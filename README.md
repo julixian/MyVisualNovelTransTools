@@ -33,7 +33,7 @@ when packing, please limit the numbers of the files to pack or delete the config
 Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<br/>
 ## RiddleArchiveTool
 To extract/repack Riddle engine .pac Archive<br/>
-##RiddleCompressTool
+## RiddleCompressTool
 To decompress/compress .scp file<br/>
 ## RiddleScriptSimpleTool
 To dump/inject Riddle .scp Script file<br/>
