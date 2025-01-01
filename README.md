@@ -10,6 +10,7 @@ To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
+DO NOT use it to edit config file, especially when it has messy code in the dumped txt file<br/>
 ## EscudeScriptSimpleTool
 Most likely it has no Universality because escude's scriptmode always changes<br/>
 Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～<br/>
