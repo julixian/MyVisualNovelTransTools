@@ -47,7 +47,7 @@ To dump/inject Tail .scd Script file<br/>
 ## TopCatCompressTool
 To decompress/compress TopCat engine .TCT Script file<br/>
 apply for both v2 and v3<br/>
-## TopTopCatV2ArchiveTool
+## TopCatV2ArchiveTool
 To extract/repack TopCatV2 .TCD Archive<br/>
 ## TopCatV3ArchiveTool
 To extract/repack TopCatV3 .TCD Archive<br/>
