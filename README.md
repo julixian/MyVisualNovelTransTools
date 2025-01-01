@@ -2,22 +2,22 @@
 Most of them are written by ai<br/>
 ## AILScriptSimpleToolPlus
 To dump/inject AIL engine Script from v1 to v3<br/>
-v3: ??-01<br/>
-v2: 02-05<br/>
-v1: 06-??<br/>
+v3: ????-2001<br/>
+v2: 2002-2005<br/>
+v1: 2006-????<br/>
 ## AosCompressTool
-To decompress/compress .scr files to achieve No-packet-read<br/>
+To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
 ## EscudeScriptSimpleTool
-Most likely it has no Universality for escude's scriptmode always changes<br/>
+Most likely it has no Universality because escude's scriptmode always changes<br/>
 Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～<br/>
 ## EscudeScriptSimpleToolV2
-Most likely it has no Universality for escude's scriptmode always changes<br/>
+Most likely it has no Universality because escude's scriptmode always changes<br/>
 Tested on 彗聖天使プリマヴェールZwei<br/>
 ## FlyingV3ArchiveTool
-To extract/repack FlyingV3 .pd Archive<br/>
+To extract/repack Flying ShineV3 .pd Archive<br/>
 ## GPK2CompressTool
 To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
 ## MajiroScriptSimpleTool
@@ -29,7 +29,7 @@ For v1 use [VNT](https://github.com/arcusmaximus/VNTranslationTools)<br/>
 For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/MajiroTools)<br/>
 ## MyAdvArchiveTool
 To extract/repack MyAdv engine .pac Archive<br/>
-when packing, please limit the numbers of the files to pack or delete the config file in the dir ready to pack to prevent recompress the config file, for the config file use the different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.<br/>
+when packing, please limit the numbers of the files to pack or delete the config files in the dir ready to pack to prevent replacing the config file in the archive, for the config file use different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.<br/>
 Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<br/>
 ## RiddleArchiveTool
 To extract/repack Riddle engine .pac Archive<br/>
