@@ -9,45 +9,45 @@ v1: 06-??<br/>
 To decompress/compress .scr files to achieve No-packet-read<br/>
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
-Most likely it won't work in very old BGI version
+Most likely it won't work in very old BGI version<br/>
 ## EscudeScriptSimpleTool
-Most likely it has no Universality for escude's scriptmode always changes
-Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～
+Most likely it has no Universality for escude's scriptmode always changes<br/>
+Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～<br/>
 ## EscudeScriptSimpleToolV2
-Most likely it has no Universality for escude's scriptmode always changes
-Tested on 彗聖天使プリマヴェールZwei
+Most likely it has no Universality for escude's scriptmode always changes<br/>
+Tested on 彗聖天使プリマヴェールZwei<br/>
 ## FlyingV3ArchiveTool
-To extract/repack FlyingV3 .pd Archive
+To extract/repack FlyingV3 .pd Archive<br/>
 ## GPK2CompressTool
-To decompress/compress GPK2 .scb file to achieve No-packet-read
+To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
 ## MajiroScriptSimpleTool
-To dump/inject Majiro Script .mjs(decrypted by mjcrypt) file or MajiroOBJV file(need to change file-extend-name to .mjs)
-To change MajiroOBJX to MajiroOBJV You can see [GalgameReverse Project](https://github.com/YuriSizuku/GalgameReverse)
-Initially made to edit script in あの晴れわたる空より高く for there are tips-jump in the game and no tools can deal with it.
-So it ONLY works on new_version majirov3 script
-For v1 use [VNT](https://github.com/arcusmaximus/VNTranslationTools)
-For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/MajiroTools)
+To dump/inject Majiro Script .mjs(decrypted by mjcrypt) file or MajiroOBJV file(need to change file-extend-name to .mjs)<br/>
+To change MajiroOBJX to MajiroOBJV You can see [GalgameReverse Project](https://github.com/YuriSizuku/GalgameReverse)<br/>
+Initially made to edit script in あの晴れわたる空より高く for there are tips-jump in the game and no tools can deal with it.<br/>
+So it ONLY works on new_version majirov3 script<br/>
+For v1 use [VNT](https://github.com/arcusmaximus/VNTranslationTools)<br/>
+For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/MajiroTools)<br/>
 ## MyAdvArchiveTool
-To extract/repack MyAdv engine .pac Archive
-when packing, please limit the numbers of the files to pack or delete the config file in the dir ready to pack to prevent recompress the config file, for the config file use the different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.
-Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～
+To extract/repack MyAdv engine .pac Archive<br/>
+when packing, please limit the numbers of the files to pack or delete the config file in the dir ready to pack to prevent recompress the config file, for the config file use the different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.<br/>
+Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<br/>
 ## RiddleArchiveTool
-To extract/repack Riddle engine .pac Archive
+To extract/repack Riddle engine .pac Archive<br/>
 ##RiddleCompressTool
-To decompress/compress .scp file
+To decompress/compress .scp file<br/>
 ## RiddleScriptSimpleTool
-To dump/inject Riddle .scp Script file
-If there are Select jump in a script, from 0x8 it has flags like Select, CngExe and F47
-And 0x24、0x44、0x64…… will restore the offset
-So if there are new flags, you can change the offset by hand
+To dump/inject Riddle .scp Script file<br/>
+If there are Select jump in a script, from 0x8 it has flags like Select, CngExe and F47<br/>
+And 0x24、0x44、0x64…… will restore the offset<br/>
+So if there are new flags, you can change the offset by hand<br/>
 ## TailCafArchiveTool
-To extract/repack Tail engine .caf Archive
+To extract/repack Tail engine .caf Archive<br/>
 ## TailScriptSimpleTool
-To dump/inject Tail .scd Script file
+To dump/inject Tail .scd Script file<br/>
 ## TopCatCompressTool
-To decompress/compress TopCat engine .TCT Script file
-apply for both v2 and v3
+To decompress/compress TopCat engine .TCT Script file<br/>
+apply for both v2 and v3<br/>
 ## TopTopCatV2ArchiveTool
-To extract/repack TopCatV2 .TCD Archive
+To extract/repack TopCatV2 .TCD Archive<br/>
 ## TopCatV3ArchiveTool
-To extract/repack TopCatV3 .TCD Archive
+To extract/repack TopCatV3 .TCD Archive<br/>
