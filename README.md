@@ -35,7 +35,7 @@ Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<
 ## RiddleArchiveTool
 To extract/repack Riddle engine .pac Archive<br/>
 ## RiddleCompressTool
-To decompress/compress .scp file<br/>
+To decompress/compress Riddle .scp file<br/>
 ## RiddleScriptSimpleTool
 To dump/inject Riddle .scp Script file<br/>
 If there are Select jump in a script, from 0x8 it has flags like Select, CngExe and F47<br/>
