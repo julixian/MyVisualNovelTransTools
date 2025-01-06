@@ -176,6 +176,7 @@ void ProcessDirectory(const fs::path& inputDir, const fs::path& outputDir, bool 
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
+        std::cerr << "Made by julixian 2025.01.06" << std::endl;
         std::cerr << "Usage: " << argv[0] << " <decompress|compress> <input_directory> <output_directory>" << std::endl;
         return 1;
     }

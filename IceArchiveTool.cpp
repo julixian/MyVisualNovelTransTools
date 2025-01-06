@@ -239,6 +239,7 @@ public:
 
 int main(int argc, char* argv[]) {
     if (argc < 4 || argc > 5) {
+        std::cerr << "Made by julixian 2025.01.06" << std::endl;
         std::cerr << "Usage:" << std::endl;
         std::cerr << "  Extract: " << argv[0] << " extract <bin_file> <output_folder>" << std::endl;
         std::cerr << "  Pack:    " << argv[0] << " pack <orgi_bin_file> <input_folder> <output_bin_file>" << std::endl;
