@@ -23,6 +23,10 @@ Tested on 彗聖天使プリマヴェールZwei<br/>
 To extract/repack Flying ShineV3 .pd Archive<br/>
 ## GPK2CompressTool
 To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
+## IceArchiveTool
+To extract/repack IceSoft .BIN Archive<br/>
+## IceCompressTool
+To decompress/compress(Actually just add a TPW\x00 sign) IceSoft TPW sign Script files<br/>
 ## MajiroScriptSimpleTool
 To dump/inject Majiro Script .mjs(decrypted by mjcrypt) file or MajiroOBJV file(need to change file-extend-name to .mjs)<br/>
 To change MajiroOBJX to MajiroOBJV You can see [GalgameReverse Project](https://github.com/YuriSizuku/GalgameReverse)<br/>
