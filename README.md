@@ -49,7 +49,7 @@ To decompress/compress Riddle .scp file<br/>
 ## RiddleScriptSimpleTool
 To dump/inject Riddle .scp Script file<br/>
 If there are Select jump in a script, from 0x8 it has flags like Select, CngExe and F47<br/>
-And 0x24、0x44、0x64…… will restore the offset<br/>
+And 0x24、0x44、0x64…… will store the offset<br/>
 So if there are new flags, you can change the offset by hand<br/>
 ## TailCafArchiveTool
 To extract/repack Tail engine .caf Archive<br/>
