@@ -38,6 +38,10 @@ For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/Majiro
 To extract/repack MyAdv engine .pac Archive<br/>
 when packing, please limit the numbers of the files to pack or delete the config files in the dir ready to pack to prevent replacing the config file in the archive, for the config file use different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.<br/>
 Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<br/>
+## OtemotoCompressTool
+To decompress/fake compress the lzss compressed files<br/>
+## OtemotoTLZArchiveTool
+To extract/repack Otemoto engine .TLZ Archive<br/>
 ## RiddleArchiveTool
 To extract/repack Riddle engine .pac Archive<br/>
 ## RiddleCompressTool
