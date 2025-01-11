@@ -9,7 +9,11 @@ v1: 2006-????<br/>
 To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
 ## AZsysCompressTool
 To decompress/compress AZ system engine ASB sign .asb compressed and encrypted files<br/>
-You can find known key in GARbro or system.arc<br/>
+You can find key in system.arc or 4 known keys in GARbro<br/>
+"Clover Heart's": 3786541434<br/>
+"Triptych": 501685433<br/>
+"Amaenbou": 2938115999<br/>
+"Reminiscence Blue": 2849404158<br/>
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
