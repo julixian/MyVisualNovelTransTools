@@ -65,3 +65,9 @@ apply for both v2 and v3<br/>
 To extract/repack TopCatV2 .TCD Archive<br/>
 ## TopCatV3ArchiveTool
 To extract/repack TopCatV3 .TCD Archive<br/>
+## YaneuraoDatArchiveTool
+To extract/repack Yaneurao engine .dat Archive<br/>
+## YaneuraoYgaImageTool
+To convert .yga image to bmp AND .bmp to yga(no compress) image<br/>
+If want to edit the image, convert the image to png first. And before convert to yga, convert the png back to bmp and then convert to yga.<br/>
+Or the image will lose Transparent pixel.<br/>
