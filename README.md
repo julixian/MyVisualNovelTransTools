@@ -7,6 +7,9 @@ v2: 2002-2005<br/>
 v1: 2006-????<br/>
 ## AosCompressTool
 To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
+## AZsysCompressTool
+To decompress/compress AZ system engine ASB sign .asb compressed and encrypted files<br/>
+You can find known key in GARbro or system.arc<br/>
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
