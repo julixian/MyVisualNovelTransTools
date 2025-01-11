@@ -5,6 +5,7 @@
 #include <memory>
 #include <filesystem>
 #include <bitset>
+#include <unordered_map>
 #include <cstring>
 
 namespace fs = std::filesystem;
@@ -86,92 +87,123 @@ public:
 };
 
 class HuffmanCompressor {
-    static const int TreeSize = 512;
-    std::vector<uint16_t> lhs;
-    std::vector<uint16_t> rhs;
+    struct Node {
+        uint8_t symbol;
+        int frequency;
+        std::shared_ptr<Node> left, right;
+
+        Node(uint8_t symbol, int frequency) : symbol(symbol), frequency(frequency), left(nullptr), right(nullptr) {}
+        bool isLeaf() const { return !left && !right; }
+    };
+
+    struct NodeComparator {
+        bool operator()(const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b) const {
+            return a->frequency > b->frequency;
+        }
+    };
+
+    std::unordered_map<uint8_t, std::string> huffmanTable; // 哈夫曼编码表
     int cache_bits = 0;
     int mm_bits = 0;
 
-    void EncodeBit(int token, int token_width, std::ofstream& writer) {
-        int mask = (1 << token_width) - 1;
-        if (cache_bits < 24) {
-            mm_bits <<= token_width;
-            mm_bits |= (token & mask);
-            cache_bits += token_width;
+    void buildHuffmanTree(const std::vector<uint8_t>& input, std::shared_ptr<Node>& root) {
+        // 统计频率
+        std::unordered_map<uint8_t, int> frequencyMap;
+        for (uint8_t byte : input) {
+            frequencyMap[byte]++;
         }
-        if (cache_bits >= 8) {
-            while (cache_bits >= 8) {
-                int shift = cache_bits - 8;
-                uint8_t byte = (mm_bits >> shift) & 0xFF;
-                cache_bits -= 8;
-                int remain_mask = (1 << cache_bits) - 1;
-                mm_bits &= remain_mask;
-                writer.put(byte);
-            }
+
+        // 构建优先队列
+        std::priority_queue<std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, NodeComparator> pq;
+        for (const auto& [symbol, frequency] : frequencyMap) {
+            pq.push(std::make_shared<Node>(symbol, frequency));
+        }
+
+        // 构建哈夫曼树
+        while (pq.size() > 1) {
+            auto left = pq.top(); pq.pop();
+            auto right = pq.top(); pq.pop();
+            auto parent = std::make_shared<Node>(0, left->frequency + right->frequency);
+            parent->left = left;
+            parent->right = right;
+            pq.push(parent);
+        }
+
+        // 根节点
+        root = pq.top();
+
+        // 构建编码表
+        buildHuffmanTable(root, "");
+    }
+
+    void buildHuffmanTable(const std::shared_ptr<Node>& node, const std::string& code) {
+        if (node->isLeaf()) {
+            huffmanTable[node->symbol] = code;
+        }
+        else {
+            buildHuffmanTable(node->left, code + "0");
+            buildHuffmanTable(node->right, code + "1");
         }
     }
 
-    void WriteTree(std::ofstream& writer) {
-        for (int i = 256; i < TreeSize; i++) {
-            if (i == 511) {
-                EncodeBit(0, 1, writer);
-                EncodeBit(1, 8, writer);
-            }
-            else {
-                EncodeBit(1, 1, writer);
-            }
+    void encodeTree(const std::shared_ptr<Node>& node, std::ofstream& writer) {
+        if (node->isLeaf()) {
+            writeBit(0, 1, writer); // 叶子节点标志
+            writeBit(node->symbol, 8, writer); // 写入符号
         }
-        for (int j = 511; j > 255; j--) {
-            EncodeBit(0, 1, writer);
-            EncodeBit(rhs[j], 8, writer);
+        else {
+            writeBit(1, 1, writer); // 内部节点标志
+            encodeTree(node->left, writer);
+            encodeTree(node->right, writer);
+        }
+    }
+
+    void writeBit(int token, int token_width, std::ofstream& writer) {
+        int mask = (1 << token_width) - 1;
+        mm_bits = (mm_bits << token_width) | (token & mask);
+        cache_bits += token_width;
+
+        while (cache_bits >= 8) {
+            uint8_t byte = (mm_bits >> (cache_bits - 8)) & 0xFF;
+            writer.put(byte);
+            cache_bits -= 8;
+        }
+    }
+
+    void flushBits(std::ofstream& writer) {
+        if (cache_bits > 0) {
+            uint8_t byte = (mm_bits << (8 - cache_bits)) & 0xFF;
+            writer.put(byte);
+            cache_bits = 0;
         }
     }
 
 public:
-    HuffmanCompressor() : lhs(TreeSize), rhs(TreeSize) {
-        for (uint16_t i = 256; i < TreeSize; i++) {
-            lhs[i] = i;
-        }
-        for (uint16_t i = 256, j = 0; i < TreeSize; i++, j++) {
-            rhs[i] = j;
-        }
-        rhs[257] = 0;
-    }
-
     std::vector<uint8_t> Compress(const std::vector<uint8_t>& input) {
         std::vector<uint8_t> output;
         std::ofstream writer("temp.bin", std::ios::binary);
 
-        WriteTree(writer);
+        // 构建哈夫曼树
+        std::shared_ptr<Node> root;
+        buildHuffmanTree(input, root);
 
-        int run_length = 9;
+        // 写入哈夫曼树
+        encodeTree(root, writer);
+
+        // 编码数据
         for (uint8_t byte : input) {
-            if (byte == 0) {
-                EncodeBit(1, 1, writer);
-            }
-            else if (byte == 1) {
-                for (int j = 0; j < 255; j++) {
-                    EncodeBit(0, 1, writer);
-                }
-            }
-            else {
-                for (int k = 0; k < byte - 1; k++) {
-                    if (run_length == 0) {
-                        EncodeBit(0, 1, writer);
-                    }
-                    else {
-                        run_length--;
-                    }
-                }
-                EncodeBit(1, 1, writer);
+            const std::string& code = huffmanTable[byte];
+            for (char bit : code) {
+                writeBit(bit == '1' ? 1 : 0, 1, writer);
             }
         }
 
-        EncodeBit(255, 8, writer);
-        EncodeBit(255, 8, writer);
+        // 刷新位缓存
+        flushBits(writer);
 
         writer.close();
 
+        // 读取压缩数据
         std::ifstream reader("temp.bin", std::ios::binary);
         output.assign(std::istreambuf_iterator<char>(reader), std::istreambuf_iterator<char>());
         reader.close();
@@ -261,7 +293,7 @@ void processDirectory(const fs::path& inputDir, const fs::path& outputDir, bool 
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
-        std::cout << "Made by julixian 2025.01.01" << std::endl;
+        std::cout << "Made by julixian 2025.01.11" << std::endl;
         std::cerr << "Usage: " << argv[0] << " <compress|decompress> <input_directory> <output_directory>" << std::endl;
         return 1;
     }
