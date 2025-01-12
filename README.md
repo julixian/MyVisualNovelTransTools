@@ -51,10 +51,10 @@ To extract/repack MyAdv engine .pac Archive<br/>
 when packing, please limit the numbers of the files to pack or delete the config files in the dir ready to pack to prevent replacing the config file in the archive, for the config file use different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.<br/>
 Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<br/>
 ## OhgetsuPacArchiveTool
-To extract/repack Ohgetsu engine script.pac Archive
-when repacking, the programm will set the compression flag to 0(no compression) in exe.<br/>
+To extract/repack Ohgetsu engine script.pac Archive<br/>
+when repacking, the programm will set the compression flag to 0(no compression) in exe<br/>
 So do not compress the files back before repacking<br/>
-You can also use crass to unpack the archive(will decompress the files at the same time).<br/>
+You can also use crass to unpack the archive(will decompress the files at the same time)<br/>
 ## OtemotoCompressTool
 To decompress/fake compress the lzss compressed files<br/>
 ## OtemotoTLZArchiveTool
