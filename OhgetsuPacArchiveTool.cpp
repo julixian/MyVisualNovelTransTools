@@ -450,6 +450,7 @@ private:
 
 int main(int argc, char* argv[]) {
     if (argc != 5) {
+        std::cout << "Made by julixian 2025.01.12" << std::endl;
         std::cout << "Usage: " << argv[0] << " <mode> <exe_path> <pac_path/input_dir> <release_dir>\n"
             << "Modes:\n"
             << "  -u    Unpack script.pac\n"

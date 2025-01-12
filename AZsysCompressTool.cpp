@@ -172,6 +172,7 @@ uint32_t parse_key(const std::string& key_str) {
 
 int main(int argc, char* argv[]) {
     if (argc != 5) {
+        std::cout << "Made by julixian 2025.01.12" << std::endl;
         std::cout << "用法: " << argv[0] << " <模式> <密钥> <输入文件夹> <输出文件夹>" << std::endl;
         std::cout << "模式: -d 解密, -e 加密" << std::endl;
         std::cout << "密钥: 可以是10进制数字或以0x开头的16进制数字" << std::endl;
