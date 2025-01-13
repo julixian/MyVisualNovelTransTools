@@ -30,6 +30,9 @@ Most likely it has no Universality because escude's scriptmode always changes<br
 Tested on 彗聖天使プリマヴェールZwei<br/>
 ## FlyingV3ArchiveTool
 To extract/repack Flying ShineV3 .pd Archive<br/>
+## FosterFA2ArchiveTool
+To extract/repack Foster game engine .FA2 Archive<br/>
+It will set all compression flags to 0(no compression) so the repacked archive looks like plaintext<br/>
 ## GPK2CompressTool
 To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
 ## IceArchiveTool
