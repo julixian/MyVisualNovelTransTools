@@ -14,6 +14,8 @@ You can find key in system.arc or 4 known keys in GARbro<br/>
 "Triptych": 501685433<br/>
 "Amaenbou": 2938115999<br/>
 "Reminiscence Blue": 2849404158<br/>
+## AZsysCpbImageTool
+To covert AZ system engine .cpb image file to bmp AND .png to cpb file<br/>
 ## AZsysScriptSimpleTool
 To dump/inject decompressed ASB sign .asb script files<br/>
 ## BGIScriptSimpleTool
