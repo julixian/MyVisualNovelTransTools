@@ -5,6 +5,9 @@ To dump/inject AIL engine Script from v1 to v3<br/>
 v3: ????-2001<br/>
 v2: 2002-2005<br/>
 v1: 2006-????<br/>
+## AoiBoxAOIMYTool
+To extract/repack Aoi engine AOIMY Unicode format .box script resource Archive<br/>
+when repacking pro.box, you need to manually change the index of pro.txt file to the first one in pro.box archive.<br/>
 ## AosCompressTool
 To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
 ## AZsysCompressTool
