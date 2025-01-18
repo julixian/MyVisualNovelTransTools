@@ -1,6 +1,6 @@
 # MyVisualNovelTransTools
 Most of them are written by ai<br/>
-## AILScriptSimpleToolPlus
+## AILScriptSimpleToolPlus/AILScriptSimpleTool++
 To dump/inject AIL engine Script from v1 to v3<br/>
 v3: ????-2001<br/>
 v2: 2002-2005<br/>
