@@ -126,12 +126,7 @@ GccHeader readGccHeader(const std::string& filename) {
     return header;
 }
 
-bool processFiles(const std::string& pngDir, const std::string& origDir, const std::string& outDir, const std::string& mode) {
-    // 验证模式参数
-    if (mode != "24m" && mode != "24n") {
-        std::cerr << "Invalid mode. Must be '24m' or '24n'" << std::endl;
-        return false;
-    }
+bool processFiles(const std::string& pngDir, const std::string& origDir, const std::string& outDir) {
 
     try {
         fs::create_directories(outDir);
@@ -162,14 +157,14 @@ bool processFiles(const std::string& pngDir, const std::string& origDir, const s
                 origFile.read(reinterpret_cast<char*>(&origHeader), sizeof(origHeader));
                 newHeader.imageOffset = origHeader.imageOffset;
 
-                if (mode == "24m") {
+                if (origHeader.signature == 0x6d343247 || origHeader.signature == 0x6d343252) {
                     // 使用原始文件的Alpha尺寸和偏移
                     newHeader.offsetX = origHeader.offsetX;
                     newHeader.offsetY = origHeader.offsetY;
                     newHeader.alphaWidth = origHeader.alphaWidth;
                     newHeader.alphaHeight = origHeader.alphaHeight;
                 }
-                else if (mode == "24n") {
+                else if (origHeader.signature == 0x6e343247 || origHeader.signature == 0x6e343252) {
                     // 24n模式使用PNG尺寸作为Alpha尺寸
                     newHeader.offsetX = origHeader.offsetX;
                     newHeader.offsetY = origHeader.offsetY;
@@ -238,16 +233,15 @@ bool processFiles(const std::string& pngDir, const std::string& origDir, const s
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 5) {
+    if (argc != 4) {
         std::cout << "Made by julixian 2025.01.22" << std::endl;
         std::cout << "Usage: " << argv[0]
-            << " <png_directory> <original_gcc_directory> <output_directory> <mode>"
+            << " <png_directory> <original_gcc_directory> <output_directory>"
             << std::endl;
-        std::cout << "Mode must be '24m' or '24n', depending on original GCC files use which sign" << std::endl;
         return 1;
     }
 
-    if (!processFiles(argv[1], argv[2], argv[3], argv[4])) {
+    if (!processFiles(argv[1], argv[2], argv[3])) {
         std::cerr << "Processing failed" << std::endl;
         return 1;
     }
