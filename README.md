@@ -1,5 +1,7 @@
 # MyVisualNovelTransTools
-Most of them are written by ai<br/>
+Most of them are written by AI<br/>
+## AI5WINGccImageTool
+To convert .png(must be 32bpp) to Ai5Win .GCC image file(Uniformly use G24m format)<br/>
 ## AILScriptSimpleToolPlus/AILScriptSimpleTool++
 To dump/inject AIL engine Script from v1 to v3<br/>
 v3: ????-2001<br/>
@@ -18,7 +20,7 @@ You can find key in system.arc or 4 known keys in GARbro<br/>
 "Amaenbou": 2938115999<br/>
 "Reminiscence Blue": 2849404158<br/>
 ## AZsysCpbImageTool
-To covert AZ system engine .cpb image file to bmp AND .png to cpb file<br/>
+To covert AZ system engine .cpb image file to bmp AND .png(must be 32bpp) to cpb file<br/>
 ## AZsysScriptSimpleTool
 To dump/inject decompressed ASB sign .asb script files<br/>
 ## BGIScriptSimpleTool
