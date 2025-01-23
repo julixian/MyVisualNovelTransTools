@@ -46,6 +46,8 @@ To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
 To extract/repack IceSoft .BIN Archive<br/>
 ## IceCompressTool
 To decompress/compress(Actually just add a TPW\x00 sign) IceSoft TPW sign Script files<br/>
+## LambdaLapArchiveTool
+To extract/repack Lambda engine gsce.lap Archive<br/>
 ## LambdaLAXArchiveTool
 To extract/repack Lambda engine .lax Archive<br/>
 Uniformly use lzss fake compression to repack<br/>
