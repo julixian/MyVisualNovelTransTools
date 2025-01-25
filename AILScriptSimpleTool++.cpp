@@ -87,7 +87,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 i++;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = extractString(buffer, SeAddr);
@@ -101,7 +101,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 i++;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = extractString(buffer, SeAddr);
@@ -110,7 +110,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 for (; buffer[i + 2] == 0x00; i += 4) {
                     memcpy(&offset, &buffer[i], sizeof(uint16_t));
                     SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text2 = extractString(buffer, SeAddr);
@@ -126,7 +126,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 i++;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = extractString(buffer, SeAddr);
@@ -136,7 +136,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                     i++;
                     memcpy(&offset, &buffer[i], sizeof(uint16_t));
                     SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text2 = extractString(buffer, SeAddr);
@@ -214,7 +214,7 @@ void injectText_covering(const fs::path& inputBinPath, const fs::path& inputTxtP
                 uint16_t offset = 0;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = translations[translationIndex];
@@ -247,7 +247,7 @@ void injectText_covering(const fs::path& inputBinPath, const fs::path& inputTxtP
                 uint16_t offset = 0;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = translations[translationIndex];
@@ -275,7 +275,7 @@ void injectText_covering(const fs::path& inputBinPath, const fs::path& inputTxtP
                     }
                     memcpy(&offset, &buffer[i], sizeof(uint16_t));
                     SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text2 = translations[translationIndex];
@@ -310,7 +310,7 @@ void injectText_covering(const fs::path& inputBinPath, const fs::path& inputTxtP
                 uint16_t offset = 0;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = translations[translationIndex];
@@ -339,7 +339,7 @@ void injectText_covering(const fs::path& inputBinPath, const fs::path& inputTxtP
                     }
                     memcpy(&offset, &buffer[i], sizeof(uint16_t));
                     SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text2 = translations[translationIndex];
@@ -407,7 +407,7 @@ void dumpTextV2(const fs::path& inputPath, const fs::path& outputPath) {
                 i += 4;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = extractString(buffer, SeAddr);
@@ -420,7 +420,7 @@ void dumpTextV2(const fs::path& inputPath, const fs::path& outputPath) {
                 uint16_t offset = 0;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = extractString(buffer, SeAddr);
@@ -432,7 +432,7 @@ void dumpTextV2(const fs::path& inputPath, const fs::path& outputPath) {
                     i += 3;
                     memcpy(&offset, &buffer[i], sizeof(uint16_t));
                     SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text2 = extractString(buffer, SeAddr);
@@ -510,7 +510,7 @@ void injectTextV2_covering(const fs::path& inputBinPath, const fs::path& inputTx
                 uint16_t offset = 0;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = translations[translationIndex];
@@ -542,7 +542,7 @@ void injectTextV2_covering(const fs::path& inputBinPath, const fs::path& inputTx
                 uint16_t offset = 0;
                 memcpy(&offset, &buffer[i], sizeof(uint16_t));
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = translations[translationIndex];
@@ -573,7 +573,7 @@ void injectTextV2_covering(const fs::path& inputBinPath, const fs::path& inputTx
                     }
                     memcpy(&offset, &buffer[i], sizeof(uint16_t));
                     SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text3 = translations[translationIndex];
@@ -646,7 +646,7 @@ void dumpTextV3(const fs::path& inputPath, const fs::path& outputPath) {
                     memcpy(&offset, &temp[0], sizeof(uint16_t));
                     temp.clear();
                     size_t SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text = extractString(buffer, SeAddr);
@@ -665,7 +665,7 @@ void dumpTextV3(const fs::path& inputPath, const fs::path& outputPath) {
                 memcpy(&offset, &temp[0], sizeof(uint16_t));
                 temp.clear();
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = extractString(buffer, SeAddr);
@@ -681,7 +681,7 @@ void dumpTextV3(const fs::path& inputPath, const fs::path& outputPath) {
                 memcpy(&offset, &temp[0], sizeof(uint16_t));
                 temp.clear();
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = extractString(buffer, SeAddr);
@@ -696,7 +696,7 @@ void dumpTextV3(const fs::path& inputPath, const fs::path& outputPath) {
                     memcpy(&offset, &temp[0], sizeof(uint16_t));
                     temp.clear();
                     SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text2 = extractString(buffer, SeAddr);
@@ -715,7 +715,7 @@ void dumpTextV3(const fs::path& inputPath, const fs::path& outputPath) {
             memcpy(&offset, &temp[0], sizeof(uint16_t));
             temp.clear();
             size_t SeAddr = ScriptBegin + offset;
-            if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+            if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                 continue;
             }
             std::string text3 = extractString(buffer, SeAddr);
@@ -808,7 +808,7 @@ void injectTextV3_covering(const fs::path& inputBinPath, const fs::path& inputTx
                     memcpy(&offset, &temp[0], sizeof(uint16_t));
                     temp.clear();
                     size_t SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text = translations[translationIndex];
@@ -848,7 +848,7 @@ void injectTextV3_covering(const fs::path& inputBinPath, const fs::path& inputTx
                 memcpy(&offset, &temp[0], sizeof(uint16_t));
                 temp.clear();
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = translations[translationIndex];
@@ -885,7 +885,7 @@ void injectTextV3_covering(const fs::path& inputBinPath, const fs::path& inputTx
                 memcpy(&offset, &temp[0], sizeof(uint16_t));
                 temp.clear();
                 size_t SeAddr = ScriptBegin + offset;
-                if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                     continue;
                 }
                 std::string text = translations[translationIndex];
@@ -921,7 +921,7 @@ void injectTextV3_covering(const fs::path& inputBinPath, const fs::path& inputTx
                     memcpy(&offset, &temp[0], sizeof(uint16_t));
                     temp.clear();
                     size_t SeAddr = ScriptBegin + offset;
-                    if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+                    if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                         continue;
                     }
                     std::string text3 = translations[translationIndex];
@@ -956,7 +956,7 @@ void injectTextV3_covering(const fs::path& inputBinPath, const fs::path& inputTx
             memcpy(&offset, &temp[0], sizeof(uint16_t));
             temp.clear();
             size_t SeAddr = ScriptBegin + offset;
-            if (SeAddr >= buffer.size() || buffer[SeAddr - 1] != 0x00 || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
+            if (SeAddr >= buffer.size() || buffer[SeAddr] <= 0x20 || buffer[SeAddr] >= 0xef) {
                 continue;
             }
             if (translationIndex >= translations.size()) {
@@ -1051,13 +1051,14 @@ size_t parseInputValue(const std::string& input) {
 int main(int argc, char* argv[]) {
 
     if (argc < 4) {
-        std::cout << "Made by julixian 2025.01.19" << std::endl;
+        std::cout << "Made by julixian 2025.01.25" << std::endl;
         std::cout << "Usage:" << std::endl;
         std::cout << "For dump: program.exe <version> dump <input_folder> <output_folder>" << std::endl;
         std::cout << "For inject: program.exe <version> inject <input_bin_folder> <input_txt_folder> <output_folder> <covering/not_covering> [ScriptBegin]" << std::endl;
         std::cout << "version: v1, v2, or v3" << std::endl;
         std::cout << "covering: covering the original scripts, for uint16 often overflows, but cause some scripts disordered in v1 AND v2 because I have't analyze them" << std::endl;
         std::cout << "ScriptBegin: manually set where to begin writing the translated texts, able to use 0x for hex" << std::endl;
+        std::cout << "v3: ????-2001\nv2: 2002 - 2005\nv1: 2006-????" << std::endl;
         return 1;
     }
 
