@@ -40,6 +40,8 @@ To extract/repack Flying ShineV3 .pd Archive<br/>
 ## FosterFA2ArchiveTool
 To extract/repack Foster game engine .FA2 Archive<br/>
 It will set all compression flags to 0(no compression) so the repacked archive looks like plaintext<br/>
+## FrontWingPacArchiveTool
+To extract/repack FrontWing engine LIB_PACKDATA0000 sign .pac(ArcFLT in GARbro) Archive<br/>
 ## GPK2CompressTool
 To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
 ## IceArchiveTool
