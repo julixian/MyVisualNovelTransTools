@@ -60,6 +60,8 @@ Initially made to edit script in あの晴れわたる空より高く for there 
 So it ONLY works on new_version majirov3 script<br/>
 For v1 use [VNT](https://github.com/arcusmaximus/VNTranslationTools)<br/>
 For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/MajiroTools) or Ineditor<br/>
+## MTSZArchiveTool
+To extract/repack MTS engine .z Archive<br/>
 ## MyAdvArchiveTool
 To extract/repack MyAdv engine .pac Archive<br/>
 when packing, please limit the numbers of the files to pack or delete the config files in the dir ready to pack to prevent replacing the config file in the archive, for the config file use different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.<br/>
