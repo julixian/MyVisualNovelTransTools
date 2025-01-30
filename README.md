@@ -64,11 +64,11 @@ For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/Majiro
 To extract/repack Marble engine mg_data(%d).mbl Archive<br/>
 If the game has no key(can be correctly extracted by the default method in GARbro), keep key empty<br/>
 Or you can use known keys in GARbro<br/>
-[![](https://pic1.imgdb.cn/item/679b26d3d0e0a243d4f89ad9.png)](https://pic1.imgdb.cn/item/679b26d3d0e0a243d4f89ad9.png)
+<img src="https://pic1.imgdb.cn/item/679b26d3d0e0a243d4f89ad9.png">
 You can also manually find the key in game.exe, [here](https://github.com/shangjiaxuan/Crass-source/blob/4aff113b98fc39fb85f64501ab47c580df779a3d/cui/MarbleEngine/MarbleEngine.cpp) exists the method to find key<br/>
 For example:<br/>
-[![](https://pic1.imgdb.cn/item/679b27abd0e0a243d4f89b32.png)](https://pic1.imgdb.cn/item/679b27abd0e0a243d4f89b32.png)
-[![](https://pic1.imgdb.cn/item/679b286bd0e0a243d4f89b95.png)](https://pic1.imgdb.cn/item/679b286bd0e0a243d4f89b95.png)
+<img src="https://pic1.imgdb.cn/item/679b27abd0e0a243d4f89b32.png">
+<img src="https://pic1.imgdb.cn/item/679b286bd0e0a243d4f89b95.png">
 the key of 彼女が見舞いに来ない理由 is 0x46554A4953415741 and Cafe AQUA is 0x89B482CD97598EF782BE
 ## MTSPakZArchiveTool
 To extract/repack MTS engine .pak or .z Archive<br/>
