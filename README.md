@@ -64,7 +64,7 @@ For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/Majiro
 To extract/repack Marble engine mg_data(%d).mbl Archive<br/>
 If the game has no key(can be correctly extracted by the default method in GARbro), keep key empty<br/>
 Or you can use known keys in GARbro<br/>
-![Snipaste_2025-01-30_15-13-54](https://pic1.imgdb.cn/item/679b26d3d0e0a243d4f89ad9.png)
+![Snipaste_2025-01-30_15-13-54](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-01-30_15-13-54.png)
 You can also manually find the key in game.exe, [here](https://github.com/shangjiaxuan/Crass-source/blob/4aff113b98fc39fb85f64501ab47c580df779a3d/cui/MarbleEngine/MarbleEngine.cpp) exists the method to find key<br/>
 For example:<br/>
 ![Snipaste_2025-01-30_14-25-37](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-01-30_14-25-37.png)
