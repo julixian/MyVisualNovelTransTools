@@ -14,7 +14,7 @@ when repacking pro.box, you need to manually change the index of pro.txt file to
 To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
 ## AZsysCompressTool
 To decompress/compress AZ system engine ASB sign .asb compressed and encrypted files<br/>
-You can find key in system.arc or 4 known keys in GARbro<br/>
+You can find key in system.arc([here](https://github.com/shangjiaxuan/Crass-source/blob/4aff113b98fc39fb85f64501ab47c580df779a3d/cui/AZSystem/AZSystem.cpp) is the method) or 4 known keys in GARbro<br/>
 "Clover Heart's": 3786541434<br/>
 "Triptych": 501685433<br/>
 "Amaenbou": 2938115999<br/>
@@ -27,6 +27,8 @@ To dump/inject decompressed ASB sign .asb script files<br/>
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
 DO NOT use it to edit config file, especially when it has messy code in the dumped txt file<br/>
+## CaramelBox
+A series of tools for extract/repack CaramelBox engine arc3 Archive, decompress/fake compress lze files, dump/inject scb script files<br/>
 ## CswareDL1ArchiveTool
 To extract/repack Csware .DL1 Archive<br/>
 ## EscudeScriptSimpleTool
@@ -80,7 +82,7 @@ Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<
 To extract/repack Ohgetsu engine script.pac Archive<br/>
 when repacking, the programm will set the compression flag to 0(no compression) in exe<br/>
 So do not compress the files back before repacking<br/>
-You can also use crass to unpack the archive(will decompress the files at the same time)<br/>
+You can also use crass to unpack the archive(using special parameter 『exe="path/to/your/game.exe"』, will decompress the files at the same time)<br/>
 ## OtemotoCompressTool
 To decompress/fake compress the lzss compressed files<br/>
 ## OtemotoTLZArchiveTool
