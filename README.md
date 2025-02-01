@@ -33,8 +33,8 @@ A series of tools for extract/repack CaramelBox engine arc3 Archive, decompress/
 To extract/repack Csware .DL1 Archive<br/>
 ## CVNSCpz2ArchiveTool
 To pack a cpz2 Archive<br/>
-have no compress AND md5_compute function in the programm
-so modify game.exe to jump the md5_check(track MessageBox) and decompress_function([here](https://www.bilibili.com/video/BV1cB4y1k7tF/) is the method)<br/>
+have no compress AND md5_compute function in the programm<br/>
+so you have to modify game.exe to jump the md5_check(track MessageBox) and decompress_function([here](https://www.bilibili.com/video/BV1cB4y1k7tF/) is the method)<br/>
 ## EscudeScriptSimpleTool
 Most likely it has no Universality because escude's scriptmode always changes<br/>
 Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～<br/>
