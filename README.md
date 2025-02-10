@@ -56,6 +56,9 @@ To extract/repack IceSoft .BIN Archive<br/>
 To decompress/compress(Actually just add a TPW\x00 sign) IceSoft TPW sign Script files<br/>
 ## LambdaLapArchiveTool
 To extract/repack Lambda engine gsce.lap Archive<br/>
+## LambdaLapArchiveSimpleTool && LambdaCompressTool
+To extract Lambda engine gevent.lap image archive.<br/>
+you need to use archivetool to extract compressed files and use compresstool to decompress files twice.
 ## LambdaLAXArchiveTool
 To extract/repack Lambda engine .lax Archive<br/>
 Uniformly use lzss fake compression to repack<br/>
