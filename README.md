@@ -35,6 +35,8 @@ To extract/repack Csware .DL1 Archive<br/>
 To pack a cpz2 Archive<br/>
 have no compress AND md5_compute function in the programm<br/>
 so you have to modify game.exe to jump the md5_check(track MessageBox) and decompress_function([here](https://www.bilibili.com/video/BV1cB4y1k7tF/) is the method)<br/>
+## EAGLSDecryptTool
+To decrypt/encrypt EAGLS .dat script files to achieve No-packet-read.<br/>
 ## EscudeScriptSimpleTool
 Most likely it has no Universality because escude's scriptmode always changes<br/>
 Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～<br/>
