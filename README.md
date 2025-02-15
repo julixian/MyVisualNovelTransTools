@@ -3,6 +3,7 @@ Most of them are written by AI<br/>
 ## ACTGSScrArchiveTool
 To extract/pack ACTGS engine arc.scr script Archive<br/>
 Track CreateFileA that open the archive and follow few steps, a certain register will point to the key<br/>
+![Image_404242458411155](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Image_404242458411155.png)
 ## AI5WINGccImageTool
 To convert .png(must be 32bpp) to Ai5Win .GCC image file(Uniformly use G24m format)<br/>
 ## AILScriptSimpleToolPlus/AILScriptSimpleTool++
