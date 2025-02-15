@@ -23,6 +23,7 @@ You can find key in system.arc([here](https://github.com/shangjiaxuan/Crass-sour
 To covert AZ system engine .cpb image file to bmp AND .png(must be 32bpp) to cpb file<br/>
 ## AZsysScriptSimpleTool
 To dump/inject decompressed ASB sign .asb script files<br/>
+I haven't fix the jump op 0x0b and 0x0c so it may cause crash.
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
