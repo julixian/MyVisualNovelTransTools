@@ -1,5 +1,8 @@
 # MyVisualNovelTransTools
 Most of them are written by AI<br/>
+## ACTGSScrArchiveTool
+To extract/pack ACTGS engine arc.scr script Archive<br/>
+Track CreateFileA that open the archive and follow few steps, a certain register will point to the key<br/>
 ## AI5WINGccImageTool
 To convert .png(must be 32bpp) to Ai5Win .GCC image file(Uniformly use G24m format)<br/>
 ## AILScriptSimpleToolPlus/AILScriptSimpleTool++
@@ -72,6 +75,11 @@ Initially made to edit script in あの晴れわたる空より高く for there 
 So it ONLY works on new_version majirov3 script<br/>
 For v1 use [VNT](https://github.com/arcusmaximus/VNTranslationTools)<br/>
 For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/MajiroTools) or Ineditor<br/>
+## MasysScriptSimpleTool
+To dump/inject Masys engine .meg script files<br/>
+Search "Powered" to find key in game.exe<br/>
+Example:<br/>
+![Snipaste_2025-02-16_01-21-26.png](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-02-16_01-21-26.png)
 ## MarbleMblArchiveTool
 To extract/repack Marble engine mg_data(%d).mbl Archive<br/>
 If the game has no key(can be correctly extracted by the default method in GARbro), keep key empty<br/>
