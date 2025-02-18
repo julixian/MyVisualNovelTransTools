@@ -89,7 +89,8 @@ For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/Majiro
 To dump/inject Masys engine .meg script files<br/>
 Search "Powered" to find key in game.exe<br/>
 Example:<br/>
-![Snipaste_2025-02-16_01-21-26.png](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-02-16_01-21-26.png)
+![Snipaste_2025-02-16_01-21-26.png](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-02-16_01-21-26.png)<br/>
+Now it has bugs, needing truncation.
 ## MarbleMblArchiveTool
 To extract/repack Marble engine mg_data(%d).mbl Archive<br/>
 If the game has no key(can be correctly extracted by the default method in GARbro), keep key empty<br/>
