@@ -48,6 +48,9 @@ so you have to modify game.exe to jump the md5_check(track MessageBox) and decom
 To extract/repack EAGLS .pak Advsys type encrypted Archive<br/>
 ## EAGLSDecryptTool
 To decrypt/encrypt EAGLS .dat script files to achieve No-packet-read.<br/>
+## Ellefin
+Release-EPK:To extract some games of Terios made by Ellefin engine<br/>
+EPKscpro.py:To decrypt script files of はぴベルラヴ×2ハネムーン<br/>
 ## EscudeScriptSimpleTool
 Most likely it has no Universality because escude's scriptmode always changes<br/>
 Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～<br/>
