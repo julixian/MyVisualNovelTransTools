@@ -3,7 +3,11 @@ Most of them are written by AI<br/>
 ## ACTGSScrArchiveTool
 To extract/pack ACTGS engine arc.scr script Archive<br/>
 Track CreateFileA that open the archive and follow few steps, a certain register will point to the key<br/>
-![Image_404242458411155](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Image_404242458411155.png)
+![Image_404242458411155](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Image_404242458411155.png)<br/>
+## AdvPolaArchiveTool
+Made to decompress Adv engine(Studio Polaris)『*Pola\x00 u16origlen + 3 * u8unknown + u16decompressedlen』 sign script files in まじかるカナン MAGICAL FANTASY BOX<br/>
+Pack the files as a pac and use crass to unpack the pac, you can get decompressed files<br/>
+For it's much easier to pack such a format than copy the decompress func from crass<br/>
 ## AI5WINGccImageTool
 To convert .png(must be 32bpp) to Ai5Win .GCC image file(Uniformly use G24m format)<br/>
 ## AILScriptSimpleToolPlus/AILScriptSimpleTool++
@@ -40,6 +44,8 @@ To extract/repack Csware .DL1 Archive<br/>
 To pack a cpz2 Archive<br/>
 have no compress AND md5_compute function in the programm<br/>
 so you have to modify game.exe to jump the md5_check(track MessageBox) and decompress_function([here](https://www.bilibili.com/video/BV1cB4y1k7tF/) is the method)<br/>
+## EAGLSAdvsysArchiveTool
+To extract/repack EAGLS .pak Advsys type encrypted Archive<br/>
 ## EAGLSDecryptTool
 To decrypt/encrypt EAGLS .dat script files to achieve No-packet-read.<br/>
 ## EscudeScriptSimpleTool
