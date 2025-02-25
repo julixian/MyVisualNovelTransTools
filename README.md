@@ -10,11 +10,14 @@ Pack the files as a pac and use crass to unpack the pac, you can get decompresse
 For it's much easier to pack such a format than copy the decompress func from crass<br/>
 ## AI5WINGccImageTool
 To convert .png(must be 32bpp) to Ai5Win .GCC image file(Uniformly use G24m format)<br/>
-## AILScriptSimpleToolPlus/AILScriptSimpleTool++
+## AILScriptSimpleToolPlus/AILScriptSimpleTool++/AILScriptSimpleTool#
 To dump/inject AIL engine Script from v1 to v3<br/>
 v3: ????-2001<br/>
 v2: 2002-2005<br/>
 v1: 2006-????<br/>
+Initially, I didn't expect there would be so many types of AIL engine scripts, so I started by creating tools for each script type as I encountered them, resulting in AILScriptSimpleToolV1-V3. I then integrated them into AILScriptSimpleToolPlus through simple copy and paste. However, since I didn't have the energy to carefully analyze many OPs in V1 and V2 scripts, and the original code was written too casually to modify easily, I only added options for overwriting the original text and freely setting the overwrite starting position. This helped avoid offset overflow issues caused by u16's small maximum value and garbled text problems caused by overwriting unanalyzed sentences. While fixing some details as much as possible, this became AILScriptSimpleTool++.<br/>
+<br/>
+AILScriptSimpleTool# completely reconstructed the extraction and reinsertion of V1 and V2 scripts (V3 remains unchanged). I still didn't analyze their OPs, but the new tool detects which sentences in the text block weren't extracted and automatically guesses where their offsets are stored. Naturally, some sentences might be guessed incorrectly, but you can manually delete them or find the actual location storing their offsets to fix them, as the reconstructed new function only makes modifications at locations based on the offset addresses (decimal numbers before ":::::") stored in the txt file.<br/>
 ## AoiBoxAOIMYTool
 To extract/repack Aoi engine AOIMY Unicode format .box script resource Archive<br/>
 when repacking pro.box, you need to manually change the index of pro.txt file to the first one in pro.box archive.<br/>
