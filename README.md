@@ -1,6 +1,6 @@
 # MyVisualNovelTransTools
 Most of them are written by AI<br/>
-## ACTGSScrArchiveTool
+## ACTGSScr_oldversionArchiveTool/ACTGSScrArchiveTool
 To extract/pack ACTGS engine arc.scr script Archive<br/>
 Track CreateFileA that open the archive and follow few steps, a certain register will point to the key<br/>
 ![Image_404242458411155](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Image_404242458411155.png)<br/>
