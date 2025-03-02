@@ -283,6 +283,7 @@ bool processDirectory(const std::string& inputDir, const std::string& outputDir)
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
+        std::cout << "Made by julixian 2025.03.02" << std::endl;
         std::cout << "Usage: " << argv[0] << " <input_directory> <output_directory>" << std::endl;
         return 1;
     }
