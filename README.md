@@ -1,5 +1,7 @@
 # MyVisualNovelTransTools
 Most of them are written by AI<br/>
+## AbmImageTool
+To convert .png(must be 32bpp) to Lilim engine .abm image format<br/>
 ## ACTGSScr_oldversionArchiveTool/ACTGSScrArchiveTool
 To extract/pack ACTGS engine arc.scr script Archive<br/>
 Track CreateFileA that open the archive and follow few steps, a certain register will point to the key<br/>
@@ -9,7 +11,7 @@ Made to decompress Adv engine(Studio Polaris)『*Pola\x00 u16origlen + 3 * u8unk
 Pack the files as a pac and use crass to unpack the pac, you can get decompressed files<br/>
 For it's much easier to pack such a format than copy the decompress func from crass<br/>
 ## AI5WINGccImageTool
-To convert .png(must be 32bpp) to Ai5Win .GCC image file(Uniformly use G24m format)<br/>
+To convert .png(must be 32bpp) to Ai5Win .GCC image format(Uniformly use G24m format)<br/>
 ## AILScriptSimpleToolPlus/AILScriptSimpleTool++/AILScriptSimpleTool#
 To dump/inject AIL engine Script from v1 to v3<br/>
 v3: ????-2001<br/>
