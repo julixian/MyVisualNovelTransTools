@@ -86,8 +86,8 @@ Uniformly use lzss fake compression to repack<br/>
 ## LucifenSobScriptSimpleTool
 To dump/inject Lucifen/Ellefin engine .sob script files<br/>
 For tob, use Ineditor or [jyxjyx1234's tool](https://github.com/jyxjyx1234/misc_game-chs/tree/re_upload/%E7%8C%AB%E6%92%AB%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)(need to fix HScene script by padding the file to the same size)<br/>
-## LvoryScriptSimpleTool && LvoryScriptSimpleTool_2
-To decrpyt/encrypt lvory engine script files && dump/inject texts in decrypted text block<br/>
+## LvoryScriptSimpleTool
+To decrpyt/encrypt lvory engine script files<br/>
 ## MajiroScriptSimpleTool
 To dump/inject Majiro Script .mjs(decrypted by mjcrypt) file or MajiroOBJV file(need to change file-extend-name to .mjs)<br/>
 To change MajiroOBJX to MajiroOBJV You can see [GalgameReverse Project](https://github.com/YuriSizuku/GalgameReverse)<br/>
