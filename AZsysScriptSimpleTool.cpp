@@ -99,6 +99,8 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 
     size_t ScriptBegin = 0;
 
+    int dvi = 0;
+
     for (size_t i = ScriptBegin; i < buffer.size(); i++) {
         if ((buffer[i] == 0x2a || buffer[i] == 0x29) && buffer[i + 1] == 0x00 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x00) {
             if (buffer[i + 24] <= 0x20 || buffer[i + 24] >= 0xef || buffer[i + 24] == 0x2a) {
@@ -135,10 +137,12 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             if (newSelength < orgiSelength) {
                 size_t dv = orgiSelength - newSelength;
                 newTotalLength -= dv;
+                dvi -= dv;
             }
             else {
                 size_t dv = newSelength - orgiSelength;
                 newTotalLength += dv;
+                dvi += dv;
             }
             if (is2a) {
                 newBuffer.push_back(0x2a);
@@ -224,16 +228,20 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             i += orgiSelength + OptionCount;
             newBuffer.push_back(buffer[i]);
         }
+        else if ((buffer[i] == 0x0b || buffer[i] == 0x0c) && buffer[i+1]==0x00 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x00 && buffer[i + 4] == 0x18 && buffer[i + 5] == 0x00 && buffer[i + 6] == 0x00 && buffer[i + 7] == 0x00) {
+            newBuffer.push_back(buffer[i]);
+            newBuffer.push_back(0x00); newBuffer.push_back(0x00); newBuffer.push_back(0x00);
+            newBuffer.push_back(0x18); newBuffer.push_back(0x00); newBuffer.push_back(0x00); newBuffer.push_back(0x00);
+            uint32_t orgiJump = 0;
+            memcpy(&orgiJump, &buffer[i + 8], sizeof(uint32_t));
+            uint32_t newJump = orgiJump + dvi;
+            newBuffer.insert(newBuffer.end(), { 0, 0, 0, 0 });
+            memcpy(&newBuffer[newBuffer.size() - 4], &newJump, sizeof(uint32_t));
+            i += 12;
+            newBuffer.push_back(buffer[i]);
+        }
         else {
-            if (i >= buffer.size() - 25) {
-                for (size_t j = i; j < buffer.size(); j++) {
-                    newBuffer.push_back(buffer[j]);
-                }
-                break;
-            }
-            else {
-                newBuffer.push_back(buffer[i]);
-            }
+            newBuffer.push_back(buffer[i]);
         }
     }
 
@@ -248,7 +256,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.01.19" << std::endl;
+    std::cout << "Made by julixian 2025.03.04" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-asb_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
