@@ -9,6 +9,8 @@
 
 namespace fs = std::filesystem;
 
+uint8_t signature = 0x1a;
+
 // CRC32计算函数
 uint32_t compute_crc32(const uint8_t* data, size_t length) {
     return crc32(0, data, length);
@@ -25,7 +27,7 @@ bool decrypt_asb(const fs::path& input_path, const fs::path& output_path, uint32
     // 读取文件头
     char signature[4];
     input.read(signature, 4);
-    if (std::memcmp(signature, "ASB\x1a", 4) != 0) {
+    if (std::memcmp(signature, "ASB", 3) != 0) {
         std::cerr << "无效的ASB文件: " << input_path << std::endl;
         return false;
     }
@@ -143,7 +145,8 @@ bool encrypt_asb(const fs::path& input_path, const fs::path& output_path, uint32
     }
 
     // 写入头部信息
-    output.write("ASB\x1a", 4);
+    output.write("ASB", 3);
+    output.write((char*)&signature, 1);
     uint32_t total_packed_size = compressed_size + 4;
     output.write(reinterpret_cast<char*>(&total_packed_size), 4);
     output.write(reinterpret_cast<char*>(&unpacked_size), 4);
@@ -238,7 +241,7 @@ bool decrypt_and_guess_key_multithreaded(const fs::path& input_path, const fs::p
     // 读取文件头
     char signature[4];
     input.read(signature, 4);
-    if (std::memcmp(signature, "ASB\x1a", 4) != 0) {
+    if (std::memcmp(signature, "ASB", 3) != 0) {
         std::cerr << "无效的ASB文件: " << input_path << std::endl;
         return false;
     }
@@ -288,14 +291,15 @@ uint32_t parse_key(const std::string& key_str) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc < 4 || argc > 5) {
+    if (argc < 4) {
         std::cout << "Made by julixian 2025.03.04" << std::endl;
-        std::cout << "Usage: " << argv[0] << " <mode> [<key>] <input_dir> <output_dir>" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <mode> [<key>] <input_dir> <output_dir> [<signature>]" << std::endl;
         std::cout << "mode: -d decrypt, -e encrypt, -g guess key and decrpyt" << std::endl;
         std::cout << "key: can be decimal number or hexadecimal number with 0x prefix (only needed in -d or -e mode)" << std::endl;
+        std::cout << "signature: a hexadecimal number with 0x prefix, use to define the next uint8_t after ASB sign\nIf the original script use \"ASB\\x1a\", fill with 0x1a\nIf the original script use \"ASB\\x00\", fill with 0x00 (only needed in -e mode)" << std::endl;
         std::cout << "Example:" << std::endl;
         std::cout << "  " << argv[0] << " -d 123456789 input_folder output_folder" << std::endl;
-        std::cout << "  " << argv[0] << " -e 0x1DE71CB9 input_folder output_folder" << std::endl;
+        std::cout << "  " << argv[0] << " -e 0x1DE71CB9 input_folder output_folder 0x1a" << std::endl;
         std::cout << "  " << argv[0] << " -g input_folder output_folder" << std::endl;
         return 1;
     }
@@ -333,6 +337,7 @@ int main(int argc, char* argv[]) {
                 }
             }
             else if (mode == "-e") {
+                signature = parse_key(argv[5]);
                 output_path.replace_extension(".asb");
                 std::cout << "Encrypting: " << entry.path().filename() << std::endl;
                 if (encrypt_asb(entry.path(), output_path, base_key)) {
