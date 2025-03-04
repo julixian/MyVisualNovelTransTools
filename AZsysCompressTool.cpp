@@ -293,13 +293,13 @@ uint32_t parse_key(const std::string& key_str) {
 int main(int argc, char* argv[]) {
     if (argc < 4) {
         std::cout << "Made by julixian 2025.03.04" << std::endl;
-        std::cout << "Usage: " << argv[0] << " <mode> [<key>] <input_dir> <output_dir> [<signature>]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <mode> [<key>] [<signature>] <input_dir> <output_dir>" << std::endl;
         std::cout << "mode: -d decrypt, -e encrypt, -g guess key and decrpyt" << std::endl;
         std::cout << "key: can be decimal number or hexadecimal number with 0x prefix (only needed in -d or -e mode)" << std::endl;
         std::cout << "signature: a hexadecimal number with 0x prefix, use to define the next uint8_t after ASB sign\nIf the original script use \"ASB\\x1a\", fill with 0x1a\nIf the original script use \"ASB\\x00\", fill with 0x00 (only needed in -e mode)" << std::endl;
         std::cout << "Example:" << std::endl;
         std::cout << "  " << argv[0] << " -d 123456789 input_folder output_folder" << std::endl;
-        std::cout << "  " << argv[0] << " -e 0x1DE71CB9 input_folder output_folder 0x1a" << std::endl;
+        std::cout << "  " << argv[0] << " -e 0x1DE71CB9 0x1a input_folder output_folder" << std::endl;
         std::cout << "  " << argv[0] << " -g input_folder output_folder" << std::endl;
         return 1;
     }
@@ -337,7 +337,7 @@ int main(int argc, char* argv[]) {
                 }
             }
             else if (mode == "-e") {
-                signature = parse_key(argv[5]);
+                signature = parse_key(argv[3]);
                 output_path.replace_extension(".asb");
                 std::cout << "Encrypting: " << entry.path().filename() << std::endl;
                 if (encrypt_asb(entry.path(), output_path, base_key)) {
