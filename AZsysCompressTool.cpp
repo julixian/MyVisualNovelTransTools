@@ -174,18 +174,7 @@ void try_keys_in_range(const std::vector<uint8_t>& encrypted_data, uint32_t unpa
         uint32_t stored_crc = *reinterpret_cast<uint32_t*>(decrypted_data.data());
         uint32_t computed_crc = compute_crc32(decrypted_data.data() + 4, decrypted_data.size() - 4);
         if (stored_crc == computed_crc) {
-            {
-                std::cout << "Key Found: 0x" << std::hex << base_key << std::dec << std::endl;
-                FoundKey = base_key;
-                found_key = true;
-                std::ofstream outTxt(L"#Key.txt");
-                outTxt << base_key << std::endl;
-                outTxt.close();
-                wchar_t buffer[MAX_PATH];
-                GetCurrentDirectoryW(MAX_PATH, buffer);
-                fs::path CurrentDic(buffer);
-                std::cout << "Key has been stored to: " << CurrentDic.string() << "\\#Key.txt" << std::endl;
-            }
+            
 
             // 进行zlib解压缩
             std::vector<uint8_t> decompressed_data(unpacked_size);
@@ -200,13 +189,13 @@ void try_keys_in_range(const std::vector<uint8_t>& encrypted_data, uint32_t unpa
 
             if (inflateInit(&strm) != Z_OK) {
                 std::cerr << "zlib初始化失败" << std::endl;
-                return;
+                continue;
             }
 
             if (inflate(&strm, Z_FINISH) != Z_STREAM_END) {
                 inflateEnd(&strm);
                 std::cerr << "解压缩失败" << std::endl;
-                return;
+                continue;
             }
 
             inflateEnd(&strm);
@@ -215,10 +204,22 @@ void try_keys_in_range(const std::vector<uint8_t>& encrypted_data, uint32_t unpa
             std::ofstream output(output_path, std::ios::binary);
             if (!output) {
                 std::cerr << "无法创建输出文件: " << output_path << std::endl;
-                return;
+                continue;
             }
 
             output.write(reinterpret_cast<char*>(decompressed_data.data()), unpacked_size);
+            {
+                std::cout << "Key Found: 0x" << std::hex << base_key << std::dec << std::endl;
+                FoundKey = base_key;
+                found_key = true;
+                std::ofstream outTxt(L"#Key.txt");
+                outTxt << base_key << std::endl;
+                outTxt.close();
+                wchar_t buffer[MAX_PATH];
+                GetCurrentDirectoryW(MAX_PATH, buffer);
+                fs::path CurrentDic(buffer);
+                std::cout << "Key has been stored to: " << CurrentDic.string() << "\\#Key.txt" << std::endl;
+            }
         }
 
         // Reset decrypted data for next attempt
@@ -356,9 +357,17 @@ int main(int argc, char* argv[]) {
                             smallest_path = entryS.path();
                         }
                     }
+                    relative = fs::relative(smallest_path, input_dir);
+                    output_path = output_dir / relative;
                     fs::create_directories(output_path.parent_path());
-                    std::cout << "Trying to decrypt: " << entry.path().filename() << std::endl;
-                    if (decrypt_and_guess_key_multithreaded(entry.path(), output_path, num_threads)) {
+                    std::cout << "Trying to decrypt: " << smallest_path.filename() << std::endl;
+                    if (decrypt_and_guess_key_multithreaded(smallest_path, output_path, num_threads)) {
+                        std::cout << "Decrypt successfully: " << output_path << std::endl;
+                    }
+                    relative = fs::relative(entry.path(), input_dir);
+                    output_path = output_dir / relative;
+                    std::cout << "Decrypting: " << entry.path().filename() << std::endl;
+                    if (decrypt_asb(entry.path(), output_path, FoundKey)) {
                         std::cout << "Decrypt successfully: " << output_path << std::endl;
                     }
                 }
