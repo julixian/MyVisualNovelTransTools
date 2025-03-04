@@ -34,14 +34,13 @@ You can find key in system.arc([here](https://github.com/shangjiaxuan/Crass-sour
 "Triptych": 501685433<br/>
 "Amaenbou": 2938115999<br/>
 "Reminiscence Blue": 2849404158<br/>
-You can also use guess_key func in this programme:<br/>
+You can also use guess_key func in this programme :<br/>
 Use crass to unpack script.arc and make the unpacked dir as input_dir, the programme will use the smallest .asb file to guess key.<br/>
 If the guessed key is wrong, delete the smallest file the programme shows and try again<br/>
 ## AZsysCpbImageTool
 To covert AZ system engine .cpb image file to bmp AND .png(must be 32bpp) to cpb file<br/>
 ## AZsysScriptSimpleTool
 To dump/inject decompressed ASB sign .asb script files<br/>
-I haven't fix the jump op 0x0b and 0x0c so it may cause crash.
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
