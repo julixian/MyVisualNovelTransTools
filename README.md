@@ -36,7 +36,7 @@ You can find key in system.arc([here](https://github.com/shangjiaxuan/Crass-sour
 "Reminiscence Blue": 2849404158<br/>
 You can also use guess_key func in this programme :<br/>
 Use crass to unpack script.arc and make the unpacked dir as input_dir, the programme will use the smallest .asb file to guess key.<br/>
-If the guessed key is wrong, delete the smallest file the programme shows and try again<br/>
+If the guessed key is wrong, delete the smallest file the programme shows and try again(A file size of 1-2kb is preferred)<br/>
 ## AZsysCpbImageTool
 To covert AZ system engine .cpb image file to bmp AND .png(must be 32bpp) to cpb file<br/>
 ## AZsysScriptSimpleTool
