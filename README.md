@@ -45,6 +45,8 @@ To dump/inject decompressed ASB sign .asb script files<br/>
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
 DO NOT use it to edit config file, especially when it has messy code in the dumped txt file<br/>
+## CadathKarArchiveTool
+To extract/pack Cadath engine KAR signature .bin Archive<br/>
 ## CaramelBox
 A series of tools for extract/repack CaramelBox engine arc3 Archive, decompress/fake compress lze files, dump/inject scb script files<br/>
 ## CswareDL1ArchiveTool
