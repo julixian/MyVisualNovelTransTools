@@ -9,7 +9,7 @@
 
 namespace fs = std::filesystem;
 
-uint8_t signature = 0x1a;
+uint32_t signature = 0x1a425341; //4153421A
 
 // CRC32计算函数
 uint32_t compute_crc32(const uint8_t* data, size_t length) {
@@ -27,10 +27,10 @@ bool decrypt_asb(const fs::path& input_path, const fs::path& output_path, uint32
     // 读取文件头
     char signature[4];
     input.read(signature, 4);
-    if (std::memcmp(signature, "ASB", 3) != 0) {
+    /*if (std::memcmp(signature, "ASB", 3) != 0) {
         std::cerr << "无效的ASB文件: " << input_path << std::endl;
         return false;
-    }
+    }*/
 
     // 读取大小信息
     uint32_t packed_size, unpacked_size;
@@ -145,8 +145,7 @@ bool encrypt_asb(const fs::path& input_path, const fs::path& output_path, uint32
     }
 
     // 写入头部信息
-    output.write("ASB", 3);
-    output.write((char*)&signature, 1);
+    output.write((char*)&signature, 4);
     uint32_t total_packed_size = compressed_size + 4;
     output.write(reinterpret_cast<char*>(&total_packed_size), 4);
     output.write(reinterpret_cast<char*>(&unpacked_size), 4);
@@ -191,13 +190,11 @@ void try_keys_in_range(const std::vector<uint8_t>& encrypted_data, uint32_t unpa
             strm.next_out = decompressed_data.data();
 
             if (inflateInit(&strm) != Z_OK) {
-                std::cerr << "zlib初始化失败" << std::endl;
                 continue;
             }
 
             if (inflate(&strm, Z_FINISH) != Z_STREAM_END) {
                 inflateEnd(&strm);
-                std::cerr << "解压缩失败" << std::endl;
                 continue;
             }
 
@@ -241,10 +238,10 @@ bool decrypt_and_guess_key_multithreaded(const fs::path& input_path, const fs::p
     // 读取文件头
     char signature[4];
     input.read(signature, 4);
-    if (std::memcmp(signature, "ASB", 3) != 0) {
+    /*if (std::memcmp(signature, "ASB", 3) != 0) {
         std::cerr << "无效的ASB文件: " << input_path << std::endl;
         return false;
-    }
+    }*/
 
     // 读取大小信息
     uint32_t packed_size, unpacked_size;
@@ -292,14 +289,14 @@ uint32_t parse_key(const std::string& key_str) {
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
-        std::cout << "Made by julixian 2025.03.04" << std::endl;
+        std::cout << "Made by julixian 2025.03.05" << std::endl;
         std::cout << "Usage: " << argv[0] << " <mode> [<key>] [<signature>] <input_dir> <output_dir>" << std::endl;
         std::cout << "mode: -d decrypt, -e encrypt, -g guess key and decrpyt" << std::endl;
         std::cout << "key: can be decimal number or hexadecimal number with 0x prefix (only needed in -d or -e mode)" << std::endl;
-        std::cout << "signature: a hexadecimal number with 0x prefix, use to define the next uint8_t after ASB sign\nIf the original script use \"ASB\\x1a\", fill with 0x1a\nIf the original script use \"ASB\\x00\", fill with 0x00 (only needed in -e mode)" << std::endl;
+        std::cout << "signature: a hexadecimal number with 0x prefix, used to define the uint32_t file signature\nIf the original script use \"ASB\\x1a\", fill with 0x1a425341\nIf the original script use \"ASB\\x00\", fill with 0x00425341, etc. (only needed in -e mode)" << std::endl;
         std::cout << "Example:" << std::endl;
         std::cout << "  " << argv[0] << " -d 123456789 input_folder output_folder" << std::endl;
-        std::cout << "  " << argv[0] << " -e 0x1DE71CB9 0x1a input_folder output_folder" << std::endl;
+        std::cout << "  " << argv[0] << " -e 0x1DE71CB9 0x1a425341 input_folder output_folder" << std::endl;
         std::cout << "  " << argv[0] << " -g input_folder output_folder" << std::endl;
         return 1;
     }
@@ -330,15 +327,14 @@ int main(int argc, char* argv[]) {
             fs::path output_path = output_dir / relative;
             fs::create_directories(output_path.parent_path());
 
-            if (mode == "-d" && entry.path().extension() == ".asb") {
+            if (mode == "-d" && entry.is_regular_file()) {
                 std::cout << "Decrypting: " << entry.path().filename() << std::endl;
                 if (decrypt_asb(entry.path(), output_path, base_key)) {
                     std::cout << "Decrypt successfully: " << output_path << std::endl;
                 }
             }
-            else if (mode == "-e") {
+            else if (mode == "-e" && entry.is_regular_file()) {
                 signature = parse_key(argv[3]);
-                output_path.replace_extension(".asb");
                 std::cout << "Encrypting: " << entry.path().filename() << std::endl;
                 if (encrypt_asb(entry.path(), output_path, base_key)) {
                     std::cout << "Encrypt successfully: " << output_path << std::endl;
@@ -350,7 +346,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Guessing key with Multi-thread, number of threads: " << num_threads << std::endl;
         // 遍历输入文件夹
         for (const auto& entry : fs::recursive_directory_iterator(input_dir)) {
-            if (entry.path().extension() == ".asb") {
+            if (entry.is_regular_file()) {
                 fs::path relative = fs::relative(entry.path(), input_dir);
                 fs::path output_path = output_dir / relative;
                 if (!found_key) {
@@ -365,19 +361,19 @@ int main(int argc, char* argv[]) {
                     relative = fs::relative(smallest_path, input_dir);
                     output_path = output_dir / relative;
                     fs::create_directories(output_path.parent_path());
-                    std::cout << "Trying to decrypt: " << smallest_path.filename() << std::endl;
+                    std::cout << "Trying to decrypt: " << smallest_path.filename().string() << std::endl;
                     if (decrypt_and_guess_key_multithreaded(smallest_path, output_path, num_threads)) {
                         std::cout << "Decrypt successfully: " << output_path << std::endl;
                     }
                     relative = fs::relative(entry.path(), input_dir);
                     output_path = output_dir / relative;
-                    std::cout << "Decrypting: " << entry.path().filename() << std::endl;
+                    std::cout << "Decrypting: " << entry.path().filename().string() << std::endl;
                     if (decrypt_asb(entry.path(), output_path, FoundKey)) {
                         std::cout << "Decrypt successfully: " << output_path << std::endl;
                     }
                 }
                 else {
-                    std::cout << "Decrypting: " << entry.path().filename() << std::endl;
+                    std::cout << "Decrypting: " << entry.path().filename().string() << std::endl;
                     if (decrypt_asb(entry.path(), output_path, FoundKey)) {
                         std::cout << "Decrypt successfully: " << output_path << std::endl;
                     }
