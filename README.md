@@ -28,15 +28,19 @@ when repacking pro.box, you need to manually change the index of pro.txt file to
 ## AosCompressTool
 To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
 ## AZsysCompressTool
-To decompress/compress AZ system engine ASB sign .asb compressed and encrypted files<br/>
-You can find key in system.arc([here](https://github.com/shangjiaxuan/Crass-source/blob/4aff113b98fc39fb85f64501ab47c580df779a3d/cui/AZSystem/AZSystem.cpp) is the method) or 4 known keys in GARbro<br/>
+To decrypt and decompress/compress and encrypt AZ system engine script files<br/>
+For script files in normal AZsys resource archive, you need key to decrypt/encrypt them<br/>
+And there are 4 known keys in GARbro :<br/>
 "Clover Heart's": 3786541434<br/>
 "Triptych": 501685433<br/>
 "Amaenbou": 2938115999<br/>
 "Reminiscence Blue": 2849404158<br/>
 You can also use guess_key func in this programme :<br/>
-Use crass to unpack script.arc and make the unpacked dir as input_dir, the programme will use the smallest .asb file to guess key.<br/>
-If the guessed key is wrong, delete the smallest file the programme shows and try again(A file size of 1-2kb is preferred)<br/>
+Use crass to unpack script.arc and make that output_dir as input_dir, the programme will use the smallest .asb file to guess key.<br/>
+If the guessed key is wrong, delete the smallest file the programme shows and try again(A file size of 1.5-3.0kb is preferred)<br/>
+For script files in AZsys encrypted resource archive(need to use special parameter『system="path/to/system.arc"』 when using crass to unpack)<br/>
+you needn't key, but pure file content without signature if you want to encrypt the files back<br/>
+Use crass with special parameter to make it or use fixed GAR in Ellefin directory in this repository to get original encrypted files and then use the tool to make it<br/>
 ## AZsysCpbImageTool
 To covert AZ system engine .cpb image file to bmp AND .png(must be 32bpp) to cpb file<br/>
 ## AZsysScriptSimpleTool
@@ -60,7 +64,7 @@ To extract/repack EAGLS .pak Advsys type encrypted Archive<br/>
 ## EAGLSDecryptTool
 To decrypt/encrypt EAGLS .dat EAGLS type encrypted script files to achieve No-packet-read.<br/>
 ## Ellefin
-Release-EPK:To extract some games of Terios made by Ellefin engine<br/>
+Release:Fixed GAR To extract some games of Terios made by Ellefin engine<br/>
 EPKscpro.py:To decrypt script files of はぴベルラヴ×2ハネムーン<br/>
 ## EscudeScriptSimpleTool
 Most likely it has no Universality because escude's scriptmode always changes<br/>
