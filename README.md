@@ -147,6 +147,8 @@ And 0x24、0x44、0x64…… will store the offset<br/>
 So if there are new flags, you can change the offset by hand<br/>
 ## RPMArchiveTool
 To extract/pack RPM/ZENOS engine .arc archvie<br/>
+## SeraphScriptArchiveTool
+To extract/pack Seraphim engine ScnPac.Dat script archive<br/>
 ## TailCafArchiveTool
 To extract/repack Tail engine .caf Archive<br/>
 ## TailScriptSimpleTool
