@@ -9,7 +9,7 @@
 namespace fs = std::filesystem;
 
 std::string decode_string;
-int entry_size;
+int entry_size = 0;
 
 struct ArcEntry {
     char name[32];
@@ -76,10 +76,13 @@ void raw_guess_key(const std::string& arc_path, bool hasFlag) {
 
     if (arc_path.find("instdata.arc") != std::string::npos) {
         decode_string = "inst";
+        std::cout << "please use --info to set key information: " << std::endl;
+        std::cout << "the keyString of this archive is \"inst\" and fileNameLength may be 32, 24 or 16" << std::endl;
         return;
     }
     else if (arc_path.find("system.arc") != std::string::npos) {
-        decode_string = "while";
+        std::cout << "please use --info to set key information: " << std::endl;
+        std::cout << "the keyString of this archive is \"while\" and fileNameLength may be 32, 24 or 16" << std::endl;
         return;
     }
     else if (get_code(index_buffer.data(), num_entries, hasFlag) != 0) {
@@ -205,38 +208,10 @@ std::vector<FileEntry> parseFileTable(const std::vector<char>& data, int fileCou
     return entries;
 }
 
-bool decryptTable(std::vector<char>& data, const GameType& key) {
-    std::vector<char> decrypted(key.fileNameLen);
-    int j = 0;
-    bool iszero = false;
-    int zpos = 0;
-
-    for (int i = 0; i < key.fileNameLen; ++i) {
-        if (j >= key.keyValue.length()) j = 0;
-        decrypted[i] = data[i] + key.keyValue[j];
-        if (decrypted[i] == 0 && !iszero) {
-            iszero = true;
-            zpos = i;
-        }
-        else if (iszero && decrypted[i] != 0) {
-            return false;
-        }
-        ++j;
-    }
-
-    if (iszero && zpos > 3) {
-        if (decrypted[zpos - 4] == '.' || decrypted[zpos - 3] == '.') {
-            std::copy(decrypted.begin(), decrypted.end(), data.begin());
-            return true;
-        }
-    }
-    return false;
-}
-
 GameType analyzeOriginalPackage(const std::string& arcFile, bool hasFlag) {
 
     raw_guess_key(arcFile, hasFlag);
-    if (!decode_string.empty()) {
+    if (!decode_string.empty() && entry_size != 0) {
         int fileNameLen = entry_size - 12;
         return { decode_string, fileNameLen};
     }
