@@ -36,7 +36,7 @@ And there are 4 known keys in GARbro :<br/>
 "Amaenbou": 2938115999<br/>
 "Reminiscence Blue": 2849404158<br/>
 You can also use guess_key func in this programme :<br/>
-Use crass to unpack script.arc and make that output_dir as input_dir, the programme will use the smallest .asb file to guess key.<br/>
+Use crass to unpack script.arc and make that output_dir as input_dir, the programme will use the smallest file to guess key.<br/>
 If the guessed key is wrong, delete the smallest file the programme shows and try again(A file size of 1.5-3.0kb is preferred)<br/>
 For script files in AZsys encrypted resource archive(need to use special parameter『system="path/to/system.arc"』 when using crass to unpack)<br/>
 you needn't key, but pure file content without signature if you want to encrypt the files back<br/>
@@ -52,12 +52,12 @@ DO NOT use it to edit config file, especially when it has messy code in the dump
 ## CadathKarArchiveTool
 To extract/pack Cadath engine KAR signature .bin Archive<br/>
 ## CaramelBox
-A series of tools for extract/repack CaramelBox engine arc3 Archive, decompress/fake compress lze files, dump/inject scb script files<br/>
+A series of tools to extract/repack CaramelBox engine arc3 Archive, decompress/fake compress lze files, dump/inject scb script files<br/>
 ## CswareDL1ArchiveTool
 To extract/repack Csware .DL1 Archive<br/>
 ## CVNSCpz2ArchiveTool
 To pack a cpz2 Archive<br/>
-have no compress AND md5_compute function in the programm<br/>
+have no compress AND md5_compute function in the programme<br/>
 so you have to modify game.exe to jump the md5_check(track MessageBox) and decompress_function([here](https://www.bilibili.com/video/BV1cB4y1k7tF/) is the method)<br/>
 ## EAGLSAdvsysArchiveTool
 To extract/repack EAGLS .pak Advsys type encrypted Archive<br/>
