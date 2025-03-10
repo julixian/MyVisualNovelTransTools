@@ -47,6 +47,8 @@ Use crass with special parameter to make it or use fixed GAR in Ellefin director
 To covert AZ system engine .cpb image file to bmp AND .png(must be 32bpp) to cpb file<br/>
 ## AZsysScriptSimpleTool
 To dump/inject decompressed ASB sign .asb script files<br/>
+## BananaDatPkArchiveTool
+To extract/pack BANANA Shu-Shu engine .pk or .dat archive<br/>
 ## BGIScriptSimpleTool
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
