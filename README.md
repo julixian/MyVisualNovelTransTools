@@ -85,6 +85,8 @@ It will set all compression flags to 0(no compression) so the repacked archive l
 To extract/repack FrontWing engine LIB_PACKDATA0000 sign .pac(ArcFLT in GARbro) Archive<br/>
 ## GPK2CompressTool
 To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
+## GsWin4ArchiveTool
+To extract/pack GsWin4 .pak archive<br/>
 ## IceArchiveTool
 To extract/repack IceSoft .BIN Archive<br/>
 ## IceCompressTool
