@@ -26,7 +26,7 @@ class BinPacker:
 
         # 处理每个文件
         for file_path in files:
-            print(f"正在处理: {file_path.name}")
+            print(f"Processing: {file_path.name}")
             
             # 读取文件数据
             with open(file_path, 'rb') as f:
@@ -80,15 +80,15 @@ def main():
     output_path = sys.argv[2]
 
     if not os.path.isdir(input_path):
-        print(f"错误：输入目录不存在: {input_path}")
+        print(f"Error：don't exist: {input_path}")
         return
 
     try:
         packer = BinPacker()
         packer.pack(input_path, output_path)
-        print("打包完成！")
+        print("Packing successfully！")
     except Exception as e:
-        print(f"打包失败：{str(e)}")
+        print(f"Fail to pack：{str(e)}")
 
 if __name__ == '__main__':
     main()
