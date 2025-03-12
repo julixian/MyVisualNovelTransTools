@@ -172,3 +172,6 @@ To extract/repack Yaneurao engine .dat Archive<br/>
 To convert .yga image to bmp AND .bmp to yga(no compress) image<br/>
 If want to edit the image, convert the image to png first. And before converting to yga, convert the png back to bmp and then convert to yga.<br/>
 Or the image will lose Transparent pixel.<br/>
+## misc_pack
+To pack (this engine)[https://github.com/Dir-A/GARbro/blob/master/ArcFormats/Misc/ArcBIN.cs] ((凌辱学園～部活調教恥獄責め～)[https://vndb.org/v7127])<br/>
+You need to download python 3.11 to use it.
