@@ -62,7 +62,7 @@ To extract/repack Csware .DL1 Archive<br/>
 ## CVNSCpz2ArchiveTool
 To pack a cpz2 Archive<br/>
 have no compress AND md5_compute function in the programme<br/>
-so you have to modify game.exe to jump the md5_check(track MessageBox) and decompress_function([here](https://www.bilibili.com/video/BV1cB4y1k7tF/) is the method)<br/>
+so you have to modify game.exe to jump the md5_check(track MessageBox) and decompress_function([here](https://youtu.be/xgpYNJMMb6o/) is the method)<br/>
 ## EAGLSAdvsysArchiveTool
 To extract/repack EAGLS .pak Advsys type encrypted Archive<br/>
 ## EAGLSDecryptTool
