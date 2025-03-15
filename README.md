@@ -171,6 +171,8 @@ apply for both v2 and v3<br/>
 To extract/repack TopCatV2 .TCD Archive<br/>
 ## TopCatV3ArchiveTool
 To extract/repack TopCatV3 .TCD Archive<br/>
+## ValkDataImageTool
+To convert .png(must be 32bpp) to Valkyria engine data\d format image in odn archive<br/>
 ## YaneuraoDatArchiveTool
 To extract/repack Yaneurao engine .dat Archive<br/>
 ## YaneuraoYgaImageTool
