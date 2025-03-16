@@ -70,7 +70,7 @@ std::vector<uint8_t> compress(const std::vector<uint8_t>& input) {
     return output;
 }
 
-bool packDat(const fs::path& input_dir, const fs::path& datPath, bool snr) {
+bool packDat(const fs::path& input_dir, const fs::path& datPath, bool snr, int version) {
 
     uint32_t file_count = 0;
     std::vector<Entry> entries;
@@ -106,14 +106,30 @@ bool packDat(const fs::path& input_dir, const fs::path& datPath, bool snr) {
         std::vector<uint8_t> file_raw_data(file_size);
         input.read((char*)file_raw_data.data(), file_size);
         input.close();
-        std::vector<uint8_t> finalData(16, 0);
+        std::vector<uint8_t> finalData;
         if (snr) {
-            uint32_t raw_data_size = file_raw_data.size();
-            memcpy(&finalData[0xc], &raw_data_size, sizeof(uint32_t));
-            std::string sig = "snr";
-            memcpy(&finalData[0], &sig[0], 3);
-            std::vector<uint8_t> compressed = compress(file_raw_data);
-            finalData.insert(finalData.end(), compressed.begin(), compressed.end());
+            if (version == 1) {
+                finalData.resize(16);
+                uint32_t raw_data_size = file_raw_data.size();
+                memcpy(&finalData[0xc], &raw_data_size, sizeof(uint32_t));
+                std::string sig = "snr";
+                memcpy(&finalData[0], &sig[0], 3);
+                std::vector<uint8_t> compressed = compress(file_raw_data);
+                finalData.insert(finalData.end(), compressed.begin(), compressed.end());
+            }
+            else if (version == 2) {
+                finalData.resize(8);
+                uint32_t raw_data_size = file_raw_data.size();
+                memcpy(&finalData[4], &raw_data_size, sizeof(uint32_t));
+                std::string sig = "snr";
+                memcpy(&finalData[0], &sig[0], 3);
+                std::vector<uint8_t> compressed = compress(file_raw_data);
+                finalData.insert(finalData.end(), compressed.begin(), compressed.end());
+            }
+            else {
+                std::cout << "Not a valid version!" << std::endl;
+                return false;
+            }
         }
         else {
             finalData = file_raw_data;
@@ -130,7 +146,7 @@ bool packDat(const fs::path& input_dir, const fs::path& datPath, bool snr) {
     return true;
 }
 
-bool extractDat(const std::string& datPath, const std::string& outputDir, bool snr) {
+bool extractDat(const std::string& datPath, const std::string& outputDir, bool snr, int version) {
     std::ifstream file(datPath, std::ios::binary);
     if (!file.is_open()) {
         std::cerr << "Can not open file: " << datPath << std::endl;
@@ -177,8 +193,18 @@ bool extractDat(const std::string& datPath, const std::string& outputDir, bool s
 
         if (snr) {
             uint32_t decompLen;
-            memcpy(&decompLen, &raw_data[0xc], sizeof(uint32_t));
-            raw_data.erase(raw_data.begin(), raw_data.begin() + 16);
+            if (version == 1) {
+                memcpy(&decompLen, &raw_data[0xc], sizeof(uint32_t));
+                raw_data.erase(raw_data.begin(), raw_data.begin() + 16);
+            }
+            else if (version == 2) {
+                decompLen = *(uint32_t*)&raw_data[4];
+                raw_data.erase(raw_data.begin(), raw_data.begin() + 8);
+            }
+            else {
+                std::cout << "Not a valid version!" << std::endl;
+                return false;
+            }
             LzssDecompressor decompressor;
             finalData = decompressor.decompress(raw_data);
             if (finalData.size() != decompLen) {
@@ -208,22 +234,24 @@ bool extractDat(const std::string& datPath, const std::string& outputDir, bool s
 int main(int argc, char* argv[]) {
 
     if (argc < 4) {
-        std::cout << "Made by julixian 2025.03.09" << std::endl;
+        std::cout << "Made by julixian 2025.03.16" << std::endl;
         std::cout << "Usage: " << "\n"
-            << "For extract: " << argv[0] << " -e [--snr] <input_file> <output_dir>" << "\n"
-            << "For pack: " << argv[0] << " -p [--snr] <input_dir> <output_file>" << "\n"
-            << "--snr: " << "use lzss decompress/fake compress when extracting/packing" << std::endl;
+            << "For extract: " << argv[0] << " -e <version> [--snr] <input_file> <output_dir>" << "\n"
+            << "For pack: " << argv[0] << " -p <version> [--snr] <input_dir> <output_file>" << "\n"
+            << "--snr: " << "use lzss decompress/fake compress when extracting/packing" << "\n"
+            << "version: " << "1 or 2" << std::endl;
         return 1;
     }
 
     std::string mode(argv[1]);
+    int version = std::stoi(std::string(argv[2]));
     std::string inputPath = argv[argc - 2];
     std::string outputPath = argv[argc - 1];
 
     // 打开DAT文件
     if (mode == "-e") {
-        bool snr = std::string(argv[2]) == "--snr";
-        if (extractDat(inputPath, outputPath, snr)) {
+        bool snr = std::string(argv[3]) == "--snr";
+        if (extractDat(inputPath, outputPath, snr, version)) {
             std::cout << "Extract successfully" << std::endl;
             return 0;
         }
@@ -232,9 +260,9 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-    else if(mode == "-p") {
-        bool snr = std::string(argv[2]) == "--snr";
-        if (packDat(inputPath, outputPath, snr)) {
+    else if (mode == "-p") {
+        bool snr = std::string(argv[3]) == "--snr";
+        if (packDat(inputPath, outputPath, snr, version)) {
             std::cout << "Pack successfully" << std::endl;
             return 0;
         }
@@ -247,6 +275,6 @@ int main(int argc, char* argv[]) {
         std::cout << "Not a vaild mode" << std::endl;
         return 1;
     }
-    
+
     return 0;
 }
