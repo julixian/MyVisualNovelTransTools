@@ -82,7 +82,7 @@ void Encrypt_1_2(std::vector<uint8_t>& data) {
     }
 }
 
-std::vector<uint8_t> Decrypt_2(std::vector<uint8_t> data)
+std::vector<uint8_t> Decrypt_2(std::vector<uint8_t> data) //https://github.com/One-sixth/TsukikagerouTranslateProject/blob/main/tools_src/%E6%9C%88%E9%98%B3%E7%82%8E%E6%B1%89%E5%8C%96%E8%AE%A1%E5%88%92%20C%2B%2B/format_lib/SnrFile.cpp
 {
     uint8_t* ecx = data.data();
     unsigned int edi = data.size();
