@@ -110,7 +110,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             else {
                 begin = true;
             }
-            std::string str((char*) & buffer[SeAddr + 3]);
+            std::string str((char*)&buffer[SeAddr + 3]);
             //std::cout << "offset: " << std::hex << i << " SeAddr: " << SeAddr << std::endl;
             if (str.length() >= 4) {
                 size_t length = str.length();
@@ -146,15 +146,16 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         else if (buffer[SeAddr] == 0x00 && buffer[SeAddr + 2] == 0x00 && buffer[SeAddr + 3] != 0x00 && buffer[SeAddr + 4] == 0x00) {
             uint16_t selectCount = 0;
             memcpy(&selectCount, &buffer[SeAddr + 3], sizeof(uint16_t));
-            if (selectCount == 0) { 
+            if (selectCount == 0) {
                 //std::cout << "select0 at: " << std::hex << i << " : " << SeAddr << std::endl;
-                continue; }
+                continue;
+            }
             SeAddr += 5;
             std::string str = "Select:";
             for (size_t j = 0; j < selectCount; j++) {
                 uint16_t length = 0;
                 memcpy(&length, &buffer[SeAddr], sizeof(uint16_t));
-                std::string select((char*) & buffer[SeAddr + 2]);
+                std::string select((char*)&buffer[SeAddr + 2]);
                 str += select;
                 str += "|||||";
                 SeAddr += length;
@@ -167,7 +168,8 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         }
         else if (begin && buffer[SeAddr] >= 0x20 && buffer[SeAddr] <= 0xef) {
             std::string str((char*)&buffer[SeAddr]);
-            if (str.length() < 2)continue;
+            //std::cout << str << std::endl;
+            //if (str.length() < 2 && str!="0")continue;
             if (!isValidCP932(str))continue;
             Sentence se;
             se.offsetAddr = i;
@@ -178,6 +180,10 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     }
 
     //reverse(Sentences.begin(), Sentences.end());
+    std::erase_if(Sentences, [&](Sentence& Se)
+        {
+            return *(uint32_t*)&buffer[Se.offsetAddr] < *(uint32_t*)&buffer[Sentences.back().offsetAddr];
+        });
 
     for (auto it = Sentences.begin(); it != Sentences.end(); it++) {
         output << std::hex << it->offsetAddr << ":::::" << (size_t)it->seq << ":::::" << it->str << std::endl;
@@ -331,7 +337,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.02.23" << std::endl;
+    std::cout << "Made by julixian 2025.04.08" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
