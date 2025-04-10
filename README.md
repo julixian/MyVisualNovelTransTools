@@ -104,6 +104,9 @@ you need to use archivetool to extract compressed files and use compresstool to 
 ## LambdaLAXArchiveTool
 To extract/repack Lambda engine .lax Archive<br/>
 Uniformly use lzss fake compression to repack<br/>
+## LazycrewScriptSimpleTool
+To dump/inject Lazycrew script.dat file<br/>
+I have no ability to fix jump op or chunck length, so it need truncation<br/>
 ## LucifenSobScriptSimpleTool
 To dump/inject Lucifen/Ellefin engine .sob script files<br/>
 For tob, use Ineditor or [jyxjyx1234's tool](https://github.com/jyxjyx1234/misc_game-chs/tree/re_upload/%E7%8C%AB%E6%92%AB%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)(need to fix HScene script by padding the file to the same size)<br/>
