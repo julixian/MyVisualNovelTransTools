@@ -53,6 +53,8 @@ To extract/pack BANANA Shu-Shu engine .pk or .dat archive<br/>
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
 DO NOT use it to edit config file, especially when it has messy code in the dumped txt file<br/>
+## BndArchiveTool
+To extract/pack [魔法少女アイ](https://vndb.org/v1091) .bnd archive<br/>
 ## CadathKarArchiveTool
 To extract/pack Cadath engine KAR signature .bin Archive<br/>
 ## CaramelBox
@@ -141,6 +143,11 @@ To extract/repack MTS engine .pak or .z Archive<br/>
 To extract/repack MyAdv engine .pac Archive<br/>
 when packing, please limit the numbers of the files to pack or delete the config files in the dir ready to pack to prevent replacing the config file in the archive, for the config file use different zlib compress method and if they are recompressed and replace the orgi config file in the archive, game can't run.<br/>
 Tested on 彼女達は脅迫に屈する, 猫mata～猫又と兄と私の話～<br/>
+## NextonLikeCLstArchiveTool
+To extract/repack Nexton LikeC(LC-ScriptEngine) archive with .lst index file<br/>
+Support both Moon and Nexton archive type<br/>
+## NextonLikeCScriptSimpleTool
+To dump/inject Nexton LikeC(LC-ScriptEngine) .SNX script file<br/>
 ## OhgetsuPacArchiveTool
 To extract/repack Ohgetsu engine script.pac Archive<br/>
 when repacking, the programm will set the compression flag to 0(no compression) in exe<br/>
