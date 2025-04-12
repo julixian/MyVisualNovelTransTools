@@ -103,7 +103,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         firstOffset = p - ScriptBegin;
     }
     else {
-        firstOffset = p - 2 - ScriptBegin;
+        firstOffset = p - 3 - ScriptBegin;
     }
     bool begin = false;
     for (size_t i = 0x10; i < ScriptBegin; i += 4) {
@@ -347,7 +347,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.04.08" << std::endl;
+    std::cout << "Made by julixian 2025.04.12" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
