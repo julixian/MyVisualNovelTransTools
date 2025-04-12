@@ -335,7 +335,8 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 
     // 写入新文件
     if (newBuffer.size() < buffer.size()) {
-        newBuffer.insert(newBuffer.end(), buffer.begin() + newBuffer.size(), buffer.end());
+        //newBuffer.insert(newBuffer.end(), buffer.begin() + newBuffer.size(), buffer.end());
+        newBuffer.resize(buffer.size());
     }
     outputBin.write(reinterpret_cast<const char*>(newBuffer.data()), newBuffer.size());
 
