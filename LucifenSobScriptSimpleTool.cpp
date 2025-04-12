@@ -90,26 +90,38 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
 
     Sentences.clear();
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(input), {});
+    size_t p = buffer.size() - 1;
+    while (buffer[p] == 0x00)p--;
+    while (buffer[p] != 0x00)p--;
+    p++;
 
     size_t ScriptBegin = 0;
     memcpy(&ScriptBegin, &buffer[0x4], sizeof(uint32_t));
     ScriptBegin += 0x10;
+    size_t firstOffset = 0;
+    if (*(uint32_t*)&buffer[p - 4] != 0x00) {
+        firstOffset = p - ScriptBegin;
+    }
+    else {
+        firstOffset = p - 2 - ScriptBegin;
+    }
     bool begin = false;
     for (size_t i = 0x10; i < ScriptBegin; i += 4) {
         uint32_t offset = 0;
         memcpy(&offset, &buffer[i], sizeof(uint32_t));
+        if (!begin) {
+            if (offset == firstOffset) {
+                begin = true;
+            }
+            else {
+                continue;
+            }
+        }
         size_t SeAddr = ScriptBegin + offset;
         if (SeAddr >= buffer.size())continue;
         if (buffer[SeAddr] == 0 && buffer[SeAddr + 3] > 0x20 && buffer[SeAddr + 3] != 0x40) {
             uint16_t seq = 0;
             memcpy(&seq, &buffer[SeAddr + 1], sizeof(uint16_t));
-            if (seq == 0) {
-                begin = false;
-                Sentences.clear();
-            }
-            else {
-                begin = true;
-            }
             std::string str((char*)&buffer[SeAddr + 3]);
             //std::cout << "offset: " << std::hex << i << " SeAddr: " << SeAddr << std::endl;
             if (str.length() >= 4) {
@@ -166,7 +178,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             se.str = str;
             Sentences.push_back(se);
         }
-        else if (begin && buffer[SeAddr] >= 0x20 && buffer[SeAddr] <= 0xef) {
+        else if (buffer[SeAddr] >= 0x20 && buffer[SeAddr] <= 0xef) {
             std::string str((char*)&buffer[SeAddr]);
             //std::cout << str << std::endl;
             //if (str.length() < 2 && str!="0")continue;
@@ -323,9 +335,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 
     // 写入新文件
     if (newBuffer.size() < buffer.size()) {
-        std::vector<uint8_t> padding(buffer.size() - newBuffer.size(), 0);
-        //memcpy(padding.data(), &buffer[newBuffer.size()], buffer.size() - newBuffer.size());
-        newBuffer.insert(newBuffer.end(), padding.begin(), padding.end());
+        newBuffer.insert(newBuffer.end(), buffer.begin() + newBuffer.size(), buffer.end());
     }
     outputBin.write(reinterpret_cast<const char*>(newBuffer.data()), newBuffer.size());
 
