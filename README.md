@@ -58,7 +58,10 @@ To extract/pack [魔法少女アイ](https://vndb.org/v1091) .bnd archive<br/>
 ## CadathKarArchiveTool
 To extract/pack Cadath engine KAR signature .bin Archive<br/>
 ## CaramelBox
-A series of tools to extract/repack CaramelBox engine arc3 Archive, decompress/fake compress lze files, dump/inject scb script files<br/>
+A series of tools to deal with Arc3 and Arc4 engine<br/>
+The repack function doesn't work on [ぴあ雀](https://vndb.org/v2398) and [EVE雀](https://vndb.org/v2320)<br/>
+Why?<br/>
+You ask me, I ask who?<br/>
 ## CswareDL1ArchiveTool
 To extract/repack Csware .DL1 Archive<br/>
 ## CVNSCpz2ArchiveTool
