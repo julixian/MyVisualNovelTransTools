@@ -59,7 +59,7 @@ To extract/pack [魔法少女アイ](https://vndb.org/v1091) .bnd archive<br/>
 To extract/pack Cadath engine KAR signature .bin Archive<br/>
 ## CaramelBox
 A series of tools to deal with Arc3 and Arc4 engine<br/>
-The repack function doesn't work on [ぴあ雀](https://vndb.org/v2398) and [EVE雀](https://vndb.org/v2320)<br/>
+The repack function of Arc4Tool doesn't work on [ぴあ雀](https://vndb.org/v2398) and [EVE雀](https://vndb.org/v2320)<br/>
 Why?<br/>
 You ask me, I ask who?<br/>
 ## CswareDL1ArchiveTool
