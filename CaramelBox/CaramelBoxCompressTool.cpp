@@ -306,7 +306,7 @@ void processDirectory(const fs::path& input_dir, const fs::path& output_dir, boo
         std::string ext = input_path.extension().string();
 
         // 只处理.scb文件
-        if (ext == ".scb") {
+        if (ext == ".scb" || ext == ".$$$") {
             if (isCompress) {
                 std::cout << "Compressing: " << relative_path.string() << std::endl;
             }
@@ -334,14 +334,14 @@ void processDirectory(const fs::path& input_dir, const fs::path& output_dir, boo
 }
 
 void printUsage(const char* programName) {
-    std::cout << "Made by julixian 2025.02.01" << std::endl;
+    std::cout << "Made by julixian 2025.05.06" << std::endl;
     std::cout << "Usage: " << programName << " [options] <input_directory> <output_directory>\n"
         << "Options:\n"
-        << "  -c    Compress .scb files\n"
-        << "  -d    Decompress .scb files\n"
+        << "  -c    Compress .scb/.$$$ files\n"
+        << "  -d    Decompress .scb/$$$ files\n"
         << "Example:\n"
-        << "  " << programName << " -c input_dir output_dir    # compress all .scb files\n"
-        << "  " << programName << " -d input_dir output_dir    # decompress all .scb files\n";
+        << "  " << programName << " -c input_dir output_dir    # compress all .scb/.$$$ files\n"
+        << "  " << programName << " -d input_dir output_dir    # decompress all .scb/.$$$ files\n";
 }
 
 int main(int argc, char* argv[]) {
