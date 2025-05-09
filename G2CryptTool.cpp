@@ -61,7 +61,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(input), {});
 
     for (size_t i = 0; i < buffer.size() - 6; i++) {
-        if ((*(uint16_t*)&buffer[i] == 0x0100) && *(uint32_t*)&buffer[i + 2] < 384) {
+        if ((*(uint16_t*)&buffer[i] == 0x0100 || *(uint16_t*)&buffer[i] == 0x0200) && *(uint32_t*)&buffer[i + 2] < 384) {
             uint32_t length = *(uint32_t*)&buffer[i + 2];
             std::string str((char*)&buffer[i + 6], length);
             decryptStr((uint8_t*)str.data(), str.length());
@@ -95,7 +95,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
     std::vector<std::string> translations;
 
-    int offset = 0;
+    int offset = 0; //0x9308
     uint32_t jmp1 = *(uint32_t*)&buffer[0x26];
     uint32_t jmp2 = *(uint32_t*)&buffer[0x2a];
     uint32_t jmp3 = *(uint32_t*)&buffer[0x2e];
@@ -114,7 +114,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::vector<uint8_t> newBuffer;
 
     for (size_t i = 0; i < buffer.size() - 6; i++) {
-        if (*(uint16_t*)&buffer[i] == 0x0100 && *(uint32_t*)&buffer[i + 2] < 384) {
+        if ((*(uint16_t*)&buffer[i] == 0x0100 || *(uint16_t*)&buffer[i] == 0x0200) && *(uint32_t*)&buffer[i + 2] < 384) {
             uint32_t length = *(uint32_t*)&buffer[i + 2];
             std::string str((char*)&buffer[i + 6], length);
             decryptStr((uint8_t*)str.data(), str.length());
@@ -130,7 +130,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             std::string text = translations[translationIndex++];
             std::vector<uint8_t> textBytes = stringToCP932(text);
             encryptStr(textBytes.data(), textBytes.size());
-            newBuffer.push_back(0); newBuffer.push_back(1);
+            newBuffer.push_back(0); newBuffer.push_back(buffer[i+1]);
             uint32_t newLen = textBytes.size();
             offset += newLen - length;
             newBuffer.insert(newBuffer.end(), (uint8_t*)&newLen, (uint8_t*)&newLen + 4);
@@ -155,6 +155,9 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         *(uint32_t*)&newBuffer[0x2a] = jmp2;
         *(uint32_t*)&newBuffer[0x2e] = jmp3;
     }*/
+    if (jmp1 < buffer.size() && jmp1 < newBuffer.size()) {
+        newBuffer.resize(jmp1);
+    }
     if (newBuffer.size() < buffer.size()) {
         newBuffer.insert(newBuffer.end(), buffer.begin() + newBuffer.size(), buffer.end());
     }
