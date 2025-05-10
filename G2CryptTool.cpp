@@ -54,7 +54,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     std::ofstream output(outputPath);
 
     if (!input || !output) {
-        std::cerr << "Error opening files: " << inputPath << " or " << outputPath << std::endl;
+        std::cerr << "Error opening files: " << inputPath.string() << " or " << outputPath.string() << std::endl;
         return;
     }
 
@@ -72,16 +72,23 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             str = std::regex_replace(str, pattern, "\\r");
             pattern = R"([\n])";
             str = std::regex_replace(str, pattern, "\\n");
+            //output << std::hex << i << " :" << str << std::endl;
             output << str << std::endl;
+            i += 6 + length - 1;
         }
     }
 
     input.close();
     output.close();
 
-    std::cout << "Extraction complete. Output saved to " << outputPath << std::endl;
+    std::cout << "Extraction complete. Output saved to " << outputPath.string() << std::endl;
 }
 
+
+struct Sentence {
+    size_t addr;
+    int offset;
+};
 //IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, const fs::path& outputBinPath) {
     std::ifstream inputBin(inputBinPath, std::ios::binary);
@@ -89,7 +96,8 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::ofstream outputBin(outputBinPath, std::ios::binary);
 
     if (!inputBin || !inputTxt || !outputBin) {
-        std::cerr << "Error opening files: " << inputBinPath << " or " << inputTxtPath << " or " << outputBinPath << std::endl;
+        std::cerr << "Error opening files: " << inputBinPath.string() << " or " 
+            << inputTxtPath.string() << " or " << outputBinPath.string() << std::endl;
         return;
     }
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
@@ -99,6 +107,8 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     uint32_t jmp1 = *(uint32_t*)&buffer[0x26];
     uint32_t jmp2 = *(uint32_t*)&buffer[0x2a];
     uint32_t jmp3 = *(uint32_t*)&buffer[0x2e];
+    uint32_t jmp4 = *(uint32_t*)&buffer[0x32];
+    std::vector<Sentence> Sentences;
 
     // 读取翻译文本
     std::string line;
@@ -112,6 +122,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 
     size_t translationIndex = 0;
     std::vector<uint8_t> newBuffer;
+    std::vector<size_t>jmps;
 
     for (size_t i = 0; i < buffer.size() - 6; i++) {
         if ((*(uint16_t*)&buffer[i] == 0x0100 || *(uint16_t*)&buffer[i] == 0x0200) && *(uint32_t*)&buffer[i + 2] < 384) {
@@ -130,12 +141,26 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             std::string text = translations[translationIndex++];
             std::vector<uint8_t> textBytes = stringToCP932(text);
             encryptStr(textBytes.data(), textBytes.size());
-            newBuffer.push_back(0); newBuffer.push_back(buffer[i+1]);
+            newBuffer.push_back(buffer[i]); newBuffer.push_back(buffer[i + 1]);
             uint32_t newLen = textBytes.size();
-            offset += newLen - length;
+            Sentence Se;
+            Se.addr = i - 4;
+            Se.offset = newLen - length;
+            Sentences.push_back(Se);
             newBuffer.insert(newBuffer.end(), (uint8_t*)&newLen, (uint8_t*)&newLen + 4);
             newBuffer.insert(newBuffer.end(), textBytes.begin(), textBytes.end());
             i += 6 + length - 1;
+        }
+        else if (*(uint16_t*)&buffer[i] == 0x090d //07 08 09
+            || *(uint16_t*)&buffer[i] == 0x0700
+            || *(uint16_t*)&buffer[i] == 0x0704
+            || *(uint16_t*)&buffer[i] == 0x0893
+            || *(uint16_t*)&buffer[i] == 0x0892
+            || *(uint16_t*)&buffer[i] == 0x0891) {
+            if (*(uint32_t*)&buffer[i + 2] < buffer.size()) {
+                jmps.push_back(newBuffer.size() + 2);
+            }
+            newBuffer.push_back(buffer[i]);
         }
         else {
             newBuffer.push_back(buffer[i]);
@@ -147,19 +172,32 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         system("pause");
     }
     newBuffer.insert(newBuffer.end(), buffer.end() - 6, buffer.end());
-    /*if (jmp1 < buffer.size() && jmp2 < buffer.size() && jmp3 < buffer.size()) {
-        jmp1 += offset;
-        jmp2 += offset;
-        jmp3 += offset;
-        *(uint32_t*)&newBuffer[0x26] = jmp1;
-        *(uint32_t*)&newBuffer[0x2a] = jmp2;
-        *(uint32_t*)&newBuffer[0x2e] = jmp3;
-    }*/
-    if (jmp1 < buffer.size() && jmp1 < newBuffer.size()) {
-        newBuffer.resize(jmp1);
+
+    if (jmp1 < buffer.size() && jmp1 != 0x1201B) {
+        jmps.push_back(0x26);
+        if (jmp2 < buffer.size() && jmp2 != 0x1201B) {
+            jmps.push_back(0x2a);
+            if (jmp3 < buffer.size() && jmp3 != 0x1201B) {
+                jmps.push_back(0x2e);
+                if (jmp4 < buffer.size() && jmp4 != 0x1201B) {
+                    jmps.push_back(0x32);
+                }
+            }
+        }
+    }
+    
+    for (size_t i = 0; i < jmps.size(); i++) {
+        //std::cout << "fixing: " << std::hex << jmps[i] << std::endl;
+        uint32_t jmp = *(uint32_t*)&newBuffer[jmps[i]];
+        offset = 0;
+        for (size_t j = 0; j < Sentences.size() && Sentences[j].addr < jmp; j++) {
+            offset += Sentences[j].offset;
+        }
+        jmp += offset;
+        *(uint32_t*)&newBuffer[jmps[i]] = jmp;
     }
     if (newBuffer.size() < buffer.size()) {
-        newBuffer.insert(newBuffer.end(), buffer.begin() + newBuffer.size(), buffer.end());
+        //newBuffer.insert(newBuffer.end(), buffer.begin() + newBuffer.size(), buffer.end());
     }
 
     // 写入新文件
@@ -169,14 +207,14 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     inputTxt.close();
     outputBin.close();
 
-    std::cout << "Write-back complete. Output saved to " << outputBinPath << std::endl;
+    std::cout << "Write-back complete. Output saved to " << outputBinPath.string() << std::endl;
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.05.09" << std::endl;
+    std::cout << "Made by julixian 2025.05.10" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
-    std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
+    std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder> " << std::endl;
 }
 
 int main(int argc, char* argv[]) {
