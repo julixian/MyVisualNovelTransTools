@@ -144,19 +144,20 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             newBuffer.push_back(buffer[i]); newBuffer.push_back(buffer[i + 1]);
             uint32_t newLen = textBytes.size();
             Sentence Se;
-            Se.addr = i - 4;
+            Se.addr = i;
             Se.offset = newLen - length;
             Sentences.push_back(Se);
             newBuffer.insert(newBuffer.end(), (uint8_t*)&newLen, (uint8_t*)&newLen + 4);
             newBuffer.insert(newBuffer.end(), textBytes.begin(), textBytes.end());
             i += 6 + length - 1;
         }
-        else if (*(uint16_t*)&buffer[i] == 0x090d //07 08 09
-            || *(uint16_t*)&buffer[i] == 0x0700
+        else if (*(uint16_t*)&buffer[i] == 0x0700 //07 08 09
             || *(uint16_t*)&buffer[i] == 0x0704
+            || *(uint16_t*)&buffer[i] == 0x0710
             || *(uint16_t*)&buffer[i] == 0x0893
             || *(uint16_t*)&buffer[i] == 0x0892
-            || *(uint16_t*)&buffer[i] == 0x0891) {
+            || *(uint16_t*)&buffer[i] == 0x0891
+            || *(uint16_t*)&buffer[i] == 0x090d) {
             if (*(uint32_t*)&buffer[i + 2] < buffer.size()) {
                 jmps.push_back(newBuffer.size() + 2);
             }
@@ -187,10 +188,10 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     }
     
     for (size_t i = 0; i < jmps.size(); i++) {
-        //std::cout << "fixing: " << std::hex << jmps[i] << std::endl;
         uint32_t jmp = *(uint32_t*)&newBuffer[jmps[i]];
         offset = 0;
-        for (size_t j = 0; j < Sentences.size() && Sentences[j].addr < jmp; j++) {
+        for (size_t j = 0; j < Sentences.size() && Sentences[j].addr < jmp + 0x51; j++) { //may be different from game to game even from script to script
+            //for example, i use "j < Sentences.size() && Sentences[j].addr < jmp + 0x04" when translating 君と恋して結ばれて
             offset += Sentences[j].offset;
         }
         jmp += offset;
