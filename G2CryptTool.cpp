@@ -61,7 +61,8 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(input), {});
 
     for (size_t i = 0; i < buffer.size() - 6; i++) {
-        if ((*(uint16_t*)&buffer[i] == 0x0100 || *(uint16_t*)&buffer[i] == 0x0200) && *(uint32_t*)&buffer[i + 2] < 384) {
+        if ((*(uint16_t*)&buffer[i] == 0x0100 || *(uint16_t*)&buffer[i] == 0x0104 || *(uint16_t*)&buffer[i] == 0x0200)
+            && *(uint32_t*)&buffer[i + 2] < 384) {
             uint32_t length = *(uint32_t*)&buffer[i + 2];
             std::string str((char*)&buffer[i + 6], length);
             decryptStr((uint8_t*)str.data(), str.length());
@@ -103,7 +104,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
     std::vector<std::string> translations;
 
-    int offset = 0; //0x9308
+    int offset = 0;
     uint32_t jmp1 = *(uint32_t*)&buffer[0x26];
     uint32_t jmp2 = *(uint32_t*)&buffer[0x2a];
     uint32_t jmp3 = *(uint32_t*)&buffer[0x2e];
@@ -121,11 +122,25 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     }
 
     size_t translationIndex = 0;
+    uint32_t ScriptBegin = 0;
     std::vector<uint8_t> newBuffer;
     std::vector<size_t>jmps;
 
+    for (size_t i = 0; i < buffer.size() - 4; i++) {
+        if (*(uint32_t*)&buffer[i] == 0x1201B) {
+            ScriptBegin = i;
+            break;
+        }
+    }
+
+    if (ScriptBegin == 0) {
+        std::cout << "Warning: ScriptBegin not found!" << std::endl;
+        system("pause");
+    }
+
     for (size_t i = 0; i < buffer.size() - 6; i++) {
-        if ((*(uint16_t*)&buffer[i] == 0x0100 || *(uint16_t*)&buffer[i] == 0x0200) && *(uint32_t*)&buffer[i + 2] < 384) {
+        if ((*(uint16_t*)&buffer[i] == 0x0100 || *(uint16_t*)&buffer[i] == 0x0104 || *(uint16_t*)&buffer[i] == 0x0200)
+            && *(uint32_t*)&buffer[i + 2] < 384) {
             uint32_t length = *(uint32_t*)&buffer[i + 2];
             std::string str((char*)&buffer[i + 6], length);
             decryptStr((uint8_t*)str.data(), str.length());
@@ -154,9 +169,10 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         else if (*(uint16_t*)&buffer[i] == 0x0700 //07 08 09
             || *(uint16_t*)&buffer[i] == 0x0704
             || *(uint16_t*)&buffer[i] == 0x0710
-            || *(uint16_t*)&buffer[i] == 0x0893
-            || *(uint16_t*)&buffer[i] == 0x0892
+            || *(uint16_t*)&buffer[i] == 0x0711
             || *(uint16_t*)&buffer[i] == 0x0891
+            || *(uint16_t*)&buffer[i] == 0x0892
+            || *(uint16_t*)&buffer[i] == 0x0893
             || *(uint16_t*)&buffer[i] == 0x090d) {
             if (*(uint32_t*)&buffer[i + 2] < buffer.size()) {
                 jmps.push_back(newBuffer.size() + 2);
@@ -190,8 +206,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     for (size_t i = 0; i < jmps.size(); i++) {
         uint32_t jmp = *(uint32_t*)&newBuffer[jmps[i]];
         offset = 0;
-        for (size_t j = 0; j < Sentences.size() && Sentences[j].addr < jmp + 0x51; j++) { //may be different from game to game even from script to script
-            //for example, i use "j < Sentences.size() && Sentences[j].addr < jmp + 0x04" when translating 君と恋して結ばれて
+        for (size_t j = 0; j < Sentences.size() && Sentences[j].addr < jmp + ScriptBegin; j++) {
             offset += Sentences[j].offset;
         }
         jmp += offset;
@@ -212,7 +227,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.05.10" << std::endl;
+    std::cout << "Made by julixian 2025.05.12" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder> " << std::endl;
