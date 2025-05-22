@@ -58,7 +58,9 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     }
 
     for (size_t i = ScriptOpBegin; i < ScriptOpEnd; i += 4) {
-        if ((*(uint32_t*)&buffer[i] == 0x64 || *(uint32_t*)&buffer[i] == 0x5F)
+        if ((*(uint32_t*)&buffer[i] == 0x64 
+            || *(uint32_t*)&buffer[i] == 0x63
+            || *(uint32_t*)&buffer[i] == 0x5F)
             && *(uint32_t*)&buffer[i + 4] < buffer.size() 
             && *(uint32_t*)&buffer[i + 4] > ScriptOpEnd) {
             Sentence Se;
