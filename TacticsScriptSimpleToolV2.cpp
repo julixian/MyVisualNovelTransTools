@@ -61,7 +61,8 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         if ((*(uint32_t*)&buffer[i] == 0x69
             || *(uint32_t*)&buffer[i] == 0x64 
             || *(uint32_t*)&buffer[i] == 0x63
-            || *(uint32_t*)&buffer[i] == 0x5F)
+            || *(uint32_t*)&buffer[i] == 0x5F
+            || *(uint32_t*)&buffer[i] == 0x5C)
             && *(uint32_t*)&buffer[i + 4] < buffer.size() 
             && *(uint32_t*)&buffer[i + 4] > ScriptOpEnd
             && *(uint32_t*)&buffer[i + 8] < buffer.size()
