@@ -66,7 +66,7 @@ def find_and_copy_files(source_dir, target_dir, mapping_file):
     # 生成可能的原始文件名并尝试
     for letter in string.ascii_lowercase:  # a-z
         for digit1 in range(10):  # 0-9
-            for digit2 in range(1, 10):  # 1-9
+            for digit2 in range(10):
                 original_name = f"gh_{letter}{digit1}{digit2}"
                 obfuscated_name = obfuscate_name(original_name)
                 
