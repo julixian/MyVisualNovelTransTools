@@ -1,4 +1,4 @@
-﻿//Game: [Shelf]かぎろひ～勺景～
+﻿//Game: [OVERDRIVE]MUSICUS!
 #include <iostream>
 #include <fstream>
 #include <windows.h>
@@ -32,23 +32,26 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
 
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(input), {});
 
+    uint32_t offsetListSize = *(uint32_t*)&buffer[0x10];
     uint32_t ScriptChunkSize = *(uint32_t*)&buffer[0xC];
-    uint32_t ScriptBegin = buffer.size() - ScriptChunkSize;
+    uint32_t ScriptBegin = buffer.size() - offsetListSize - ScriptChunkSize;
+    uint32_t offsetListBegin = buffer.size() - offsetListSize;
 
-    for (size_t i = 0; i < ScriptBegin; i++) {
-        if (*(uint16_t*)&buffer[i] == 0x041E
-            || *(uint16_t*)&buffer[i] == 0x0403
-            || *(uint16_t*)&buffer[i] == 0x403F) {
-            uint32_t offset = *(uint32_t*)&buffer[i + 2];
-            if (offset + ScriptBegin < buffer.size() && buffer[ScriptBegin + offset] != 0) {
-                if (offset != 0 && buffer[ScriptBegin + offset - 1] != 0)continue;
-                std::string str((char*)&buffer[ScriptBegin + offset]);
-                std::regex pattern(R"(^[a-zA-Z\.\\]+$)");
-                if (std::regex_match(str, pattern)) {
-                    continue;
-                }
-                output << std::hex << i + 2 << ":::::" << str << std::endl;
-            }
+    /*if (offsetListSize == 0 || ScriptChunkSize == 0) {
+        input.close();
+        output.close();
+        fs::remove(outputPath);
+        return;
+    }*/
+
+    for (size_t i = offsetListBegin; i < buffer.size(); i += 4) {
+        uint32_t offset = *(uint32_t*)&buffer[i];
+        if (buffer[ScriptBegin + offset] == 0x00) {
+            output << "empty" << std::endl;
+        }
+        else {
+            std::string str((char*)&buffer[ScriptBegin + offset]);
+            output << str << std::endl;
         }
     }
 
@@ -69,8 +72,8 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         return;
     }
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
-    std::vector<uint8_t> newBuffer = buffer;
     std::vector<std::string> translations;
+    std::vector<uint32_t> offsets;
 
     // 读取翻译文本
     std::string line;
@@ -78,24 +81,37 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         translations.push_back(line);
     }
 
-    uint32_t ScriptChunkSize = *(uint32_t*)&buffer[0xC];
-    uint32_t addedBytes = 0;
-    uint32_t ScriptBegin = buffer.size() - ScriptChunkSize;
+    uint32_t OrgiOffsetListSize = *(uint32_t*)&buffer[0x10];
 
-    for (const auto& trans : translations) {
-        uint32_t newOffset = newBuffer.size() - ScriptBegin;
-        size_t pos = trans.find(":::::");
-        size_t offsetAddr = std::stoul(trans.substr(0, pos), nullptr, 16);
-        *(uint32_t*)&newBuffer[offsetAddr] = newOffset;
-        std::vector<uint8_t> textBytes = stringToCP932(trans.substr(pos + 5));
-        textBytes.push_back(0);
-        addedBytes += textBytes.size();
-        newBuffer.insert(newBuffer.end(), textBytes.begin(), textBytes.end());
+    if (translations.size() * 4 != OrgiOffsetListSize) {
+        std::cout << "Num of Translations is wrong!" << std::endl;
+        return;
     }
 
-    ScriptChunkSize += addedBytes;
-    *(uint32_t*)&newBuffer[0xC] = ScriptChunkSize;
+    uint32_t OrgiScriptChunkSize = *(uint32_t*)&buffer[0xC];
+    uint32_t NewScriptChunkSize = 0;
+    uint32_t ScriptBegin = buffer.size() - OrgiOffsetListSize - OrgiScriptChunkSize;
+
+    std::vector<uint8_t> newBuffer;
+    newBuffer.insert(newBuffer.end(), buffer.data(), buffer.data() + ScriptBegin);
+
+    for (const auto& trans : translations) {
+        offsets.push_back((uint32_t)(newBuffer.size() - ScriptBegin));
+        if (trans != "empty") {
+            std::vector<uint8_t> textBytes = stringToCP932(trans);
+            newBuffer.insert(newBuffer.end(), textBytes.begin(), textBytes.end());
+            NewScriptChunkSize += textBytes.size();
+        }
+        NewScriptChunkSize++;
+        newBuffer.push_back(0);
+    }
+
+    for (const auto& offset : offsets) {
+        newBuffer.insert(newBuffer.end(), (uint8_t*)&offset, (uint8_t*)&offset + 4);
+    }
+
     // 写入新文件
+    *(uint32_t*)&newBuffer[0xC] = NewScriptChunkSize;
     outputBin.write(reinterpret_cast<const char*>(newBuffer.data()), newBuffer.size());
 
     inputBin.close();
@@ -106,7 +122,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.05.13" << std::endl;
+    std::cout << "Made by julixian 2025.03.17" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
