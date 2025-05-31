@@ -210,7 +210,7 @@ Or the image will lose Transparent pixel.<br/>
 To extract/repack YoxAdv+++ engine .dat archive<br/>
 v1: Tested on かぎろひ～勺景～<br/>
 v2: Tested on MUSICUS!<br/>
-## YoxScriptSimpleTool && YoxScriptSimpleToolV2
+## YoxScriptSimpleTool/YoxScriptSimpleToolV2
 To dump/inject YoxAdv+++ engine script files<br/>
 ## misc_pack
 To pack [this engine](https://github.com/Dir-A/GARbro/blob/master/ArcFormats/Misc/ArcBIN.cs) ([凌辱学園～部活調教恥獄責め～](https://vndb.org/v7127))<br/>
