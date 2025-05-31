@@ -30,7 +30,7 @@ when repacking pro.box, you need to manually change the index of pro.txt file to
 ## AosCompressTool
 To decompress/compress Lilim engine .scr files to achieve No-packet-read<br/>
 ## AZsysCompressTool
-To decrypt and decompress/compress and encrypt AZ system engine script files<br/>
+To (decrypt and decompress/compress and encrypt) AZ system engine script files<br/>
 For script files in normal AZsys resource archive, you need key to decrypt/encrypt them<br/>
 And there are 4 known keys in GARbro :<br/>
 "Clover Heart's": 3786541434<br/>
@@ -53,10 +53,16 @@ To extract/pack BANANA Shu-Shu engine .pk or .dat archive<br/>
 To dump/inject BGI engine Script<br/>
 Most likely it won't work in very old BGI version<br/>
 DO NOT use it to edit config file, especially when it has messy code in the dumped txt file<br/>
+## BinzArchiveTool
+To extract/pack archives of [椿色のプリジオーネ](https://vndb.org/v9646)<br/>
 ## BndArchiveTool
 To extract/pack [魔法少女アイ](https://vndb.org/v1091) .bnd archive<br/>
 ## CadathKarArchiveTool
 To extract/pack Cadath engine KAR signature .bin Archive<br/>
+## CadathSnrCryptTool
+To (decrypt and decompress/compress and encrypt) Cadath engine .snr script files<br/>
+Each snr file has checksum for itself like Azsystem and the checksum func is difficult to recurrent(Why not just use standard crc32 or adler32 like Azsys……)<br/>
+So you need to fix game.exe to jump the check func, and [here](https://github.com/One-sixth/TsukikagerouTranslateProject/) has some fix records<br/>
 ## CaramelBox
 A series of tools to deal with Arc3 and Arc4 engine<br/>
 The repack function of Arc4Tool doesn't work on [ぴあ雀](https://vndb.org/v2398) and [EVE雀](https://vndb.org/v2320)<br/>
@@ -171,12 +177,16 @@ To dump/inject Riddle .scp Script file<br/>
 If there are Select jump in a script, from 0x8 it has flags like Select, CngExe and F47<br/>
 And 0x24、0x44、0x64…… will store the offset<br/>
 So if there are new flags, you can change the offset by hand<br/>
+## RMTImageTool
+To convert .png(must be 32bpp) to AI5WIN/AI6WIN .rmt image format<br/>
 ## RPMArchiveTool
 To extract/pack RPM/ZENOS engine .arc archvie<br/>
 ## ScoopFxArchiveTool
 To extract/pack Scoop engine .FX archive<br/>
 ## SeraphScriptArchiveTool
 To extract/pack Seraphim engine ScnPac.Dat script archive<br/>
+## TacticsScriptSimpleTool
+To dump/inject Tactics .bin script files<br/>
 ## TailCafArchiveTool
 To extract/repack Tail engine .caf Archive<br/>
 ## TailScriptSimpleTool
@@ -196,6 +206,12 @@ To extract/repack Yaneurao engine .dat Archive<br/>
 To convert .yga image to bmp AND .bmp to yga(no compress) image<br/>
 If want to edit the image, convert the image to png first. And before converting to yga, convert the png back to bmp and then convert to yga.<br/>
 Or the image will lose Transparent pixel.<br/>
+## YoxDatArchvieTool
+To extract/repack YoxAdv+++ engine .dat archive<br/>
+v1: Tested on かぎろひ～勺景～<br/>
+v2: Tested on MUSICUS!<br/>
+## YoxScriptSimpleTool && YoxScriptSimpleToolV2
+To dump/inject YoxAdv+++ engine script files<br/>
 ## misc_pack
 To pack [this engine](https://github.com/Dir-A/GARbro/blob/master/ArcFormats/Misc/ArcBIN.cs) ([凌辱学園～部活調教恥獄責め～](https://vndb.org/v7127))<br/>
 You need to download python 3.11 to use it.

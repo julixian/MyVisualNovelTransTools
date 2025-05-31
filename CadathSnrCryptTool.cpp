@@ -177,7 +177,7 @@ void Decrypt_3(DWORD* a1, int a2, int a3) //待解密内容指针, 长度, 解�
     }
 }
 
-void Encrypt_3(DWORD* a1, int a2, int a3) 
+void Encrypt_3(DWORD* a1, int a2, int a3)
 {
     int v3; // eax
     DWORD* v4; // ecx
@@ -347,7 +347,7 @@ void SNR_EncryptFile(const std::string& input_file, const std::string& output_fi
         std::cout << "Not a valid version!" << std::endl;
         return;
     }
-    
+
     std::ofstream output(output_file, std::ios::binary);
     if (!output) {
         throw std::runtime_error("Failed to create output file");
