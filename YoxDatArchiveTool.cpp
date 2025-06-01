@@ -294,7 +294,9 @@ void PrintUsage(const char* programName) {
     std::cout << "Made by julixian 2025.03.17" << std::endl;
     std::cout << "Usage:\n"
         << "Extract: " << programName << " -e <version> <input.dat> <output_directory>\n"
-        << "Pack:    " << programName << " -p <version> [--zlib] <original.dat> <input_directory> <output.dat>\n";
+        << "Pack:    " << programName << " -p <version> [--zlib] <original.dat> <input_directory> <output.dat>\n"
+        << "version: 1 or 2" << "\n"
+        << "--zlib: use zlib compress when repacking, usually used for script.dat" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
