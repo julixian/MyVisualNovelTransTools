@@ -79,7 +79,7 @@ To extract/repack EAGLS .pak Advsys type encrypted Archive<br/>
 ## EAGLSDecryptTool
 To decrypt/encrypt EAGLS .dat EAGLS type encrypted script files to achieve No-packet-read.<br/>
 ## Ellefin
-Release:Fixed GAR To extract some games of Terios made by Ellefin engine<br/>
+Release-EPK:Fixed GAR To extract some games of Terios made by Ellefin engine<br/>
 EPKscpro.py:To decrypt script files of はぴベルラヴ×2ハネムーン<br/>
 ## EscudeScriptSimpleTool
 Most likely it has no Universality because escude's scriptmode always changes<br/>
