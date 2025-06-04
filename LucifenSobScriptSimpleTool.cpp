@@ -23,7 +23,7 @@ bool isValidCP932(const std::string& str) {
             //std::cout << str << " :E1 " << i << std::endl;
             return false;
         }
-        else if ((i+1<textBytes.size())
+        else if ((i + 1 < textBytes.size())
             &&
             ((0x81 <= textBytes[i] && textBytes[i] <= 0x9f) || (0xe0 <= textBytes[i] && textBytes[i] <= 0xef))) { //most games use sjis, for cp932 exactly should be <= 0xfc here
             if (textBytes[i + 1] > 0xfc || textBytes[i + 1] < 0x40) {
@@ -74,7 +74,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         oldver = true;
         ScriptBegin = *(uint32_t*)&buffer[0x6];
     }
-    
+
     ScriptBegin += oldver ? 0x12 : 0x10;
     size_t firstOffset = 0;
     if (*(uint32_t*)&buffer[p - 4] != 0x00) {
@@ -261,7 +261,6 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
     std::vector<std::string> translations;
 
-
     std::string line;
     while (std::getline(inputTxt, line)) {
 
@@ -414,7 +413,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                             if (newBuffer[j] == 0x20 && newBuffer[j + 1] == 0xbc && newBuffer[j + 2] == 0x80 && newBuffer[j + 3] == 0x01) {
                                 size_t fixedoffset = j - ScriptBegin;
                                 if (u >= Fixops.size()) {
-                                    std::cout << "Error: Don't have enough Fix ops " << std::hex << it->seq << std::endl;
+                                    std::cout << "Sentence: " << it->str << "(seq:" << std::hex << it->seq << ")\ndosen't have enough fix ops " << std::endl;
                                     system("pause");
                                     continue;
                                 }
@@ -428,7 +427,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                             if (newBuffer[j] == 0x02 && newBuffer[j + 3] == 0x92 && newBuffer[j + 4] == 0x00) {
                                 size_t fixedoffset = j + 1 - ScriptBegin;
                                 if (u >= Fixops.size()) {
-                                    std::cout << "Error: Don't have enough Fix ops " << std::hex << it->seq << std::endl;
+                                    std::cout << "Sentence: " << it->str << "(seq:" << std::hex << it->seq << ")\ndosen't have enough fix ops " << std::endl;
                                     system("pause");
                                     continue;
                                 }
@@ -438,7 +437,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                         }
                     }
                     if (u != Fixops.size()) {
-                        std::cout << "Sentence: " << it->str << "\ndoesn't have enough custom name" << std::endl;
+                        std::cout << "Sentence: " << it->str << "(seq:" << std::hex << it->seq << ")\ndoesn't have enough custom name" << std::endl;
                         system("pause");
                     }
                 }
@@ -462,7 +461,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.06.02" << std::endl;
+    std::cout << "Made by julixian 2025.06.03" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
