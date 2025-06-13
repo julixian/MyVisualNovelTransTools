@@ -78,7 +78,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     ScriptBegin += oldver ? 0x12 : 0x10;
     size_t firstOffset = 0;
     if ((*(uint32_t*)&buffer[p - 4] != 0x00) 
-        || (*(uint32_t*)&buffer[p - 4] == 0x00 && buffer[p - 5] == 0x00)) {
+        || (*(uint32_t*)&buffer[p - 4] == 0x00 && buffer[p - 5] == 0x00 && buffer[p - 6] == 0xBF)) {
         firstOffset = p - ScriptBegin;
     }
     else {
