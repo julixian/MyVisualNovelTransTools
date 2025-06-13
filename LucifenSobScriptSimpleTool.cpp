@@ -19,11 +19,11 @@ std::vector<uint8_t> stringToCP932(const std::string& str) {
 bool isValidCP932(const std::string& str) {
     std::vector<uint8_t> textBytes = stringToCP932(str);
     for (size_t i = 0; i < textBytes.size(); i++) {
-        if (textBytes[i] < 0x20 || (0x9f < textBytes[i] && textBytes[i] < 0xe0)) {
+        if ((textBytes[i] < 0x20 && textBytes[i] != 0x0a && textBytes[i] != 0x0d) || (0x9f < textBytes[i] && textBytes[i] < 0xe0)) {
             //std::cout << str << " :E1 " << i << std::endl;
             return false;
         }
-        else if ((i + 1 < textBytes.size())
+        else if ((i+1<textBytes.size())
             &&
             ((0x81 <= textBytes[i] && textBytes[i] <= 0x9f) || (0xe0 <= textBytes[i] && textBytes[i] <= 0xef))) { //most games use sjis, for cp932 exactly should be <= 0xfc here
             if (textBytes[i + 1] > 0xfc || textBytes[i + 1] < 0x40) {
@@ -74,10 +74,11 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         oldver = true;
         ScriptBegin = *(uint32_t*)&buffer[0x6];
     }
-
+    
     ScriptBegin += oldver ? 0x12 : 0x10;
     size_t firstOffset = 0;
-    if (*(uint32_t*)&buffer[p - 4] != 0x00) {
+    if ((*(uint32_t*)&buffer[p - 4] != 0x00) 
+        || (*(uint32_t*)&buffer[p - 4] == 0x00 && buffer[p - 5] == 0x00)) {
         firstOffset = p - ScriptBegin;
     }
     else {
@@ -132,7 +133,8 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             }
             else if (oldver && str.length() > 5) {
                 for (size_t j = SeAddr + 3; j < SeAddr + 3 + length - 5; j++) {
-                    if (buffer[j] == 0x02 && buffer[j + 3] == 0x92 && buffer[j + 4] == 0x00) {
+                    if ((buffer[j] == 0x02 && buffer[j + 3] == 0x92 && buffer[j + 4] == 0x00)
+                        || (buffer[j] == 0xFF && (buffer[j + 1] == 0x92 || buffer[j + 1] == 0x99 || buffer[j + 1] == 0xA0))) {
                         //std::cout << "Fix find: " << std::hex << j + 1 << std::endl;
                         size_t fixoffset = j + 1 - ScriptBegin; //0x02后一位的偏移，也就是偏移列表应该显示的一个偏移
                         size_t fixop = 0; //显示这个偏移的位置
@@ -221,21 +223,17 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         }
     }
 
-    //reverse(Sentences.begin(), Sentences.end());
     std::erase_if(Sentences, [&](Sentence& Se)
         {
             return *(uint32_t*)&buffer[Se.offsetAddr] < *(uint32_t*)&buffer[Sentences.back().offsetAddr];
         });
 
     for (auto it = Sentences.begin(); it != Sentences.end(); it++) {
-        if (it->str.length() > 5) {
-            for (size_t k = 0; k < it->str.length() - 5; k++) {
-                if (it->str[k] == '\x02' && it->str[k + 3] == '\x92' && it->str[k + 4] == '\x00') {
-                    it->str.replace(k + 3, 2, "\\x92\\x00");
-                    k += 10;
-                }
-            }
-        }
+        it->str = std::regex_replace(it->str, std::regex(R"(\x02\x92\x00)"), "\x02\\x92\\x00");
+        it->str = std::regex_replace(it->str, std::regex(R"(\xFF\x92)"), "\\xff\\x92");
+        it->str = std::regex_replace(it->str, std::regex(R"(\xFF\x99)"), "\\xff\\x99");
+        it->str = std::regex_replace(it->str, std::regex(R"(\xFF\xA0)"), "\\xff\\xa0");
+        it->str = std::regex_replace(it->str, std::regex(R"([\n])"), "\\n");
         output << std::hex << it->offsetAddr << ":::::" << (size_t)it->seq << ":::::" << it->str << std::endl;
     }
 
@@ -261,6 +259,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
     std::vector<std::string> translations;
 
+
     std::string line;
     while (std::getline(inputTxt, line)) {
 
@@ -274,10 +273,11 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 
         size_t opoffset = std::stoul(first_str, nullptr, 16);
         uint16_t seq = std::stoul(second_str, nullptr, 16);
-        std::regex pattern(R"(\\x92\\x00)");
-        std::string tmp;
-        tmp.push_back('\x92'); tmp.push_back('\x00');
-        trans = std::regex_replace(trans, pattern, tmp);
+        trans = std::regex_replace(trans, std::regex(R"(\\x92\\x00)"), std::string("\x92\x00", 2));
+        trans = std::regex_replace(trans, std::regex(R"(\\xff\\x92)"), "\xff\x92");
+        trans = std::regex_replace(trans, std::regex(R"(\\xff\\x99)"), "\xff\x99");
+        trans = std::regex_replace(trans, std::regex(R"(\\xff\\xa0)"), "\xff\xa0");
+        trans = std::regex_replace(trans, std::regex(R"(\\n)"), "\n");
         Sentences.push_back({ opoffset, seq, trans });
     }
 
@@ -413,7 +413,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                             if (newBuffer[j] == 0x20 && newBuffer[j + 1] == 0xbc && newBuffer[j + 2] == 0x80 && newBuffer[j + 3] == 0x01) {
                                 size_t fixedoffset = j - ScriptBegin;
                                 if (u >= Fixops.size()) {
-                                    std::cout << "Sentence: " << it->str << "(seq:" << std::hex << it->seq << ")\ndosen't have enough fix ops " << std::endl;
+                                    std::cout << "Error: Don't have enough Fix ops " << std::hex << it->seq << std::endl;
                                     system("pause");
                                     continue;
                                 }
@@ -427,7 +427,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                             if (newBuffer[j] == 0x02 && newBuffer[j + 3] == 0x92 && newBuffer[j + 4] == 0x00) {
                                 size_t fixedoffset = j + 1 - ScriptBegin;
                                 if (u >= Fixops.size()) {
-                                    std::cout << "Sentence: " << it->str << "(seq:" << std::hex << it->seq << ")\ndosen't have enough fix ops " << std::endl;
+                                    std::cout << "Error: Don't have enough Fix ops " << std::hex << it->seq << std::endl;
                                     system("pause");
                                     continue;
                                 }
@@ -437,7 +437,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                         }
                     }
                     if (u != Fixops.size()) {
-                        std::cout << "Sentence: " << it->str << "(seq:" << std::hex << it->seq << ")\ndoesn't have enough custom name" << std::endl;
+                        std::cout << "Sentence: " << it->str << "\ndoesn't have enough custom name" << std::endl;
                         system("pause");
                     }
                 }
@@ -461,7 +461,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.06.03" << std::endl;
+    std::cout << "Made by julixian 2025.06.02" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
