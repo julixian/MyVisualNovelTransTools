@@ -424,7 +424,8 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                     }
                     else {
                         for (size_t j = newBuffer.size() - textBytes.size() - 1; j < newBuffer.size() - 1 - 5; j++) {
-                            if (newBuffer[j] == 0x02 && newBuffer[j + 3] == 0x92 && newBuffer[j + 4] == 0x00) {
+                            if ((newBuffer[j] == 0x02 && newBuffer[j + 3] == 0x92 && newBuffer[j + 4] == 0x00)
+                                || (newBuffer[j] == 0xFF && (newBuffer[j + 1] == 0x92 || newBuffer[j + 1] == 0x99 || newBuffer[j + 1] == 0xA0))) {
                                 size_t fixedoffset = j + 1 - ScriptBegin;
                                 if (u >= Fixops.size()) {
                                     std::cout << "Error: Don't have enough Fix ops " << std::hex << it->seq << std::endl;
