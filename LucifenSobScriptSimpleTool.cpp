@@ -221,6 +221,14 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             se.str = str;
             Sentences.push_back(se);
         }
+        else if (buffer[SeAddr] == 0 && buffer[SeAddr + 1] == 0 && buffer[SeAddr + 2] == 0 && buffer[SeAddr + 3] == 0) {
+            std::string str = "zeroAll";
+            Sentence se;
+            se.offsetAddr = i;
+            se.seq = 0xffff;
+            se.str = str;
+            Sentences.push_back(se);
+        }
     }
 
     std::erase_if(Sentences, [&](Sentence& Se)
@@ -277,6 +285,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         trans = std::regex_replace(trans, std::regex(R"(\\xff\\x92)"), "\xff\x92");
         trans = std::regex_replace(trans, std::regex(R"(\\xff\\x99)"), "\xff\x99");
         trans = std::regex_replace(trans, std::regex(R"(\\xff\\xa0)"), "\xff\xa0");
+        trans = std::regex_replace(trans, std::regex(R"(zeroAll)"), std::string("\x00\x00\x00", 3));
         trans = std::regex_replace(trans, std::regex(R"(\\n)"), "\n");
         Sentences.push_back({ opoffset, seq, trans });
     }
