@@ -1,0 +1,3 @@
+[submodule "betterfpk"]
+	path = betterfpk
+	url = https://github.com/julixian/betterfpk.git
