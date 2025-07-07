@@ -81,6 +81,12 @@ To decrypt/encrypt EAGLS .dat EAGLS type encrypted script files to achieve No-pa
 ## Ellefin
 Release-EPK:Fixed GAR To extract some games of Terios made by Ellefin engine<br/>
 EPKscpro.py:To decrypt script files of はぴベルラヴ×2ハネムーン<br/>
+## EntisDecryptTool
+To extract EntisGLS engine .noa archive<br/>
+Initially made to extract some script.csx in script.noa because GARbro doesn't work on them<br/>
+To find key, you need to use ResourceHacker(or any other PE tool) to save the IDR_COTOMI of game.exe as a binary file, like this:<br/>
+![Snipaste_2025-07-07_23-32-40](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-07-07_23-32-40.png)<br/>
+And then use [ericomp.exe](https://github.com/satan53x/SExtractor/tree/main/tools/EntisGLS) to decompress the binary file to xml, the key will be stored there<br/>
 ## EscudeScriptSimpleTool
 Most likely it has no Universality because escude's scriptmode always changes<br/>
 Tested on 放課後⇒エデュケーション！～先生とはじめる魅惑のレッスン～<br/>
@@ -200,6 +206,8 @@ To extract/repack TopCatV2 .TCD Archive<br/>
 To extract/repack TopCatV3 .TCD Archive<br/>
 ## ValkDataImageTool
 To convert .png(must be 32bpp) to Valkyria engine data\d format image in odn archive<br/>
+## WscScriptSimpleTool
+To dump/inject Willplus V1 engine .wsc script files<br/>
 ## YaneuraoDatArchiveTool
 To extract/repack Yaneurao engine .dat Archive<br/>
 ## YaneuraoYgaImageTool
