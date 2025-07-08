@@ -1,0 +1,3 @@
+LIBRARY   "CaramelBox_patch"   
+  EXPORTS     
+	  CaramelBox_patch  @1 

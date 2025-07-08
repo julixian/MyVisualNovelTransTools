@@ -24,6 +24,8 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     std::ifstream input(inputPath, std::ios::binary);
     std::ofstream output(outputPath);
 
+    bool oldver = false;
+
     if (!input || !output) {
         std::cerr << "Error opening files: " << inputPath << " or " << outputPath << std::endl;
         return;
@@ -60,8 +62,38 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     }
 
     if(ScriptBegin == 0 || OffsetBegin == 0 || OffsetEnd == 0) {
-        std::cout << "Error: Unable to find script offsets in the binary file." << std::endl;
-        return;
+        oldver = true;
+        for (size_t i = 4; i < buffer.size() - 3; i++) {
+            if (buffer[i] == 0x00 && buffer[i + 1] == 0x00 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x00) {
+                uint16_t susOffsetCount = *(uint16_t*)&buffer[4];
+                uint32_t susOffsetEnd = 0;
+                if (i + susOffsetCount * sizeof(uint32_t) < buffer.size()) {
+                    susOffsetEnd = i + susOffsetCount * sizeof(uint32_t);
+                }
+                else {
+                    continue;
+                }
+                uint32_t susLastOffset = 0;
+                memcpy(&susLastOffset, &buffer[susOffsetEnd - 4], sizeof(uint32_t));
+                if (susOffsetEnd + susLastOffset >= buffer.size()) {
+                    continue;
+                }
+                std::string lastStr((char*)&buffer[susOffsetEnd + susLastOffset]);
+                if (susOffsetEnd + susLastOffset + lastStr.length() + 1 == buffer.size()) {
+                    ScriptBegin = susOffsetEnd;
+                    OffsetBegin = i;
+                    OffsetEnd = susOffsetEnd;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+        if (ScriptBegin == 0 || OffsetBegin == 0 || OffsetEnd == 0) {
+            std::cout << "Failed to find script offsets in the file." << std::endl;
+            return;
+        }
 	}
 
     for (size_t i = OffsetBegin; i < OffsetEnd; i += sizeof(uint32_t)) {
@@ -87,6 +119,8 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::ifstream inputBin(inputBinPath, std::ios::binary);
     std::ifstream inputTxt(inputTxtPath);
     std::ofstream outputBin(outputBinPath, std::ios::binary);
+
+    bool oldver = false;
 
     if (!inputBin || !inputTxt || !outputBin) {
         std::cerr << "Error opening files: " << inputBinPath << " or " << inputTxtPath << " or " << outputBinPath << std::endl;
@@ -137,8 +171,38 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     }
 
     if (ScriptBegin == 0 || OffsetBegin == 0 || OffsetEnd == 0) {
-        std::cout << "Error: Unable to find script offsets in the binary file." << std::endl;
-        return;
+        oldver = true;
+        for (size_t i = 4; i < buffer.size() - 3; i++) {
+            if (buffer[i] == 0x00 && buffer[i + 1] == 0x00 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x00) {
+                uint16_t susOffsetCount = *(uint16_t*)&buffer[4];
+                uint32_t susOffsetEnd = 0;
+                if (i + susOffsetCount * sizeof(uint32_t) < buffer.size()) {
+                    susOffsetEnd = i + susOffsetCount * sizeof(uint32_t);
+                }
+                else {
+                    continue;
+                }
+                uint32_t susLastOffset = 0;
+                memcpy(&susLastOffset, &buffer[susOffsetEnd - 4], sizeof(uint32_t));
+                if (susOffsetEnd + susLastOffset >= buffer.size()) {
+                    continue;
+                }
+                std::string lastStr((char*)&buffer[susOffsetEnd + susLastOffset]);
+                if (susOffsetEnd + susLastOffset + lastStr.length() + 1 == buffer.size()) {
+                    ScriptBegin = susOffsetEnd;
+                    OffsetBegin = i;
+                    OffsetEnd = susOffsetEnd;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+        if (ScriptBegin == 0 || OffsetBegin == 0 || OffsetEnd == 0) {
+            std::cout << "Failed to find script offsets in the file." << std::endl;
+            return;
+        }
     }
 
     newBuffer = buffer;
@@ -163,8 +227,10 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         system("pause");
     }
 
-    uint32_t newScriptLength = newBuffer.size() - ScriptBegin;
-    memcpy(&newBuffer[OffsetEnd], &newScriptLength, sizeof(uint32_t));
+    if (!oldver) {
+        uint32_t newScriptLength = newBuffer.size() - ScriptBegin;
+        memcpy(&newBuffer[OffsetEnd], &newScriptLength, sizeof(uint32_t));
+    }
 
     // 写入新文件
     outputBin.write(reinterpret_cast<const char*>(newBuffer.data()), newBuffer.size());
@@ -177,7 +243,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.07.08" << std::endl;
+    std::cout << "Made by julixian 2025.07.09" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:    dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject:  inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;

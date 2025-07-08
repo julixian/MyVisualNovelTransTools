@@ -1,0 +1,14 @@
+Start-Process cmd -ArgumentList "/k cd /d [your work directory]" -Verb runAs
+
+if the script file is compressed, you should decompress it first
+and before repacking, compress it back
+
+for arc3, you need to get its index first before repack
+the usage of packer: programme.exe output_new_archive_name .idx file (the org archive should be in the same directory)
+
+if the script file is not compressed, you know what i want to say
+don't compress them back before repacking
+
+for this game, you need to use the unpacker patched by me
+
+it's all, thank you!
