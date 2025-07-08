@@ -70,10 +70,10 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 continue;
             }
             std::regex pattern(R"([\r])");
-            str = std::regex_replace(str, pattern, "\\r");
+            str = std::regex_replace(str, pattern, "[r]");
             pattern = R"([\n])";
-            str = std::regex_replace(str, pattern, "\\n");
-            //output << std::hex << i << " :" << str << std::endl;
+            str = std::regex_replace(str, pattern, "[n]");
+            //output << std::hex << i << ": [" << str << "] length: " << std::hex << str.length() << std::endl;
             output << str << std::endl;
             i += 6 + length - 1;
         }
@@ -97,7 +97,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::ofstream outputBin(outputBinPath, std::ios::binary);
 
     if (!inputBin || !inputTxt || !outputBin) {
-        std::cerr << "Error opening files: " << inputBinPath.string() << " or " 
+        std::cerr << "Error opening files: " << inputBinPath.string() << " or "
             << inputTxtPath.string() << " or " << outputBinPath.string() << std::endl;
         return;
     }
@@ -114,9 +114,9 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     // 读取翻译文本
     std::string line;
     while (std::getline(inputTxt, line)) {
-        std::regex pattern(R"(\\r)");
+        std::regex pattern(R"(\[r\])");
         line = std::regex_replace(line, pattern, "\r");
-        pattern = R"(\\n)";
+        pattern = R"(\[n\])";
         line = std::regex_replace(line, pattern, "\n");
         translations.push_back(line);
     }
@@ -202,7 +202,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             }
         }
     }
-    
+
     for (size_t i = 0; i < jmps.size(); i++) {
         uint32_t jmp = *(uint32_t*)&newBuffer[jmps[i]];
         offset = 0;
