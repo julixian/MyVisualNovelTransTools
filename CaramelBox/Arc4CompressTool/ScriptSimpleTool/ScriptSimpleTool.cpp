@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <cstdint>
 #include <filesystem>
+#include <regex>
 #include <algorithm>
 
 namespace fs = std::filesystem;
@@ -33,13 +34,13 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     size_t ScriptBegin = 0;
     size_t OffsetBegin = 0;
     size_t OffsetEnd = 0;
-    for (size_t i = 4; i < buffer.size(); i++) {
+    for (size_t i = 4; i < buffer.size() - 3; i++) {
         if (buffer[i] == 0x00 && buffer[i + 1] == 0x00 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x00) {
             uint32_t susOffsetCount = 0;
             uint32_t susOffsetEnd = 0;
             memcpy(&susOffsetCount, &buffer[i - 4], sizeof(uint32_t));
-            if (i + susOffsetCount * 4 < buffer.size()) {
-                susOffsetEnd = i + susOffsetCount * 4;
+            if (i + susOffsetCount * sizeof(uint32_t) < buffer.size()) {
+                susOffsetEnd = i + susOffsetCount * sizeof(uint32_t);
             }
             else {
                 continue;
@@ -50,6 +51,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 ScriptBegin = susOffsetEnd + 4;
                 OffsetBegin = i;
                 OffsetEnd = susOffsetEnd;
+                break;
             }
             else {
                 continue;
@@ -57,12 +59,21 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         }
     }
 
-    for (size_t i = OffsetBegin; i < OffsetEnd; i += 4) {
+    if(ScriptBegin == 0 || OffsetBegin == 0 || OffsetEnd == 0) {
+        std::cout << "Error: Unable to find script offsets in the binary file." << std::endl;
+        return;
+	}
+
+    for (size_t i = OffsetBegin; i < OffsetEnd; i += sizeof(uint32_t)) {
         uint32_t offset = 0;
         memcpy(&offset, &buffer[i], sizeof(uint32_t));
         size_t SeAddr = ScriptBegin + offset;
         std::string text((char*)&buffer[SeAddr]);
-        output << text << "\n";
+        std::regex pattern(R"([\r])");
+        text = std::regex_replace(text, pattern, "[r]");
+		pattern = std::regex(R"([\n])");
+		text = std::regex_replace(text, pattern, "[n]");
+        output << text << std::endl;
     }
 
     input.close();
@@ -87,6 +98,10 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     // 读取翻译文本
     std::string line;
     while (std::getline(inputTxt, line)) {
+		std::regex pattern(R"(\[r\])");
+		line = std::regex_replace(line, pattern, "\r");
+		pattern = std::regex(R"(\[n\])");
+		line = std::regex_replace(line, pattern, "\n");
         translations.push_back(line);
     }
 
@@ -96,7 +111,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     size_t ScriptBegin = 0;
     size_t OffsetBegin = 0;
     size_t OffsetEnd = 0;
-    for (size_t i = 4; i < buffer.size(); i++) {
+    for (size_t i = 4; i < buffer.size() - 3; i++) {
         if (buffer[i] == 0x00 && buffer[i + 1] == 0x00 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x00) {
             uint32_t susOffsetCount = 0;
             uint32_t susOffsetEnd = 0;
@@ -113,6 +128,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                 ScriptBegin = susOffsetEnd + 4;
                 OffsetBegin = i;
                 OffsetEnd = susOffsetEnd;
+                break;
             }
             else {
                 continue;
@@ -120,9 +136,14 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         }
     }
 
+    if (ScriptBegin == 0 || OffsetBegin == 0 || OffsetEnd == 0) {
+        std::cout << "Error: Unable to find script offsets in the binary file." << std::endl;
+        return;
+    }
+
     newBuffer = buffer;
 
-    for (size_t i = OffsetBegin; i < OffsetEnd; i += 4) {
+    for (size_t i = OffsetBegin; i < OffsetEnd; i += sizeof(uint32_t)) {
         if (translationIndex >= translations.size()) {
             std::cout << "Not Enough Translations！" << std::endl;
             continue;
@@ -156,7 +177,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.04.24" << std::endl;
+    std::cout << "Made by julixian 2025.07.08" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:    dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject:  inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
