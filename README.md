@@ -104,8 +104,10 @@ To extract/repack FrontWing engine LIB_PACKDATA0000 sign .pac(ArcFLT in GARbro) 
 To dump/inject G2 engine .g2 script files<br/>
 ## GPK2CompressTool
 To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
-## GsWin2ArchiveTool
+## GsWin2ArchiveTool && GsWin2ImageTool
 To extract/pack GsWin2 .pak archive<br/>
+To convert gspic2png and png2gspic<br/>
+If you want to edit script files without truncation, trying to see [this project](https://github.com/icey9527/yami)<br/>
 ## GsWin4ArchiveTool
 To extract/pack GsWin4 .pak archive<br/>
 For GsWin5, use AnimED to repack<br/>
@@ -115,11 +117,17 @@ To extract/repack IceSoft .BIN Archive<br/>
 To decompress/compress(Actually just add a TPW\x00 sign) IceSoft TPW sign Script files<br/>
 ## IvoryScriptSimpleTool
 To decrpyt/encrypt Ivory engine script files<br/>
+## LambdaCLSArchiveTool && LambdaCLSImageTool
+To extract/repack Lambda(maybe?) engine .DAT CLSLINK Archive<br/>
+To convert clspic2png and png2clspic<br/>
+The sturct of the CLS archive seems simple, but I failed to create readable archives<br/>
+if I create them directly from directory instead of adding files to the end of the original archive<br/>
+Maybe it has some hard-codes or strange alignment rules? Who knows, I just use the way that would work<br/>
 ## LambdaLapArchiveTool
 To extract/repack Lambda engine gsce.lap Archive<br/>
 ## LambdaLapArchiveSimpleTool && LambdaCompressTool
-To extract Lambda engine gevent.lap image archive.<br/>
-you need to use archivetool to extract compressed files and use compresstool to decompress files twice.
+To extract Lambda engine gevent.lap image archive<br/>
+you need to use archivetool to extract compressed files and use compresstool to decompress files twice(how foolish...)<br/>
 ## LambdaLAXArchiveTool
 To extract/repack Lambda engine .lax Archive<br/>
 Uniformly use lzss fake compression to repack<br/>

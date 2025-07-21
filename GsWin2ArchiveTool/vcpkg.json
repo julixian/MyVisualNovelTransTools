@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "gswin2archivetool",
+  "version": "2025.7.21",
+  "dependencies": [
+    "stb"
+  ]
+}
