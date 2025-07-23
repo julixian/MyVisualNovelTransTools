@@ -13,7 +13,7 @@ For it's much easier to pack such a format than copy the decompress func from cr
 ## AI5WINGccImageTool
 To convert .png(must be 32bpp) to Ai5Win .GCC image format(Uniformly use G24m format)<br/>
 ## AILScriptSimpleToolPlus/AILScriptSimpleTool++/AILScriptSimpleTool#
-There are many greater tool you can try before using this outdated tool, such as (this one)[https://github.com/HOKORISAMA/AILSOFT-AIL-Engine-Tools/tree/main] or (this one)[https://github.com/crskycode/AIL_Tools]<br/>
+There are many greater tool you can try before using this outdated tool, such as [this one](https://github.com/HOKORISAMA/AILSOFT-AIL-Engine-Tools/tree/main) or [this one](https://github.com/crskycode/AIL_Tools)<br/>
 To dump/inject AIL engine Script from v1 to v3<br/>
 v3: ????-2001<br/>
 v2: 2002-2005<br/>
