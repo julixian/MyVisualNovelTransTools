@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36327.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IvoryScriptSimpleTool", "IvoryScriptSimpleTool\IvoryScriptSimpleTool.vcxproj", "{A2E350FA-109C-45D4-B067-179752A225DF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IvoryCryptTool", "IvoryCryptTool\IvoryCryptTool.vcxproj", "{A524F4DD-7DE4-4615-BB30-94CDAA74B117}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IvoryPkArchiveTool", "IvoryPkArchiveTool\IvoryPkArchiveTool.vcxproj", "{786AB19E-DCCD-4397-A815-17D91970A84E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Debug|x64.ActiveCfg = Debug|x64
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Debug|x64.Build.0 = Debug|x64
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Debug|x86.ActiveCfg = Debug|Win32
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Debug|x86.Build.0 = Debug|Win32
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Release|x64.ActiveCfg = Release|x64
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Release|x64.Build.0 = Release|x64
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Release|x86.ActiveCfg = Release|Win32
+		{A2E350FA-109C-45D4-B067-179752A225DF}.Release|x86.Build.0 = Release|Win32
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Debug|x64.ActiveCfg = Debug|x64
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Debug|x64.Build.0 = Debug|x64
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Debug|x86.ActiveCfg = Debug|Win32
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Debug|x86.Build.0 = Debug|Win32
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Release|x64.ActiveCfg = Release|x64
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Release|x64.Build.0 = Release|x64
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Release|x86.ActiveCfg = Release|Win32
+		{A524F4DD-7DE4-4615-BB30-94CDAA74B117}.Release|x86.Build.0 = Release|Win32
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Debug|x64.ActiveCfg = Debug|x64
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Debug|x64.Build.0 = Debug|x64
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Debug|x86.ActiveCfg = Debug|Win32
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Debug|x86.Build.0 = Debug|Win32
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Release|x64.ActiveCfg = Release|x64
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Release|x64.Build.0 = Release|x64
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Release|x86.ActiveCfg = Release|Win32
+		{786AB19E-DCCD-4397-A815-17D91970A84E}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {65719B0A-AB4E-4950-804A-C99B0768FA7D}
+	EndGlobalSection
+EndGlobal
