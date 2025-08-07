@@ -116,8 +116,8 @@ For GsWin5, use AnimED to repack<br/>
 To extract/repack IceSoft .BIN Archive<br/>
 ## IceCompressTool
 To decompress/compress(Actually just add a TPW\x00 sign) IceSoft TPW sign Script files<br/>
-## IvoryScriptSimpleTool
-To decrpyt/encrypt Ivory engine script files<br/>
+## IvoryTool
+A serial of tools to extract/repack .pk archive, decrypt/encrypt script files, dump/inject texts from/into script files<br/>
 ## LambdaCLSArchiveTool && LambdaCLSImageTool
 To extract/repack Lambda(maybe?) engine .DAT CLSLINK Archive<br/>
 To convert clspic2png and png2clspic<br/>
