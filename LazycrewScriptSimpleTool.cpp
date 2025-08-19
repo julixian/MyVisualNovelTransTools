@@ -1,11 +1,7 @@
-﻿#include <iostream>
-#include <fstream>
-#include <windows.h>
-#include <vector>
-#include <string>
-#include <regex>
-#include <filesystem>
+﻿#include <windows.h>
+#include <stdint.h>
 
+import std;
 namespace fs = std::filesystem;
 
 std::vector<uint8_t> stringToCP932(const std::string& str) {
@@ -18,20 +14,12 @@ std::vector<uint8_t> stringToCP932(const std::string& str) {
 
 bool isValidCP932(const std::string& str) {
     std::vector<uint8_t> textBytes = stringToCP932(str);
-    //for (char ch : str) {
-    //    /*if (*(uint8_t*)&ch < 0x20) {
-    //        return false;
-    //    }*/
-    //    textBytes.push_back(*(uint8_t*)&ch);
-    //}
     for (size_t i = 0; i < textBytes.size(); i++) {
         if ((textBytes[i] < 0x20 && textBytes[i] != 0x0a && textBytes[i] != 0x0d) || (0x9f < textBytes[i] && textBytes[i] < 0xe0)) {
-            //std::cout << str << " :E1 " << i << std::endl;
             return false;
         }
-        else if ((0x81 <= textBytes[i] && textBytes[i] <= 0x9f) || (0xe0 <= textBytes[i] && textBytes[i] <= 0xef)) {
+        else if ((0x81 <= textBytes[i] && textBytes[i] <= 0x9f) || (0xe0 <= textBytes[i] && textBytes[i] <= 0xfc)) {
             if (textBytes[i + 1] > 0xfc || textBytes[i + 1] < 0x40) {
-                //std::cout << str << " :E2 " << i << std::endl;
                 return false;
             }
             else {
@@ -41,30 +29,6 @@ bool isValidCP932(const std::string& str) {
         }
     }
     return true;
-    /*int required = MultiByteToWideChar(
-        932,
-        MB_ERR_INVALID_CHARS,
-        str.c_str(),
-        str.length(),
-        nullptr,
-        0
-    );
-
-    if (required == 0) {
-        return false;
-    }
-
-    std::wstring wide(required, L'\0');
-    int result = MultiByteToWideChar(
-        932,
-        MB_ERR_INVALID_CHARS,
-        str.c_str(),
-        str.length(),
-        &wide[0],
-        required
-    );
-
-    return result != 0;*/
 }
 
 std::string WideToAscii(const std::wstring& wide, UINT CodePage) {
@@ -112,6 +76,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     }
 
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(input), {});
+    std::regex pattern(R"([\n])");
 
     for (size_t i = 0; i < buffer.size() - 8; i++) {
         if (*(uint16_t*)&buffer[i] == 0x04) {
@@ -125,8 +90,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             if (encryptedData.back() != 0x00)continue;
             std::string str((char*)encryptedData.data());
             if (!isValidCP932(str))continue;
-            std::regex pattern(R"([\n])");
-            str = std::regex_replace(str, pattern, "<br>");
+            str = std::regex_replace(str, pattern, "/");
             output << str << std::endl;
             i += 4 + length - 1;
         }
@@ -149,46 +113,62 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         return;
     }
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
-    std::vector<uint8_t> newBuffer = buffer;
+    std::vector<uint8_t> newBuffer;
     std::vector<std::string> translations;
 
     // 读取翻译文本
     std::string line;
+    std::regex pattern(R"(/)");
     while (std::getline(inputTxt, line)) {
+        line = std::regex_replace(line, pattern, "\n");
         translations.push_back(line);
     }
 
     size_t translationIndex = 0;
-    for (size_t i = 0; i < newBuffer.size() - 8; i++) {
-        if (*(uint16_t*)&newBuffer[i] == 0x04) {
+    for (size_t i = 0; i < buffer.size() - 8; i++) {
+        if (*(uint16_t*)&buffer[i] == 0x04) {
             size_t k = i;
             k += 2;
-            uint16_t length = *(uint16_t*)&newBuffer[k];
-            if (length < 3)continue;
+            uint16_t length = *(uint16_t*)&buffer[k];
+            if (length < 3) {
+                newBuffer.push_back(buffer[i]);
+                continue;
+            }
             k += 2;
-            std::vector<uint8_t> encryptedData(&newBuffer[k], &newBuffer[k + length]);
+            std::vector<uint8_t> encryptedData(&buffer[k], &buffer[k + length]);
             DecryptData(encryptedData.data(), encryptedData.size());
-            if (encryptedData.back() != 0x00)continue;
+            if (encryptedData.back() != 0x00) {
+                newBuffer.push_back(buffer[i]);
+                continue;
+            }
             std::string str((char*)encryptedData.data());
-            if (!isValidCP932(str))continue;
+            if (!isValidCP932(str)) {
+                newBuffer.push_back(buffer[i]);
+                continue;
+            }
             if (translationIndex >= translations.size()) {
                 std::cout << "not have enough translations!" << std::endl;
                 return;
             }
-            std::string text = translations[translationIndex];
+            std::string text = translations[translationIndex++];
             //std::cout << WideToAscii(AsciiToWide(text, 932), CP_ACP) << std::endl;
-            translationIndex++;
-            std::regex pattern(R"(<br>)");
-            text = std::regex_replace(text, pattern, "\n");
             std::vector<uint8_t> textBytes = stringToCP932(text);
             textBytes.push_back(0x00);
             EncryptData(textBytes.data(), textBytes.size());
-            *(uint16_t*)&newBuffer[i + 2] = textBytes.size();
-            newBuffer.erase(newBuffer.begin() + i + 4, newBuffer.begin() + i + 4 + length);
-            newBuffer.insert(newBuffer.begin() + i + 4, textBytes.begin(), textBytes.end());
-            i += 4 + textBytes.size() - 1;
+            uint16_t newLength = static_cast<uint16_t>(textBytes.size());
+            newBuffer.push_back(0x04);
+            newBuffer.push_back(0x00);
+            newBuffer.push_back(newLength & 0xFF);
+            newBuffer.push_back((newLength >> 8) & 0xFF);
+            newBuffer.insert(newBuffer.end(), textBytes.begin(), textBytes.end());
+            i += 4 + length - 1;
+        }
+        else {
+            newBuffer.push_back(buffer[i]);
         }
     }
+
+    newBuffer.insert(newBuffer.end(), buffer.end() - 8, buffer.end());
 
     if (translationIndex != translations.size()) {
         std::cout << "Warning: translations too much" << std::endl;
@@ -205,10 +185,10 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.04.11" << std::endl;
+    std::cout << "Made by julixian 2025.08.19" << std::endl;
     std::cout << "Usage:" << std::endl;
-    std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
-    std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
+    std::cout << "  Dump:   ./program dump <script.dat> <output_txt>" << std::endl;
+    std::cout << "  Inject: ./program inject <org_script.dat> <new_txt> <script_new.dat>" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -225,19 +205,7 @@ int main(int argc, char* argv[]) {
             printUsage();
             return 1;
         }
-        std::string inputFolder = argv[2];
-        std::string outputFolder = argv[3];
-
-        fs::create_directories(outputFolder);
-
-        for (const auto& entry : fs::recursive_directory_iterator(inputFolder)) {
-            if (fs::is_regular_file(entry)) {
-                fs::path relativePath = fs::relative(entry.path(), inputFolder);
-                fs::path outputPath = fs::path(outputFolder) / relativePath;
-                fs::create_directories(outputPath.parent_path());
-                dumpText(entry.path(), outputPath);
-            }
-        }
+        dumpText(argv[2], argv[3]);
     }
     else if (mode == "inject") {
         if (argc != 5) {
@@ -245,26 +213,7 @@ int main(int argc, char* argv[]) {
             printUsage();
             return 1;
         }
-        std::string inputBinFolder = argv[2];
-        std::string inputTxtFolder = argv[3];
-        std::string outputFolder = argv[4];
-
-        fs::create_directories(outputFolder);
-
-        for (const auto& entry : fs::recursive_directory_iterator(inputBinFolder)) {
-            if (fs::is_regular_file(entry)) {
-                fs::path relativePath = fs::relative(entry.path(), inputBinFolder);
-                fs::path txtPath = fs::path(inputTxtFolder) / relativePath;
-                fs::path outputPath = fs::path(outputFolder) / relativePath;
-                fs::create_directories(outputPath.parent_path());
-                if (fs::exists(txtPath)) {
-                    injectText(entry.path(), txtPath, outputPath);
-                }
-                else {
-                    std::cerr << "Warning: No corresponding file found for " << relativePath << std::endl;
-                }
-            }
-        }
+        injectText(argv[2], argv[3], argv[4]);
     }
     else {
         std::cerr << "Error: Invalid mode selected." << std::endl;
