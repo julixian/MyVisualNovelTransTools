@@ -10,6 +10,8 @@ Track CreateFileA that open the archive and follow few steps, a certain register
 Made to decompress Adv engine(Studio Polaris)『*Pola\x00 u16origlen + 3 * u8unknown + u16decompressedlen』 sign script files in まじかるカナン MAGICAL FANTASY BOX<br/>
 Pack the files as a pac and use crass to unpack the pac, you can get decompressed files<br/>
 For it's much easier to pack such a format than copy the decompress func from crass<br/>
+## AGSIPakArchvieTool
+To extract/pack AGSI engine .pak archive<br/>
 ## AI5WINGccImageTool
 To convert .png(must be 32bpp) to Ai5Win .GCC image format(Uniformly use G24m format)<br/>
 ## AILScriptSimpleToolPlus/AILScriptSimpleTool++/AILScriptSimpleTool#
@@ -66,9 +68,10 @@ Each snr file has checksum for itself like Azsystem and the checksum func is dif
 So you need to fix game.exe to jump the check func, and [here](https://github.com/One-sixth/TsukikagerouTranslateProject/) has some fix records<br/>
 ## CaramelBox
 A series of tools to deal with Arc3 and Arc4 engine<br/>
-The repack function of Arc4Tool doesn't work on [ぴあ雀](https://vndb.org/v2398) and [EVE雀](https://vndb.org/v2320)<br/>
-Why?<br/>
-You ask me, I ask who<br/>
+~~The repack function of Arc4Tool doesn't work on [ぴあ雀](https://vndb.org/v2398) and [EVE雀](https://vndb.org/v2320)~~<br/>
+~~Why?~~<br/>
+~~You ask me, I ask who~~<br/>
+After update on 2025.08.22, you can repack them and inject their script files with parameter --compress | -c<br/>
 ## CswareDL1ArchiveTool
 To extract/repack Csware .DL1 Archive<br/>
 ## CVNSCpz2ArchiveTool
@@ -134,7 +137,7 @@ To extract/repack Lambda engine .lax Archive<br/>
 Uniformly use lzss fake compression to repack<br/>
 ## LazycrewScriptSimpleTool
 To dump/inject Lazycrew script.dat file<br/>
-I have no ability to fix jump op or chunck length, so it need truncation<br/>
+I haven't analyzed jump op or chunck length, so it needs truncation now<br/>
 ## LucifenSobScriptSimpleTool
 To dump/inject Lucifen/Ellefin engine .sob script files<br/>
 For tob, use Ineditor or [jyxjyx1234's tool](https://github.com/jyxjyx1234/misc_game-chs/tree/re_upload/%E7%8C%AB%E6%92%AB%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)(need to fix HScene script by padding the file to the same size)<br/>
@@ -144,7 +147,7 @@ To decrypt/encrypt MainProgramHoep engine .dat script file<br/>
 To dump/inject Majiro Script .mjs(decrypted by mjcrypt) file or MajiroOBJV file(need to change file-extend-name to .mjs)<br/>
 To change MajiroOBJX to MajiroOBJV You can see [GalgameReverse Project](https://github.com/YuriSizuku/GalgameReverse)<br/>
 Initially made to edit script in あの晴れわたる空より高く for there are tips-jump in the game and no tools can deal with it.<br/>
-So it ONLY works on new_version majirov3 script<br/>
+So it ONLY works on few new_version majirov3 script(Looking back at this tool a year later, I feel it was written so foolishly...)<br/>
 For v1 use [VNT](https://github.com/arcusmaximus/VNTranslationTools)<br/>
 For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/MajiroTools) or Ineditor<br/>
 ## MasysScriptSimpleTool
@@ -152,7 +155,7 @@ To dump/inject Masys engine .meg script files<br/>
 Search "Powered" to find key in game.exe<br/>
 Example:<br/>
 ![Snipaste_2025-02-16_01-21-26.png](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-02-16_01-21-26.png)<br/>
-Now it has bugs, needing truncation.
+I haven't analyzed jump op or chunck length, so it needs truncation now.
 ## MarbleMblArchiveTool
 To extract/repack Marble engine mg_data(%d).mbl Archive<br/>
 If the game has no key(can be correctly extracted by the default method in GARbro), keep key empty<br/>
@@ -163,6 +166,8 @@ For example:<br/>
 ![Snipaste_2025-01-30_14-25-37](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-01-30_14-25-37.png)
 ![Snipaste_2025-01-30_15-21-02](https://github.com/julixian/MyVisualNovelTransTools/blob/main/images/Snipaste_2025-01-30_15-21-02.png)
 the key of 彼女が見舞いに来ない理由 is 0x46554A4953415741 and Cafe AQUA is 0x89B482CD97598EF782BE
+## MnpMmaArchiveTool
+To extract/repack Mnp Engine .mma archive(only works on script archive now, because pictures are stored in a special way in mma and the tool doesn't process it)<br/>
 ## MTSPakZArchiveTool
 To extract/repack MTS engine .pak or .z Archive<br/>
 ## MyAdvArchiveTool
@@ -213,8 +218,10 @@ apply for both v2 and v3<br/>
 To extract/repack TopCatV2 .TCD Archive<br/>
 ## TopCatV3ArchiveTool
 To extract/repack TopCatV3 .TCD Archive<br/>
+## ValkArchiveTool
+A serial of tools to extract latest dat archive(2025.08), extract/pack am2 multi-frame archive format, convert image format between mg2 and png<br/>
 ## ValkDataImageTool
-To convert .png(must be 32bpp) to Valkyria engine data\d format image in odn archive<br/>
+To convert .png(must be 32bpp) to Valkyria engine data\d format image in odn archive(only works on few games now)<br/>
 ## WscScriptSimpleTool
 To dump/inject Willplus V1 engine .wsc script files<br/>
 ## YaneuraoDatArchiveTool

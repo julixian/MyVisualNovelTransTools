@@ -13,13 +13,19 @@ struct ARC4COMPCHUNKHDR {
 	uint16_t original_length;
 	uint16_t seed;
 };
+
+struct EVEMHDR {
+	uint32_t magic; // 0x4D455645
+	uint32_t unknown; // 0x100
+	uint32_t reserved; // 0x0
+	uint32_t scriptBegin;
+	uint32_t scriptLength;
+};
 #pragma pack()
 
-std::string get_file_prefix(const std::string& filename);
-std::string get_file_extension(const std::string& filename);
-std::vector<uint8_t> uncompress_sequence(std::vector<uint8_t>& data, const std::string& filename);
+std::vector<uint8_t> uncompress_sequence(std::vector<uint8_t>& data);
 uint32_t get_stupid_long(uint8_t* buff);
-std::vector<uint8_t> compress_sequence(std::vector<uint8_t>& data);
+std::vector<uint8_t> compress_sequence(std::vector<uint8_t>& data, uint32_t maxChunckSize, bool compress_type);
 void write_stupid_long(uint8_t* buff, size_t val);
 
 #endif

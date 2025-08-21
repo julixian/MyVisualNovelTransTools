@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "arc4compresstool",
+  "version": "2025.8.22",
+  "dependencies": [
+    "boost-endian"
+  ]
+}
