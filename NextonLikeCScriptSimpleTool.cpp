@@ -1,11 +1,7 @@
-﻿#include <iostream>
-#include <fstream>
-#include <windows.h>
-#include <vector>
-#include <string>
-#include <regex>
-#include <filesystem>
+﻿#include <stdint.h>
+#include <cstring>
 
+import std;
 namespace fs = std::filesystem;
 
 std::vector<uint8_t> stringToCP932(const std::string& str) {
@@ -36,17 +32,25 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     uint32_t funcCount = *(uint32_t*)&buffer[0];
     uint32_t scriptBegin = funcCount * 12 + 8;
 
+    std::regex pattern_1(R"([\x01])");
+    std::regex pattern_2(R"([\x02])");
+    std::regex pattern_3(R"([\x03])");
+    std::regex pattern_4(R"([\x04])");
+    std::regex pattern_5(R"([\x05])");
+    std::regex lb1(R"(\r)");
+    std::regex lb2(R"(\n)");
     for (size_t i = 0; i < funcCount; i++) {
         LC_FUNC lc_func = *(LC_FUNC*)&buffer[8 + i * 12];
         if (lc_func.func == 0x11 && lc_func.param1 == 0x02) {
             uint32_t offset = scriptBegin + lc_func.param2 + 4;
             std::string str((char*)&buffer[offset]);
-            std::regex pattern_1(R"([\x01])");
-            std::regex pattern_2(R"([\x02])");
-            std::regex pattern_3(R"([\x03])");
             str = std::regex_replace(str, pattern_1, "\\x01");
             str = std::regex_replace(str, pattern_2, "\\x02");
             str = std::regex_replace(str, pattern_3, "\\x03");
+            str = std::regex_replace(str, pattern_4, "\\x04");
+            str = std::regex_replace(str, pattern_5, "\\x05");
+            str = std::regex_replace(str, lb1, "[r]");
+            str = std::regex_replace(str, lb2, "[n]");
             output << str << std::endl;
         }
     }
@@ -81,6 +85,13 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::vector<uint8_t> newBuffer(scriptBegin);
     memcpy(newBuffer.data(), buffer.data(), scriptBegin);
 
+    std::regex pattern_1(R"(\\x01)");
+    std::regex pattern_2(R"(\\x02)");
+    std::regex pattern_3(R"(\\x03)");
+    std::regex pattern_4(R"(\\x04)");
+    std::regex pattern_5(R"(\\x05)");
+    std::regex lb1(R"(\[r\])");
+    std::regex lb2(R"(\[n\])");
     for (size_t i = 0; i < funcCount; i++) {
         LC_FUNC lc_func = *(LC_FUNC*)&buffer[8 + i * 12];
         if (lc_func.func == 0x11 && lc_func.param1 == 0x02) {
@@ -93,12 +104,13 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             }
             std::string str = translations[translationIndex];
             translationIndex++;
-            std::regex pattern_1(R"(\\x01)");
-            std::regex pattern_2(R"(\\x02)");
-            std::regex pattern_3(R"(\\x03)");
             str = std::regex_replace(str, pattern_1, "\x01");
             str = std::regex_replace(str, pattern_2, "\x02");
             str = std::regex_replace(str, pattern_3, "\x03");
+            str = std::regex_replace(str, pattern_4, "\x04");
+            str = std::regex_replace(str, pattern_5, "\x05");
+            str = std::regex_replace(str, lb1, "\r");
+            str = std::regex_replace(str, lb2, "\n");
             std::vector<uint8_t> textBytes = stringToCP932(str);
             textBytes.push_back(0x00);
             uint32_t length = textBytes.size();
@@ -124,7 +136,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.04.11" << std::endl;
+    std::cout << "Made by julixian 2025.08.22" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
