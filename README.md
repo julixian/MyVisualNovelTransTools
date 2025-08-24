@@ -72,6 +72,8 @@ A series of tools to deal with Arc3 and Arc4 engine<br/>
 ~~Why?~~<br/>
 ~~You ask me, I ask who~~<br/>
 After update on 2025.08.22, you can repack them and inject their script files with parameter --compress | -c<br/>
+## CrsysSceneCrpArchiveTool
+To extract/pack Crsys engine(maybe this name?) scene.crp archive<br/>
 ## CswareDL1ArchiveTool
 To extract/repack Csware .DL1 Archive<br/>
 ## CVNSCpz2ArchiveTool
@@ -201,6 +203,10 @@ So if there are new flags, you can change the offset by hand<br/>
 To convert .png(must be 32bpp) to AI5WIN/AI6WIN .rmt image format<br/>
 ## RPMArchiveTool
 To extract/pack RPM/ZENOS engine .arc archvie<br/>
+## SAS5OldScriptSimpleTool
+To dump/inject texts in old(From version 100000 to 104000) SAS5 engine CODE section(in .sec5 file)<br/>
+For higher version, use [SAS5Tool](https://github.com/pkuislm/SAS5Tool)<br/>
+For extract/repack sec5 archive, use [sec5_unpack/sec5_pack](https://github.com/Yggdrasill-Moe/Niflheim/tree/master/StudioSeldomAdventureSystem)<br/>
 ## ScoopFxArchiveTool
 To extract/pack Scoop engine .FX archive<br/>
 ## SeraphScriptArchiveTool
