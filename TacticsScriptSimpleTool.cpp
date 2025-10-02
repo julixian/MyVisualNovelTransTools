@@ -1,14 +1,7 @@
-﻿#include <iostream>
-#include <fstream>
-#include <windows.h>
-#include <vector>
-#include <string>
-#include <iomanip>
+﻿#include <windows.h>
 #include <cstdint>
-#include <filesystem>
-#include <algorithm>
-#include <regex>
 
+import std;
 namespace fs = std::filesystem;
 
 std::vector<uint8_t> stringToCP932(const std::string& str) {
@@ -63,7 +56,8 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             || *(uint32_t*)&buffer[i] == 0x63
             || *(uint32_t*)&buffer[i] == 0x61
             || *(uint32_t*)&buffer[i] == 0x5F
-            || *(uint32_t*)&buffer[i] == 0x5C)
+            || *(uint32_t*)&buffer[i] == 0x5C
+            || *(uint32_t*)&buffer[i] == 0x5B)
             && *(uint32_t*)&buffer[i + 4] < buffer.size()
             && *(uint32_t*)&buffer[i + 4] > ScriptOpEnd
             && *(uint32_t*)&buffer[i + 8] < buffer.size()
@@ -225,16 +219,17 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::cout << "Write-back complete. Output saved to " << outputBinPath << std::endl;
 }
 
-void printUsage() {
-    std::cout << "Made by julixian 2025.05.24" << std::endl;
+void printUsage(const fs::path& programPath) {
+    std::string programName = programPath.filename().string();
+    std::cout << "Made by julixian 2025.10.02" << std::endl;
     std::cout << "Usage:" << std::endl;
-    std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
-    std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
+    std::cout << "  Dump:   " << programName << " dump <input_folder> <output_folder>" << std::endl;
+    std::cout << "  Inject: " << programName << " inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        printUsage();
+        printUsage(argv[0]);
         return 1;
     }
 
@@ -243,7 +238,7 @@ int main(int argc, char* argv[]) {
     if (mode == "dump") {
         if (argc != 4) {
             std::cerr << "Error: Incorrect number of arguments for dump mode." << std::endl;
-            printUsage();
+            printUsage(argv[0]);
             return 1;
         }
         std::string inputFolder = argv[2];
@@ -263,7 +258,7 @@ int main(int argc, char* argv[]) {
     else if (mode == "inject") {
         if (argc != 5) {
             std::cerr << "Error: Incorrect number of arguments for inject mode." << std::endl;
-            printUsage();
+            printUsage(argv[0]);
             return 1;
         }
         std::string inputBinFolder = argv[2];
@@ -289,7 +284,7 @@ int main(int argc, char* argv[]) {
     }
     else {
         std::cerr << "Error: Invalid mode selected." << std::endl;
-        printUsage();
+        printUsage(argv[0]);
         return 1;
     }
 
