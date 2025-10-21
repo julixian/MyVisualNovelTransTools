@@ -8,7 +8,7 @@
 // Main header for the ERISA library.
 #include "xerisa.h"
 
-std::string WideToAscii(const std::wstring& wide, UINT CodePage) {
+std::string wide2Ascii(const std::wstring& wide, UINT CodePage) {
     int len = WideCharToMultiByte
     (CodePage, 0, wide.c_str(), -1, nullptr, 0, nullptr, nullptr);
     if (len == 0) return "";
@@ -19,7 +19,7 @@ std::string WideToAscii(const std::wstring& wide, UINT CodePage) {
     return ascii;
 }
 
-std::wstring AsciiToWide(const std::string& ascii, UINT CodePage) {
+std::wstring ascii2Wide(const std::string& ascii, UINT CodePage) {
     int len = MultiByteToWideChar(CodePage, 0, ascii.c_str(), -1, nullptr, 0);
     if (len == 0) return L"";
     std::wstring wide(len, L'\0');
@@ -28,8 +28,8 @@ std::wstring AsciiToWide(const std::string& ascii, UINT CodePage) {
     return wide;
 }
 
-std::string AsciiToAscii(const std::string& ascii, UINT src, UINT dst) {
-    return WideToAscii(AsciiToWide(ascii, src), dst);
+std::string ascii2Ascii(const std::string& ascii, UINT src, UINT dst) {
+    return wide2Ascii(ascii2Wide(ascii, src), dst);
 }
 
 // Provide stub implementations for missing virtual functions for the linker.
@@ -38,12 +38,12 @@ const char* ESLObject::GetClassNameW(void) const { return "ESLObject"; }
 
 // Struct to hold an extracted file's path and data in memory.
 struct ExtractedFile {
-    std::filesystem::path disk_path; // Stored as a Unicode-aware path object.
+    std::filesystem::path diskPath; // Stored as a Unicode-aware path object.
     std::vector<BYTE> data;
 };
 
 // Forward declaration of the recursive function.
-void ReadArchiveToMemory(
+void readArchiveToMemory(
     ERISAArchive* archive,
     const std::filesystem::path& current_path_in_archive,
     const char* password,
@@ -52,7 +52,7 @@ void ReadArchiveToMemory(
 
 int main(int argc, char* argv[])
 {
-    system("chcp 65001");
+    SetConsoleOutputCP(65001); // Set console output code page to UTF-8.
     if (argc < 3 || argc > 4)
     {
         std::cout << "Made by julixian 2025.07.07" << std::endl;
@@ -63,16 +63,16 @@ int main(int argc, char* argv[])
         return 1;
     }
     
-    std::filesystem::path input_noa_path(argv[1]);
-    std::filesystem::path output_folder_path(argv[2]);
+    std::filesystem::path inputNoaPath(argv[1]);
+    std::filesystem::path outputFolderPath(argv[2]);
 
     // Check if a password was provided.
     const char* password = (argc == 4) ? argv[3] : nullptr;
 
     std::cout << "ERISA NOA Archive Extractor" << std::endl;
     std::cout << "--------------------------------------------" << std::endl;
-    std::cout << "Input File: " << WideToAscii(input_noa_path.wstring(), 65001) << std::endl;
-    std::cout << "Output Directory: " << WideToAscii(output_folder_path.wstring(), 65001) << std::endl;
+    std::cout << "Input File: " << wide2Ascii(inputNoaPath.wstring(), 65001) << std::endl;
+    std::cout << "Output Directory: " << wide2Ascii(outputFolderPath.wstring(), 65001) << std::endl;
     if (password) {
         std::cout << "Using Password: " << password << std::endl;
     }
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 
     // --- Open the archive ---
     ERawFile* rawFile = new ERawFile();
-    if (rawFile->Open(input_noa_path.string().c_str(), ESLFileObject::modeRead) != eslErrSuccess)
+    if (rawFile->Open(inputNoaPath.string().c_str(), ESLFileObject::modeRead) != eslErrSuccess)
     {
         std::cerr << "Error: Failed to open input .noa file." << std::endl;
         delete rawFile;
@@ -103,11 +103,11 @@ int main(int argc, char* argv[])
     // Phase 1: Read all files from the archive into memory.
     // This decouples library interaction from disk I/O to prevent bugs.(I know it seems stupid, but...you know what I want to say.)
     // ====================================================================
-    std::vector<ExtractedFile> files_in_memory;
+    std::vector<ExtractedFile> filesInMemory;
     std::cout << "Phase 1: Scanning archive and reading files into memory..." << std::endl;
     try
     {
-        ReadArchiveToMemory(noaArchive, "", password, files_in_memory);
+        readArchiveToMemory(noaArchive, L"", password, filesInMemory);
     }
     catch (const std::exception& e)
     {
@@ -118,29 +118,29 @@ int main(int argc, char* argv[])
     noaArchive->Close();
     delete noaArchive;
     delete rawFile;
-    std::cout << "Scan complete. " << files_in_memory.size() << " files read into memory." << std::endl << std::endl;
+    std::cout << "Scan complete. " << filesInMemory.size() << " files read into memory." << std::endl << std::endl;
 
     // ====================================================================
     // Phase 2: Write the files from memory to the disk.
     // ====================================================================
     std::cout << "Phase 2: Writing files from memory to disk..." << std::endl;
-    for (const auto& file : files_in_memory)
+    for (const auto& file : filesInMemory)
     {
         // Construct the final disk path.
-        std::filesystem::path final_disk_path = output_folder_path / file.disk_path;
+        std::filesystem::path finalDiskPath = outputFolderPath / file.diskPath;
 
         // Convert the Unicode path to the console's encoding for correct display.
-        std::string console_path = WideToAscii(final_disk_path.wstring(), 65001);
-        std::cout << "Writing: " << console_path << " (" << file.data.size() << " bytes)" << std::endl;
+        std::string consolePath = wide2Ascii(finalDiskPath.wstring(), 65001);
+        std::cout << "Writing: " << consolePath << " (" << file.data.size() << " bytes)" << std::endl;
 
         try
         {
-            if (final_disk_path.has_parent_path())
+            if (finalDiskPath.has_parent_path())
             {
-                std::filesystem::create_directories(final_disk_path.parent_path());
+                std::filesystem::create_directories(finalDiskPath.parent_path());
             }
 
-            std::ofstream outfile(final_disk_path, std::ios::binary);
+            std::ofstream outfile(finalDiskPath, std::ios::binary);
             if (outfile)
             {
                 outfile.write(reinterpret_cast<const char*>(file.data.data()), file.data.size());
@@ -163,15 +163,15 @@ int main(int argc, char* argv[])
 /**
  * @brief Recursively reads all files from a directory within the archive into a memory vector.
  * @param archive The active ERISAArchive object.
- * @param current_path_in_archive The relative path of the current directory being processed.
+ * @param currentPathInArchive The relative path of the current directory being processed.
  * @param password The password to use for encrypted files.
- * @param extracted_files The vector to store the results in.
+ * @param extractedFiles The vector to store the results in.
  */
-void ReadArchiveToMemory(
+void readArchiveToMemory(
     ERISAArchive* archive,
-    const std::filesystem::path& current_path_in_archive,
+    const std::filesystem::path& currentPathInArchive,
     const char* password,
-    std::vector<ExtractedFile>& extracted_files)
+    std::vector<ExtractedFile>& extractedFiles)
 {
     ERISAArchive::EDirectory dir;
     archive->GetFileEntries(dir);
@@ -180,40 +180,39 @@ void ReadArchiveToMemory(
     {
         ERISAArchive::FILE_INFO& fileInfo = dir[i];
 
-        // --- Convert filename from CP932 to a Unicode path object ---
-        std::string cp932FileName(fileInfo.ptrFileName);
-        std::wstring wideFileName = AsciiToWide(cp932FileName, 932);
-        std::filesystem::path new_path = current_path_in_archive / wideFileName;
+        // --- Convert filename from UTF-8 to a Unicode path object ---
+        std::string u8FileName(fileInfo.ptrFileName);
+        std::wstring wideFileName = ascii2Wide(u8FileName, 65001);
+        std::filesystem::path newPath = currentPathInArchive / wideFileName;
         // ---
 
         if (fileInfo.dwAttribute & ERISAArchive::attrDirectory)
         {
             archive->DescendDirectory(fileInfo.ptrFileName);
-            ReadArchiveToMemory(archive, new_path, password, extracted_files);
+            readArchiveToMemory(archive, newPath, password, extractedFiles);
             archive->AscendDirectory();
         }
         else
         {
-            const char* pass_to_use = (fileInfo.dwEncodeType & ERISAArchive::etBSHFCrypt) ? password : nullptr;
+            const char* passToUse = (fileInfo.dwEncodeType & ERISAArchive::etBSHFCrypt) ? password : nullptr;
 
-            if (archive->OpenFile(fileInfo.ptrFileName, pass_to_use) != eslErrSuccess)
+            if (archive->OpenFile(fileInfo.ptrFileName, passToUse) != eslErrSuccess)
             {
-                std::string console_path = WideToAscii(new_path.wstring(), 65001);
-                std::cerr << "  -> Warning: Failed to open file in archive: " << console_path << std::endl;
+                std::cerr << "  -> Warning: Failed to open file in archive: " << u8FileName << std::endl;
                 continue;
             }
 
             UINT64 size = archive->GetLargeLength();
-            ExtractedFile mem_file;
-            mem_file.disk_path = new_path;
+            ExtractedFile memFile;
+            memFile.diskPath = newPath;
 
             if (size > 0)
             {
-                mem_file.data.resize(static_cast<size_t>(size));
-                archive->Read(mem_file.data.data(), (unsigned long)size);
+                memFile.data.resize(static_cast<size_t>(size));
+                archive->Read(memFile.data.data(), (unsigned long)size);
             }
 
-            extracted_files.push_back(std::move(mem_file));
+            extractedFiles.push_back(std::move(memFile));
             archive->AscendFile();
         }
     }
