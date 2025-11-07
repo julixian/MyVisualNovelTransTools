@@ -1,4 +1,4 @@
-﻿#include <stdint.h>
+﻿#include <cstdint>
 #include <cstring>
 
 import std;
@@ -37,6 +37,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     std::regex pattern_3(R"([\x03])");
     std::regex pattern_4(R"([\x04])");
     std::regex pattern_5(R"([\x05])");
+    std::regex pattern_6(R"([\x06])");
     std::regex lb1(R"(\r)");
     std::regex lb2(R"(\n)");
     for (size_t i = 0; i < funcCount; i++) {
@@ -49,6 +50,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             str = std::regex_replace(str, pattern_3, "\\x03");
             str = std::regex_replace(str, pattern_4, "\\x04");
             str = std::regex_replace(str, pattern_5, "\\x05");
+            str = std::regex_replace(str, pattern_6, "\\x06");
             str = std::regex_replace(str, lb1, "[r]");
             str = std::regex_replace(str, lb2, "[n]");
             output << str << std::endl;
@@ -90,6 +92,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::regex pattern_3(R"(\\x03)");
     std::regex pattern_4(R"(\\x04)");
     std::regex pattern_5(R"(\\x05)");
+    std::regex pattern_6(R"(\\x06)");
     std::regex lb1(R"(\[r\])");
     std::regex lb2(R"(\[n\])");
     for (size_t i = 0; i < funcCount; i++) {
@@ -109,6 +112,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             str = std::regex_replace(str, pattern_3, "\x03");
             str = std::regex_replace(str, pattern_4, "\x04");
             str = std::regex_replace(str, pattern_5, "\x05");
+            str = std::regex_replace(str, pattern_6, "\x06");
             str = std::regex_replace(str, lb1, "\r");
             str = std::regex_replace(str, lb2, "\n");
             std::vector<uint8_t> textBytes = stringToCP932(str);
@@ -136,7 +140,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
 }
 
 void printUsage() {
-    std::cout << "Made by julixian 2025.08.22" << std::endl;
+    std::cout << "Made by julixian 2025.11.08" << std::endl;
     std::cout << "Usage:" << std::endl;
     std::cout << "  Dump:   ./program dump <input_folder> <output_folder>" << std::endl;
     std::cout << "  Inject: ./program inject <input_orgi-bin_folder> <input_translated-txt_folder> <output_folder>" << std::endl;
