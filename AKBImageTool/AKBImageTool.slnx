@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AKB2Png/AKB2Png.vcxproj" />
+  <Project Path="AKBImageTool/AKBImageTool.vcxproj" />
+</Solution>
