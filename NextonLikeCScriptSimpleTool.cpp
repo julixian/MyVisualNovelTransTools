@@ -32,6 +32,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     uint32_t funcCount = *(uint32_t*)&buffer[0];
     uint32_t scriptBegin = funcCount * 12 + 8;
 
+    std::regex pattern_0(R"([\x00])");
     std::regex pattern_1(R"([\x01])");
     std::regex pattern_2(R"([\x02])");
     std::regex pattern_3(R"([\x03])");
@@ -43,8 +44,11 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     for (size_t i = 0; i < funcCount; i++) {
         LC_FUNC lc_func = *(LC_FUNC*)&buffer[8 + i * 12];
         if (lc_func.func == 0x11 && lc_func.param1 == 0x02) {
+            uint32_t lengthOffset = scriptBegin + lc_func.param2;
+            uint32_t length = *(uint32_t*)&buffer[lengthOffset];
             uint32_t offset = scriptBegin + lc_func.param2 + 4;
-            std::string str((char*)&buffer[offset]);
+            std::string str((char*)&buffer[offset], length - 1);
+            str = std::regex_replace(str, pattern_0, "\\x00");
             str = std::regex_replace(str, pattern_1, "\\x01");
             str = std::regex_replace(str, pattern_2, "\\x02");
             str = std::regex_replace(str, pattern_3, "\\x03");
@@ -87,6 +91,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     std::vector<uint8_t> newBuffer(scriptBegin);
     memcpy(newBuffer.data(), buffer.data(), scriptBegin);
 
+    std::regex pattern_0(R"(\\x00)");
     std::regex pattern_1(R"(\\x01)");
     std::regex pattern_2(R"(\\x02)");
     std::regex pattern_3(R"(\\x03)");
@@ -98,7 +103,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     for (size_t i = 0; i < funcCount; i++) {
         LC_FUNC lc_func = *(LC_FUNC*)&buffer[8 + i * 12];
         if (lc_func.func == 0x11 && lc_func.param1 == 0x02) {
-            uint32_t offset = newBuffer.size() - scriptBegin;
+            uint32_t offset = (uint32_t)newBuffer.size() - scriptBegin;
             lc_func.param2 = offset;
             *(LC_FUNC*)&newBuffer[8 + i * 12] = lc_func;
             if (translationIndex >= translations.size()) {
@@ -107,6 +112,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             }
             std::string str = translations[translationIndex];
             translationIndex++;
+            str = std::regex_replace(str, pattern_0, "\x00");
             str = std::regex_replace(str, pattern_1, "\x01");
             str = std::regex_replace(str, pattern_2, "\x02");
             str = std::regex_replace(str, pattern_3, "\x03");
@@ -117,7 +123,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             str = std::regex_replace(str, lb2, "\n");
             std::vector<uint8_t> textBytes = stringToCP932(str);
             textBytes.push_back(0x00);
-            uint32_t length = textBytes.size();
+            uint32_t length = (uint32_t)textBytes.size();
             newBuffer.insert(newBuffer.end(), (uint8_t*)&length, (uint8_t*)&length + 4);
             newBuffer.insert(newBuffer.end(), textBytes.begin(), textBytes.end());
         }
@@ -127,7 +133,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         std::cout << "Warning: translations too much" << std::endl;
     }
 
-    *(uint32_t*)&newBuffer[4] = newBuffer.size() - scriptBegin;
+    *(uint32_t*)&newBuffer[4] = (uint32_t)newBuffer.size() - scriptBegin;
 
     // 写入新文件
     outputBin.write(reinterpret_cast<const char*>(newBuffer.data()), newBuffer.size());
