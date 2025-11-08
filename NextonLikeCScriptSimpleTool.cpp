@@ -112,7 +112,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
             }
             std::string str = translations[translationIndex];
             translationIndex++;
-            str = std::regex_replace(str, pattern_0, "\x00");
+            str = std::regex_replace(str, pattern_0, std::string("\x00", 1));
             str = std::regex_replace(str, pattern_1, "\x01");
             str = std::regex_replace(str, pattern_2, "\x02");
             str = std::regex_replace(str, pattern_3, "\x03");
