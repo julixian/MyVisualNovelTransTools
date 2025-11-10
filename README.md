@@ -23,6 +23,9 @@ v1: 2006-????<br/>
 Initially, I didn't expect there would be so many types of AIL engine scripts, so I started by creating tools for each script type as I encountered them, resulting in AILScriptSimpleToolV1-V3. I then integrated them into AILScriptSimpleToolPlus through simple copy and paste. However, since I didn't have the energy to carefully analyze many OPs in V1 and V2 scripts, and the original code was written too casually to modify easily, I only added options for overwriting the original text and freely setting the overwrite starting position. This helped avoid offset overflow issues caused by u16's small maximum value and garbled text problems caused by overwriting unanalyzed sentences. While fixing some details as much as possible, this became AILScriptSimpleTool++.<br/>
 <br/>
 AILScriptSimpleTool# completely reconstructed the extraction and reinsertion of V1 and V2 scripts (V3 remains unchanged). I still didn't analyze their OPs, but the new tool detects which sentences in the text block weren't extracted and automatically guesses where their offsets are stored. Naturally, some sentences might be guessed incorrectly, but you can manually delete them or find the actual location storing their offsets to fix them, as the reconstructed new function only makes modifications at locations based on the offset addresses (hexadecimal numbers before ":::::") stored in the txt file.<br/>
+
+## AKBImageTool
+To convert .png(must be 32bpp) to AI5WIN/AI6WIN .akb image format<br/>
 ## AnkhDatArchiveTool
 To extract/repack Ankh engine .dat archive<br/>
 ## AoiBoxAOIBXTool
