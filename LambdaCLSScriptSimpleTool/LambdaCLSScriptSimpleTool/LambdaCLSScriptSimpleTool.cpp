@@ -203,6 +203,9 @@ int wmain(int argc, wchar_t* argv[])
                 if (entry.is_regular_file()) {
                     const fs::path inputPath = entry.path();
                     const fs::path outputPath = outputFolder / fs::relative(inputPath, inputFolder);
+                    if (!fs::exists(outputPath.parent_path())) {
+                        fs::create_directories(outputPath.parent_path());
+                    }
                     dumpText(inputPath, outputPath);
                 }
             }

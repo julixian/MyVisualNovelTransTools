@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="LambdaCLSScriptSimpleTool/LambdaCLSScriptSimpleTool.vcxproj" />
+  <Project Path="LambdaCLSScriptSimpleTool/LambdaCLSScriptSimpleTool.vcxproj" Id="596cfe5b-502e-4116-8661-52574747706b" />
 </Solution>
