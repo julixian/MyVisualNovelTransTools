@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="NextonLikeC/NextonLikeC.vcxproj" Id="600dbe28-8ea9-4484-9511-c56b67f4b037" />
+  <Project Path="NextonLikeCScriptSimpleTool/NextonLikeCScriptSimpleTool.vcxproj" Id="77b1d8fc-b2ff-41e1-a6f6-e247c7372cde" />
+</Solution>

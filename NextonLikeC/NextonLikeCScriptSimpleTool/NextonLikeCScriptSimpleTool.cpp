@@ -65,36 +65,11 @@ std::string replaceStr(std::string_view str, std::string_view org, std::string_v
     return result;
 }
 
-bool isValidSjis(const std::string& str, bool enableCP932 = true) {
-    std::vector<uint8_t> textBytes = string2Bytes(str);
-    uint8_t leadByteLimit = enableCP932 ? 0xfc : 0xef;
-    for (size_t i = 0; i < textBytes.size(); i++) {
-        if (textBytes[i] < 0x20 || textBytes[i] > leadByteLimit || (0x9f < textBytes[i] && textBytes[i] < 0xe0)) {
-            return false;
-        }
-        else if ((0x81 <= textBytes[i] && textBytes[i] <= 0x9f) || (0xe0 <= textBytes[i] && textBytes[i] <= leadByteLimit)) {
-            if (i + 1 >= textBytes.size()) {
-                return false;
-            }
-            if (textBytes[i + 1] > 0xfc || textBytes[i + 1] < 0x40) {
-                return false;
-            }
-            else {
-                i++;
-                continue;
-            }
-        }
-    }
-    return true;
-}
-
-void printUsage(const fs::path& programPath) {
-    std::print("Made by julixian 2025.11.16\n"
-        "Usage: \n"
-    "  Dump: {0} dump <input_folder> <output_folder>\n"
-    "  Inject: {0} inject <input_orig-bin_folder> <input_translated-txt_folder> <output_folder>",
-        wide2Ascii(programPath.filename()));
-}
+struct LC_FUNC {
+    uint32_t func;
+    uint32_t param1;
+    uint32_t param2;
+};
 
 //DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
@@ -106,19 +81,36 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     }
 
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(input), {});
+    uint32_t funcCount = *(uint32_t*)&buffer[0];
+    uint32_t scriptBegin = funcCount * 12 + 8;
 
-    if (std::string(buffer.begin(), buffer.begin() + 4) != "MBT0") {
-        throw std::runtime_error("Invalid file format: " + wide2Ascii(inputPath));
-    }
-
-    uint32_t sentenceCount = read<uint32_t>(&buffer[0x8]);
-    for (uint32_t i = 0; i < sentenceCount - 3; i++) {
-        uint32_t indexOfOffset = 0x14 + i * 4;
-        uint32_t offset = read<uint32_t>(&buffer[indexOfOffset]);
-        std::string sentence((char*)&buffer[offset]);
-        replaceStrInplace(sentence, "\r", "[r]");
-        replaceStrInplace(sentence, "\n", "[n]");
-        output << sentence << "\n";
+    std::regex pattern_0(R"([\x00])");
+    std::regex pattern_1(R"([\x01])");
+    std::regex pattern_2(R"([\x02])");
+    std::regex pattern_3(R"([\x03])");
+    std::regex pattern_4(R"([\x04])");
+    std::regex pattern_5(R"([\x05])");
+    std::regex pattern_6(R"([\x06])");
+    std::regex lb1(R"(\r)");
+    std::regex lb2(R"(\n)");
+    for (size_t i = 0; i < funcCount; i++) {
+        LC_FUNC lc_func = *(LC_FUNC*)&buffer[8 + i * 12];
+        if (lc_func.func == 0x11 && lc_func.param1 == 0x02) {
+            uint32_t lengthOffset = scriptBegin + lc_func.param2;
+            uint32_t length = *(uint32_t*)&buffer[lengthOffset];
+            uint32_t offset = scriptBegin + lc_func.param2 + 4;
+            std::string str((char*)&buffer[offset], length - 1);
+            str = std::regex_replace(str, pattern_0, "\\x00");
+            str = std::regex_replace(str, pattern_1, "\\x01");
+            str = std::regex_replace(str, pattern_2, "\\x02");
+            str = std::regex_replace(str, pattern_3, "\\x03");
+            str = std::regex_replace(str, pattern_4, "\\x04");
+            str = std::regex_replace(str, pattern_5, "\\x05");
+            str = std::regex_replace(str, pattern_6, "\\x06");
+            str = std::regex_replace(str, lb1, "[r]");
+            str = std::regex_replace(str, lb2, "[n]");
+            output << str << std::endl;
+        }
     }
 
     input.close();
@@ -137,40 +129,62 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         throw std::runtime_error("Error opening files: " + wide2Ascii(inputBinPath) + " or " + wide2Ascii(inputTxtPath) + " or " + wide2Ascii(outputBinPath));
     }
     std::vector<uint8_t> buffer(std::istreambuf_iterator<char>(inputBin), {});
-    std::vector<uint8_t> newBuffer = buffer;
+    std::vector<std::string> translations;
 
-    std::vector<std::string> sentences;
-    uint32_t translationIndex = 0;
-
-    // 读取翻译文本
     std::string line;
     while (std::getline(inputTxt, line)) {
-        replaceStrInplace(line, "[r]", "\r");
-        replaceStrInplace(line, "[n]", "\n");
-        sentences.push_back(std::move(line));
+        translations.push_back(line);
     }
 
-    uint32_t sentenceCount = read<uint32_t>(&buffer[0x8]);
+    size_t translationIndex = 0;
+    uint32_t funcCount = *(uint32_t*)&buffer[0];
+    uint32_t scriptBegin = funcCount * 12 + 8;
+    std::vector<uint8_t> newBuffer(scriptBegin);
+    memcpy(newBuffer.data(), buffer.data(), scriptBegin);
 
-    for (uint32_t i = 0; i < sentenceCount - 3; i++) {
-        if (translationIndex >= sentences.size()) {
-            throw std::runtime_error(std::format("Not enough translations provided, expected {0}, got {1}.", sentenceCount - 3, translationIndex));
+    std::regex pattern_0(R"(\\x00)");
+    std::regex pattern_1(R"(\\x01)");
+    std::regex pattern_2(R"(\\x02)");
+    std::regex pattern_3(R"(\\x03)");
+    std::regex pattern_4(R"(\\x04)");
+    std::regex pattern_5(R"(\\x05)");
+    std::regex pattern_6(R"(\\x06)");
+    std::regex lb1(R"(\[r\])");
+    std::regex lb2(R"(\[n\])");
+    for (size_t i = 0; i < funcCount; i++) {
+        LC_FUNC lc_func = *(LC_FUNC*)&buffer[8 + i * 12];
+        if (lc_func.func == 0x11 && lc_func.param1 == 0x02) {
+            uint32_t offset = (uint32_t)newBuffer.size() - scriptBegin;
+            lc_func.param2 = offset;
+            *(LC_FUNC*)&newBuffer[8 + i * 12] = lc_func;
+            if (translationIndex >= translations.size()) {
+                throw std::runtime_error("Not enough translations provided.");
+            }
+            std::string str = translations[translationIndex];
+            translationIndex++;
+            str = std::regex_replace(str, pattern_0, std::string("\x00", 1));
+            str = std::regex_replace(str, pattern_1, "\x01");
+            str = std::regex_replace(str, pattern_2, "\x02");
+            str = std::regex_replace(str, pattern_3, "\x03");
+            str = std::regex_replace(str, pattern_4, "\x04");
+            str = std::regex_replace(str, pattern_5, "\x05");
+            str = std::regex_replace(str, pattern_6, "\x06");
+            str = std::regex_replace(str, lb1, "\r");
+            str = std::regex_replace(str, lb2, "\n");
+            std::vector<uint8_t> textBytes = string2Bytes(str);
+            textBytes.push_back(0x00);
+            uint32_t length = (uint32_t)textBytes.size();
+            newBuffer.insert(newBuffer.end(), (uint8_t*)&length, (uint8_t*)&length + 4);
+            newBuffer.insert(newBuffer.end(), textBytes.begin(), textBytes.end());
         }
-        uint32_t indexOfOffset = 0x14 + i * 4;
-        write(&newBuffer[indexOfOffset], static_cast<uint32_t>(newBuffer.size()));
-        const std::string& sentence = sentences[translationIndex++];
-        std::vector<uint8_t> sentenceBytes = string2Bytes(sentence);
-        sentenceBytes.push_back(0);
-        newBuffer.insert(newBuffer.end(), sentenceBytes.begin(), sentenceBytes.end());
-        while (newBuffer.size() % 4 != 0) {
-            newBuffer.push_back(0);
-        }
     }
 
-    if (translationIndex < sentenceCount - 3) {
-        std::println("Warning: {0} translations provided, expected {1}.", sentences.size(), translationIndex);
+    if (translationIndex < translations.size()) {
+        std::println("Warning: {0} translations provided, expected {1}.", translations, translationIndex);
     }
-    
+
+    *(uint32_t*)&newBuffer[4] = (uint32_t)newBuffer.size() - scriptBegin;
+
     outputBin.write(reinterpret_cast<const char*>(newBuffer.data()), newBuffer.size());
 
     inputBin.close();
@@ -178,6 +192,14 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     outputBin.close();
 
     std::println("Injection complete. Output saved to {}", wide2Ascii(outputBinPath));
+}
+
+void printUsage(const fs::path& programPath) {
+    std::print("Made by julixian 2025.11.16\n"
+        "Usage: \n"
+        "  Dump: {0} dump <input_folder> <output_folder>\n"
+        "  Inject: {0} inject <input_orig-bin_folder> <input_translated-txt_folder> <output_folder>",
+        wide2Ascii(programPath.filename()));
 }
 
 int wmain(int argc, wchar_t* argv[])
