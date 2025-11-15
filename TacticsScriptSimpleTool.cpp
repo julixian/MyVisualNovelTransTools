@@ -45,7 +45,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
 
     for (size_t i = buffer.size() - 4; i > 0; --i) {
         if (*(uint32_t*)&buffer[i] == 0x05) {
-            ScriptOpEnd = i;
+            ScriptOpEnd = (uint32_t)i;
             break;
         }
     }
@@ -56,6 +56,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
             || *(uint32_t*)&buffer[i] == 0x63
             || *(uint32_t*)&buffer[i] == 0x61
             || *(uint32_t*)&buffer[i] == 0x5F
+            || *(uint32_t*)&buffer[i] == 0x5D
             || *(uint32_t*)&buffer[i] == 0x5C
             || *(uint32_t*)&buffer[i] == 0x5B)
             && *(uint32_t*)&buffer[i + 4] < buffer.size()
