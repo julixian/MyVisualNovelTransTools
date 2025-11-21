@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AoiArchiveTool/AoiArchiveTool.vcxproj" />
+  <Project Path="AoiMYAScriptSimpleTool/AoiMYAScriptSimpleTool.vcxproj" />
+  <Project Path="AoiMYUScriptSimpleTool/AoiMYUScriptSimpleTool.vcxproj" />
+</Solution>
