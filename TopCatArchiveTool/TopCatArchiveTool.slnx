@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="TopCatArchiveTool/TopCatArchiveTool.vcxproj" Id="17d6b454-2e2b-43c6-b92c-a4c5d2c7bf1a" />
+  <Project Path="TopCatCompressTool/TopCatCompressTool.vcxproj" Id="9bb8365c-064f-430d-9736-11919496479b" />
+  <Project Path="TopCatScriptSimpleTool/TopCatScriptSimpleTool.vcxproj" Id="038df633-6912-472f-85fa-bf6c0170bd30" />
+</Solution>

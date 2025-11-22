@@ -223,10 +223,10 @@ To dump/inject Tail .scd Script file<br/>
 ## TopCatCompressTool
 To decompress/compress TopCat engine .TCT Script file<br/>
 apply for both v2 and v3<br/>
-## TopCatV2ArchiveTool
-To extract/repack TopCatV2 .TCD Archive<br/>
-## TopCatV3ArchiveTool
-To extract/repack TopCatV3 .TCD Archive<br/>
+## TopCatArchiveTool
+To extract/repack TopCatV2/TopCatV3 .TCD Archive<br/>
+## TopCatScriptSimpleTool
+To dump/inject TopCat engine .TCT script files<br/>
 ## ValkArchiveTool
 A serial of tools to extract latest dat archive(2025.08), extract/pack am2 multi-frame archive format, convert image format between mg2 and png<br/>
 ## ValkDataImageTool
