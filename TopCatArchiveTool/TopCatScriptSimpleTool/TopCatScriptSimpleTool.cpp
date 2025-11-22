@@ -112,6 +112,12 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
         switch (commandHeader)
         {
         case 0x00010004:
+        {
+            std::string text((char*)&commandBytes[9]);
+            output << "Select: " << text << "\n";
+        }
+        break;
+
         case 0x0000003A:
         {
             std::string text((char*)&commandBytes[9]);
@@ -233,6 +239,9 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     // 读取翻译文本
     std::string line;
     while (std::getline(inputTxt, line)) {
+        if (line.starts_with("Select: ")) {
+            line = line.substr(8);
+        }
         sentences.push_back(std::move(line));
     }
 
