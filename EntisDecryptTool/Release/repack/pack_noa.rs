@@ -17,8 +17,8 @@ int main( String[] arg )
 {
 	if ( arg.length() < 2 )
 	{
-		con.printf( "Usage:\n"
-					+ "Rosetta.exe pack_noa.rs /arg <output noa> <input file>\n" ) ;
+		con.printf( "引数を指定してください。\n"
+					+ "引数 : <出力ファイル> <入力ファイル>\n" ) ;
 		return	-1 ;
 	}
 	for ( int i = 0; i < g_IgnoreCompressExt.length(); i ++ )
@@ -36,14 +36,14 @@ int main( String[] arg )
 	}
 	catch ( Exception e )
 	{
-		con.printf( "File could not be opened: %s\n", strDstFile ) ;
+		con.printf( "ファイルを開けませんでした : %s\n", strDstFile ) ;
 		return	1 ;
 	}
 	NoaFileArchiver.FileInfo[]	dirFiles = listFileInfo( strSrcFiles ) ;
 	NoaFileArchiver	noafile = new NoaFileArchiver() ;
 	if ( !noafile.createArchive( file, dirFiles ) )
 	{
-		con.printf( "Failed to create file : %s\n", strDstFile ) ;
+		con.printf( "ファイルへの書き出しに失敗しました : %s\n", strDstFile ) ;
 		return	1 ;
 	}
 	int	nErrors = archiveDirectory( noafile, strSrcDir, "", dirFiles ) ;
@@ -52,11 +52,11 @@ int main( String[] arg )
 	//
 	if ( nErrors == 0 )
 	{
-		con.printf( "%s has been created.\n", strDstFile ) ;
+		con.printf( "%s への書庫化が完了しました。\n", strDstFile ) ;
 	}
 	else
 	{
-		con.printf( "%s Add: %d errors\n", strDstFile, nErrors ) ;
+		con.printf( "%s への書庫化 : %d errors\n", strDstFile, nErrors ) ;
 	}
 	return	nErrors ;
 }
@@ -126,7 +126,7 @@ int archiveDirectory
 			//
 			if ( !noafile.createDirectory( strFileName, dirSubFiles ) )
 			{
-				con.printf( "Failed to create a directory in the archive: %s\n", strFileName ) ;
+				con.printf( "書庫内ディレクトリ作成失敗 : %s\n", strFileName ) ;
 				nErrors ++ ;
 				continue ;
 			}
@@ -146,13 +146,13 @@ int archiveDirectory
 			}
 			catch ( Exception e )
 			{
-				con.printf( "%s Could not be opened\n", strArcFilePath ) ;
+				con.printf( "%s を開けませんでした。\n", strArcFilePath ) ;
 				nErrors ++ ;
 				continue ;
 			}
 			if ( !noafile.descendFile( strFileName, null, true ) )
 			{
-				con.printf( "%s Can't add.\n", strArcFilePath ) ;
+				con.printf( "%s の書き込みを開始できません。\n", strArcFilePath ) ;
 				nErrors ++ ;
 				continue ;
 			}
@@ -176,7 +176,7 @@ int archiveDirectory
 			}
 			catch ( Exception e )
 			{
-				con.printf( "\n%s Failed to write.\n", strArcFilePath ) ;
+				con.printf( "\n%s の書き込みに失敗しました。\n", strArcFilePath ) ;
 				nErrors ++ ;
 			}
 			noafile.ascendFile() ;
