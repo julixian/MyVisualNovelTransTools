@@ -18,15 +18,6 @@ void write(void* ptr, T value)
     memcpy(ptr, &value, sizeof(T));
 }
 
-std::vector<uint8_t> string2Bytes(const std::string& str) {
-    std::vector<uint8_t> result;
-    result.reserve(str.size());
-    for (char c : str) {
-        result.push_back(static_cast<uint8_t>(c));
-    }
-    return result;
-}
-
 std::string wide2Ascii(const std::wstring& wide, UINT CodePage = CP_UTF8);
 std::wstring ascii2Wide(const std::string& ascii, UINT CodePage = CP_ACP);
 std::string ascii2Ascii(const std::string& ascii, UINT src = CP_ACP, UINT dst = CP_UTF8);
@@ -107,7 +98,7 @@ void extractMode2(std::ifstream& ifs, const fs::path& outputDir) {
         std::vector<uint8_t> fileData(fileEntry.fileSize);
         ifs.seekg(fileEntry.offset);
         ifs.read(reinterpret_cast<char*>(fileData.data()), fileEntry.fileSize);
-        //std::println("FileEntry: {}, offset: {:#x}, size: {:#x}", ascii2Ascii(fileEntry.fileName, 932), fileEntry.offset, fileEntry.fileSize);
+        std::println("FileEntry: {}, offset: {:#x}, size: {:#x}", ascii2Ascii(fileEntry.fileName, 932), fileEntry.offset, fileEntry.fileSize);
 
         std::wstring fileName = ascii2Wide(fileEntry.fileName, 932);
         const fs::path fileOutputPath = outputDir / fileName;

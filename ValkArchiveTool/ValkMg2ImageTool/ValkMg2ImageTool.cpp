@@ -1,25 +1,93 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
+#define NOMINMAX
+#include <Windows.h>
 #include <cstdint>
-#include <algorithm>
-#include <cstring>
 
+#define STBIW_WINDOWS_UTF8
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include <stb_image_write.h>
+
+import std;
+namespace fs = std::filesystem;
 
 // --- 加密/解密与辅助函数 ---
+
+template<typename T>
+T read(void* ptr)
+{
+    T value;
+    memcpy(&value, ptr, sizeof(T));
+    return value;
+}
+
+template<typename T>
+void write(void* ptr, T value)
+{
+    memcpy(ptr, &value, sizeof(T));
+}
+
+std::string wide2Ascii(const std::wstring& wide, UINT CodePage = CP_UTF8);
+std::wstring ascii2Wide(const std::string& ascii, UINT CodePage = CP_ACP);
+std::string ascii2Ascii(const std::string& ascii, UINT src = CP_ACP, UINT dst = CP_UTF8);
+
+std::string wide2Ascii(const std::wstring& wide, UINT CodePage) {
+    int len = WideCharToMultiByte
+    (CodePage, 0, wide.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    if (len == 0) return {};
+    std::string ascii(len, '\0');
+    WideCharToMultiByte
+    (CodePage, 0, wide.c_str(), -1, &ascii[0], len, nullptr, nullptr);
+    ascii.pop_back();
+    return ascii;
+}
+
+std::wstring ascii2Wide(const std::string& ascii, UINT CodePage) {
+    int len = MultiByteToWideChar(CodePage, 0, ascii.c_str(), -1, nullptr, 0);
+    if (len == 0) return {};
+    std::wstring wide(len, L'\0');
+    MultiByteToWideChar(CodePage, 0, ascii.c_str(), -1, &wide[0], len);
+    wide.pop_back();
+    return wide;
+}
+
+std::string ascii2Ascii(const std::string& ascii, UINT src, UINT dst) {
+    return wide2Ascii(ascii2Wide(ascii, src), dst);
+}
+
+constexpr DWORD key1 = 0xD17ACA4B;
+constexpr int shift1 = 2;
+constexpr DWORD key2 = 0x6269B97C;
+constexpr int shift2 = 3;
+constexpr DWORD key3 = 0x915C1A4C;
+constexpr int shift3 = 5;
+constexpr DWORD key4 = 0xBD3ACCDD;
+constexpr int shift4 = 3;
+
+DWORD decyptMode1(DWORD eDword, DWORD indexDataSize) {
+    return indexDataSize ^ std::rotr(eDword - key1, shift1);
+}
+
+DWORD decyptMode2(DWORD eDword, DWORD indexDataSize) {
+    return indexDataSize ^ std::rotr(eDword - key2, shift2);
+}
+
+DWORD decyptMode3(DWORD eDword, DWORD indexDataSize) {
+    return indexDataSize ^ std::rotr(eDword - key3, shift3);
+}
+
+DWORD decyptMode4(DWORD eDword, DWORD indexDataSize) {
+    return indexDataSize ^ std::rotr(eDword - key4, shift4);
+}
 
 /**
  * @brief 使用基于文件大小的密钥解密16字节的加密文件头。
  * @param header 包含16字节头文件的vector引用。
  * @param file_size 整个MG2文件的总大小。
  */
-void decrypt_header(std::vector<uint8_t>& header, size_t file_size) {
+void decrypt_header(std::vector<uint8_t>& orgHeader, size_t file_size) {
+    std::vector<uint8_t> header = orgHeader;
     if (header.size() < 16) return;
     uint8_t key = ((file_size >> 8) & 0xFF) + ((file_size >> 24) & 0xFF);
     uint8_t increment = (file_size & 0xFF) + ((file_size >> 16) & 0xFF);
@@ -27,6 +95,30 @@ void decrypt_header(std::vector<uint8_t>& header, size_t file_size) {
     for (int i = 0; i < 16; ++i) {
         header[i] ^= key;
         key += increment;
+    }
+    if (memcmp(header.data(), "MICO", 4) == 0) {
+        orgHeader = header;
+        return;
+    }
+    header = orgHeader;
+
+    uint32_t decryptMode = 0;
+    for (uint32_t i = 0; i <= 0xC; i++) {
+        DWORD eDword = read<DWORD>(header.data() + i);
+        DWORD dDword;
+        if (decryptMode) {
+            dDword = decyptMode1(eDword, file_size);
+            decryptMode = 0;
+        }
+        else {
+            dDword = decyptMode2(eDword, file_size);
+            decryptMode = 1;
+        }
+        write<DWORD>(header.data() + i, dDword);
+    }
+    if (memcmp(header.data(), "MICO", 4) == 0) {
+        orgHeader = header;
+        return;
     }
 }
 
@@ -74,6 +166,25 @@ void decrypt_cg02_alt_data(std::vector<uint8_t>& data, uint32_t key_seed) {
     }
 }
 
+void decrypt_cg03_data(std::vector<uint8_t>& data, uint32_t key_seed) {
+    uint32_t data_offset = 0;
+    uint32_t decryptMode = 0;
+    do {
+        DWORD eDword = read<DWORD>(data.data() + data_offset);
+        DWORD dDword;
+        if (decryptMode) {
+            dDword = decyptMode3(eDword, key_seed);
+            decryptMode = 0;
+        }
+        else {
+            dDword = decyptMode4(eDword, key_seed);
+            decryptMode = 1;
+        }
+        write<DWORD>(data.data() + data_offset, dDword);
+        data_offset++;
+    } while (data_offset <= key_seed - 4);
+}
+
 /**
  * @brief 垂直翻转图像。
  * @param image_pixels 指向原始像素数据的指针。
@@ -102,11 +213,11 @@ void flip_image_vertically(unsigned char* image_pixels, int width, int height, i
  * @param output_path 目标PNG文件的路径。
  * @return 成功返回true，失败返回false。
  */
-bool convert_mg2_to_png(const std::string& input_path, const std::string& output_path) {
+bool convert_mg2_to_png(const fs::path& input_path, const fs::path& output_path) {
     std::cout << "--- Decoding MG2 to PNG ---" << std::endl;
     std::ifstream file(input_path, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
-        std::cerr << "ERROR: Cannot open input file: " << input_path << std::endl;
+        std::cerr << "ERROR: Cannot open input file: " << wide2Ascii(input_path) << std::endl;
         return false;
     }
     size_t file_size = file.tellg();
@@ -172,6 +283,10 @@ bool convert_mg2_to_png(const std::string& input_path, const std::string& output
             if (alpha_length > 0) crypt_v3_data(alpha_image_data, image_length);
         }
     }
+    else if (version == "CG03") {
+        decrypt_cg03_data(main_image_data, image_length);
+        if (alpha_length > 0) decrypt_cg03_data(alpha_image_data, alpha_length);
+    }
     else {
         std::cerr << "ERROR: Unsupported version '" << version << "'. Only 'CG01' and 'CG02' are supported." << std::endl;
         return false;
@@ -216,8 +331,8 @@ bool convert_mg2_to_png(const std::string& input_path, const std::string& output
     std::cout << "Flipping image vertically..." << std::endl;
     flip_image_vertically(final_pixels.data(), width, height, 4);
 
-    if (stbi_write_png(output_path.c_str(), width, height, 4, final_pixels.data(), width * 4)) {
-        std::cout << "Success! File saved to " << output_path << std::endl;
+    if (stbi_write_png(wide2Ascii(output_path).c_str(), width, height, 4, final_pixels.data(), width * 4)) {
+        std::cout << "Success! File saved to " << wide2Ascii(output_path) << std::endl;
         return true;
     }
     else {
@@ -232,11 +347,11 @@ bool convert_mg2_to_png(const std::string& input_path, const std::string& output
  * @param output_path 目标MG2文件的路径。
  * @return 成功返回true，失败返回false。
  */
-bool convert_png_to_mg2(const std::string& input_path, const std::string& output_path) {
+bool convert_png_to_mg2(const fs::path& input_path, const fs::path& output_path) {
     std::cout << "--- Encoding PNG to MG2 ---" << std::endl;
-    std::cout << "Loading PNG file: " << input_path << std::endl;
+    std::cout << "Loading PNG file: " << wide2Ascii(input_path) << std::endl;
     int width, height, channels;
-    unsigned char* pixels = stbi_load(input_path.c_str(), &width, &height, &channels, 4);
+    unsigned char* pixels = stbi_load(wide2Ascii(input_path).c_str(), &width, &height, &channels, 4);
     if (!pixels) {
         std::cerr << "ERROR: Failed to load PNG file. Reason: " << stbi_failure_reason() << std::endl;
         return false;
@@ -294,7 +409,7 @@ bool convert_png_to_mg2(const std::string& input_path, const std::string& output
 
     std::ofstream outfile(output_path, std::ios::binary);
     if (!outfile.is_open()) {
-        std::cerr << "ERROR: Cannot create output file: " << output_path << std::endl;
+        std::cerr << "ERROR: Cannot create output file: " << wide2Ascii(output_path) << std::endl;
         return false;
     }
     outfile.write(reinterpret_cast<const char*>(header.data()), 16);
@@ -302,41 +417,45 @@ bool convert_png_to_mg2(const std::string& input_path, const std::string& output
     outfile.write(reinterpret_cast<const char*>(alpha_image_block.data()), alpha_length);
     outfile.close();
 
-    std::cout << "Success! File saved to " << output_path << std::endl;
+    std::cout << "Success! File saved to " << wide2Ascii(output_path) << std::endl;
     return true;
 }
 
-void print_usage(const char* program_name) {
+void print_usage(const fs::path& program_path) {
+    std::string program_filename = wide2Ascii(program_path.filename());
     std::cout << "Made by julixian 2025.07.24" << std::endl;
     std::cout << "Usage:" << std::endl;
-    std::cout << "  " << program_name << " <command> <input_file> <output_file>" << std::endl << std::endl;
+    std::cout << "  " << program_filename << " <command> <input_file> <output_file>" << std::endl << std::endl;
     std::cout << "Commands:" << std::endl;
     std::cout << "  decode    Converts an MG2 file to a PNG file." << std::endl;
     std::cout << "  encode    Converts a PNG file to an MG2 file." << std::endl << std::endl;
     std::cout << "Examples:" << std::endl;
-    std::cout << "  " << program_name << " decode character.mg2 character.png" << std::endl;
-    std::cout << "  " << program_name << " encode new_image.png new_image.mg2" << std::endl;
+    std::cout << "  " << program_filename << " decode character.mg2 character.png" << std::endl;
+    std::cout << "  " << program_filename << " encode new_image.png new_image.mg2" << std::endl;
 }
 
-int main(int argc, char* argv[]) {
+int wmain(int argc, wchar_t* argv[]) {
+
+    SetConsoleOutputCP(CP_UTF8);
+
     if (argc != 4) {
         print_usage(argv[0]);
         return 1;
     }
 
-    std::string command = argv[1];
-    std::string input_path = argv[2];
-    std::string output_path = argv[3];
+    std::wstring command = argv[1];
+    const fs::path input_path = argv[2];
+    const fs::path output_path = argv[3];
 
     bool success = false;
-    if (command == "decode") {
+    if (command == L"decode") {
         success = convert_mg2_to_png(input_path, output_path);
     }
-    else if (command == "encode") {
+    else if (command == L"encode") {
         success = convert_png_to_mg2(input_path, output_path);
     }
     else {
-        std::cerr << "ERROR: Unknown command '" << command << "'." << std::endl << std::endl;
+        std::cerr << "ERROR: Unknown command '" << wide2Ascii(command) << "'." << std::endl << std::endl;
         print_usage(argv[0]);
         return 1;
     }
