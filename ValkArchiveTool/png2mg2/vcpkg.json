@@ -1,8 +1,0 @@
-{
-  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "name": "valkmg2imagetool",
-  "version": "2025.7.23",
-  "dependencies": [
-    "stb"
-  ]
-}

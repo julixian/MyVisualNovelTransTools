@@ -1,0 +1,4 @@
+**/vcpkg_installed/
+**/x64/Release/
+!**/x64/Release/*.exe
+**/.vs/

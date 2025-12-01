@@ -65,20 +65,9 @@ constexpr int shift3 = 5;
 constexpr DWORD key4 = 0xBD3ACCDD;
 constexpr int shift4 = 3;
 
-DWORD decyptMode1(DWORD eDword, DWORD indexDataSize) {
-    return indexDataSize ^ std::rotr(eDword - key1, shift1);
-}
-
-DWORD decyptMode2(DWORD eDword, DWORD indexDataSize) {
-    return indexDataSize ^ std::rotr(eDword - key2, shift2);
-}
-
-DWORD decyptMode3(DWORD eDword, DWORD indexDataSize) {
-    return indexDataSize ^ std::rotr(eDword - key3, shift3);
-}
-
-DWORD decyptMode4(DWORD eDword, DWORD indexDataSize) {
-    return indexDataSize ^ std::rotr(eDword - key4, shift4);
+template<DWORD hard_key, int shift>
+DWORD decryptDword(DWORD eDword, DWORD dynamic_key) {
+    return dynamic_key ^ std::rotr(eDword - hard_key, shift);
 }
 
 /**
@@ -107,11 +96,11 @@ void decrypt_header(std::vector<uint8_t>& orgHeader, size_t file_size) {
         DWORD eDword = read<DWORD>(header.data() + i);
         DWORD dDword;
         if (decryptMode) {
-            dDword = decyptMode1(eDword, file_size);
+            dDword = decryptDword<key1, shift1>(eDword, file_size);
             decryptMode = 0;
         }
         else {
-            dDword = decyptMode2(eDword, file_size);
+            dDword = decryptDword<key2, shift2>(eDword, file_size);
             decryptMode = 1;
         }
         write<DWORD>(header.data() + i, dDword);
@@ -173,11 +162,11 @@ void decrypt_cg03_data(std::vector<uint8_t>& data, uint32_t key_seed) {
         DWORD eDword = read<DWORD>(data.data() + data_offset);
         DWORD dDword;
         if (decryptMode) {
-            dDword = decyptMode3(eDword, key_seed);
+            dDword = decryptDword<key3, shift3>(eDword, key_seed);
             decryptMode = 0;
         }
         else {
-            dDword = decyptMode4(eDword, key_seed);
+            dDword = decryptDword<key4, shift4>(eDword, key_seed);
             decryptMode = 1;
         }
         write<DWORD>(data.data() + data_offset, dDword);
