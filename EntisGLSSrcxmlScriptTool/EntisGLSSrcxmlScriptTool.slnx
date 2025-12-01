@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="EntisGLSSrcxmlScriptTool/EntisGLSSrcxmlScriptTool.vcxproj" />
+  <Project Path="EntisGLSSrcxmlScriptTool/EntisGLSSrcxmlScriptTool.vcxproj" Id="932f35df-0cb3-44f9-8aa9-4b6400c60eb6" />
 </Solution>

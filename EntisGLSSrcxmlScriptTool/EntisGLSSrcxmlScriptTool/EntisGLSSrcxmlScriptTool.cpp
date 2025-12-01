@@ -170,7 +170,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                     if (nameAttr && std::strlen(nameAttr) > 0) {
                         msg->SetAttribute("name", item["name"].get<std::string>().c_str());
                     }
-                    msg->SetAttribute("text", item["message"].get<std::string>().c_str());
+                    msg->SetAttribute("text", replaceStr(item["message"].get<std::string>(), "'", "[__spec__char__1]").c_str());
                 }
 
                 msg = msg->NextSiblingElement("msg");
@@ -181,7 +181,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     tinyxml2::XMLPrinter printer;
     doc.Print(&printer);
     std::string xmlStr = printer.CStr();
-    outputBin << replaceStrInplace(xmlStr, " _l=", " @l=");
+    outputBin << replaceStrInplace(replaceStrInplace(xmlStr, " _l=", " @l="), "[__spec__char__1]", "'");
 
     inputBin.close();
     inputTxt.close();
