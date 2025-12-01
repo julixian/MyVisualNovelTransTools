@@ -182,7 +182,7 @@ void decrypt_cg03_data(std::vector<uint8_t>& data, uint32_t key_seed) {
         }
         write<DWORD>(data.data() + data_offset, dDword);
         data_offset++;
-    } while (data_offset <= key_seed - 4);
+    } while (data_offset <= data.size() - 4);
 }
 
 /**
@@ -285,7 +285,7 @@ bool convert_mg2_to_png(const fs::path& input_path, const fs::path& output_path)
     }
     else if (version == "CG03") {
         decrypt_cg03_data(main_image_data, image_length);
-        if (alpha_length > 0) decrypt_cg03_data(alpha_image_data, alpha_length);
+        if (alpha_length > 0) decrypt_cg03_data(alpha_image_data, image_length);
     }
     else {
         std::cerr << "ERROR: Unsupported version '" << version << "'. Only 'CG01' and 'CG02' are supported." << std::endl;
