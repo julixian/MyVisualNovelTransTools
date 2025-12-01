@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11222.16 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ValkArchiveTool", "ValkArchiveTool\ValkArchiveTool.vcxproj", "{8DADB76B-0FB5-4F97-A9D4-8E32AC2FFA06}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ValkMg2ImageTool", "ValkMg2ImageTool\ValkMg2ImageTool.vcxproj", "{4553C404-2069-441D-BCBD-7787A5786D95}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Am2ArchiveTool", "Am2ArchiveTool\Am2ArchiveTool.vcxproj", "{8F1DE368-DA02-4BC0-8430-590A6C0ACE82}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BitchSwitch", "BitchSwitch\BitchSwitch.vcxproj", "{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{8F1DE368-DA02-4BC0-8430-590A6C0ACE82}.Release|x64.Build.0 = Release|x64
 		{8F1DE368-DA02-4BC0-8430-590A6C0ACE82}.Release|x86.ActiveCfg = Release|Win32
 		{8F1DE368-DA02-4BC0-8430-590A6C0ACE82}.Release|x86.Build.0 = Release|Win32
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Debug|x64.ActiveCfg = Debug|x64
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Debug|x64.Build.0 = Debug|x64
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Debug|x86.ActiveCfg = Debug|Win32
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Debug|x86.Build.0 = Debug|Win32
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Release|x64.ActiveCfg = Release|x64
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Release|x64.Build.0 = Release|x64
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Release|x86.ActiveCfg = Release|Win32
+		{CEAF9733-D86C-4BCE-AA5C-4C80AE30A4C5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
