@@ -148,13 +148,9 @@ To dump/inject Lucifen/Ellefin engine .sob script files<br/>
 For tob, use Ineditor or [jyxjyx1234's tool](https://github.com/jyxjyx1234/misc_game-chs/tree/re_upload/%E7%8C%AB%E6%92%AB%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3)(need to fix HScene script by padding the file to the same size)<br/>
 ## MainProgramHoepDatCryptTool
 To decrypt/encrypt MainProgramHoep engine .dat script file<br/>
-## MajiroScriptSimpleTool
-To dump/inject Majiro Script .mjs(decrypted by mjcrypt) file or MajiroOBJV file(need to change file-extend-name to .mjs)<br/>
-To change MajiroOBJX to MajiroOBJV You can see [GalgameReverse Project](https://github.com/YuriSizuku/GalgameReverse)<br/>
-Initially made to edit script in あの晴れわたる空より高く for there are tips-jump in the game and no tools can deal with it.<br/>
-So it ONLY works on few new_version majirov3 script(Looking back at this tool a year later, I feel it was written so foolishly...)<br/>
-For v1 use [VNT](https://github.com/arcusmaximus/VNTranslationTools)<br/>
-For v2 and old_version v3 use [MajiroTools](https://github.com/AtomCrafty/MajiroTools) or Ineditor<br/>
+## MajiroScriptTool
+To dump/inject Majiro Script .mjo script files, initially made to deal with tips-jump in あの晴れわたる空より高く<br>
+Now(after 2025.12.03) I try to combine [VNT](https://github.com/arcusmaximus/VNTranslationTools), [lneditor](https://github.com/regomne/lneditor), and [MajiroTools](https://github.com/AtomCrafty/MajiroTools) to develop a more convenient tool with better compatibility<br/>
 ## MasysScriptSimpleTool
 To dump/inject Masys engine .meg script files<br/>
 Search "Powered" to find key in game.exe<br/>
