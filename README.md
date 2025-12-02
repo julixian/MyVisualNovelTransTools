@@ -228,7 +228,7 @@ To extract/repack TopCatV2/TopCatV3 .TCD Archive<br/>
 ## TopCatScriptSimpleTool
 To dump/inject TopCat engine .TCT script files<br/>
 ## ValkArchiveTool
-A serial of tools to extract latest dat archive(2025.08), extract/pack am2 multi-frame archive format, convert image format between mg2 and png<br/>
+A serial of tools to extract latest dat archive(2025.08, 2025.12), extract/pack am2 multi-frame archive format, convert image format between mg2 and png<br/>
 ## ValkDataImageTool
 To convert .png(must be 32bpp) to Valkyria engine data\d format image in odn archive(only works on few games now)<br/>
 ## WscScriptSimpleTool
