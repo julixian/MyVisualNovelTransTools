@@ -585,16 +585,32 @@ std::vector<std::string> splitText(const std::string& text, UINT codePage) {
             i += 6;
         }
         else if (text[i] == '[' || text[i] == '{') {
-            if (!currentPart.empty()) {
-                parts.push_back(currentPart);
-                currentPart.clear();
-            }
             size_t endPos = text.find(text[i] == '[' ? "]" : "}", i + 1);
             if (endPos == std::string::npos) {
                 throw std::runtime_error(std::format("Invalid text : [{}], there is no matching result for [ or {{ at position {}.", text, i));
             }
-            parts.push_back(text.substr(i, endPos - i + 1));
-            i = endPos;
+            std::string content = text.substr(i, endPos - i + 1);
+            if (content.starts_with('[')) {
+                if (content.contains('/')) {
+                    if (!currentPart.empty()) {
+                        parts.push_back(currentPart);
+                        currentPart.clear();
+                    }
+                    parts.push_back(std::move(content));
+                    i = endPos;
+                }
+                else {
+                    currentPart.push_back(text[i]);
+                }
+            }
+            else {
+                if (!currentPart.empty()) {
+                    parts.push_back(currentPart);
+                    currentPart.clear();
+                }
+                parts.push_back(std::move(content));
+                i = endPos;
+            }
         }
         else {
             currentPart.push_back(text[i]);
@@ -642,11 +658,8 @@ std::vector<uint8_t> processNormalText(const std::string& name, const std::strin
                 0x42,0x08,0x02,0x00,0x67,0x00 };
             result.insert(result.end(), commandBytes, commandBytes + sizeof(commandBytes));
         }
-        else if (part.front() == '[' && part.back() == ']') {
+        else if (part.front() == '[' && part.back() == ']' && part.contains('/')) {
             size_t slashPos = part.find('/');
-            if (slashPos == std::string::npos) {
-                throw std::runtime_error(std::format("Invalid furigana: [{}], there is no / in it.", part));
-            }
             std::string furigana = part.substr(1, slashPos - 1);
             std::string text = part.substr(slashPos + 1, part.size() - slashPos - 2);
             if (furigana.empty() || text.empty()) {
