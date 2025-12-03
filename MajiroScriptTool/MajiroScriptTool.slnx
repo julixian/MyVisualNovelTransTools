@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="MajiroScriptTool/MajiroScriptTool.vcxproj" />
+  <Project Path="MajiroScriptTool/MajiroScriptTool.vcxproj" Id="a133787b-8397-4d56-9a99-2cb2bd23ea1c" />
 </Solution>

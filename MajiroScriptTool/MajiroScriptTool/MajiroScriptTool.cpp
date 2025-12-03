@@ -522,13 +522,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 throw std::runtime_error(std::format("Invalid text bytes in op 0x842 at {:#x}.", opCodeAddr));
             }
             std::string_view command(reinterpret_cast<const char*>(commandBytes.data()), commandBytes.size() - 1);
-            if (command == "p" || command == "r" || command == "\\") {
-                if (currentSentence.firstOpCodeAddr != 0) {
-                    currentSentence.totalCommandLength = opCodeAddr - currentSentence.firstOpCodeAddr;
-                    outputSentence(jarray, currentSentence);
-                }
-            }
-            else if (command == "n") {
+            if (command == "n") {
                 if (currentSentence.firstOpCodeAddr == 0) {
                     currentSentence.firstOpCodeAddr = opCodeAddr;
                     currentSentence.type = "text";
@@ -536,10 +530,10 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                 currentSentence.text += "[n]";
             }
             else {
-                if (currentSentence.firstOpCodeAddr != 0) {
+                /*if (currentSentence.firstOpCodeAddr != 0) {
                     throw std::runtime_error(std::format("Previous sentence not ended at {:#x}.", opCodeAddr));
-                }
-                //verifySentence(jarray, currentSentence, opCodeAddr);
+                }*/
+                verifySentence(jarray, currentSentence, opCodeAddr);
             }
         }
         break;
