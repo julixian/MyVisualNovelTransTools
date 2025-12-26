@@ -66,29 +66,6 @@ std::string replaceStr(std::string_view str, std::string_view org, std::string_v
     return result;
 }
 
-bool isValidSjis(const std::string& str, bool enableCP932 = true) {
-    std::vector<uint8_t> textBytes = string2Bytes(str);
-    uint8_t leadByteLimit = enableCP932 ? 0xfc : 0xef;
-    for (size_t i = 0; i < textBytes.size(); i++) {
-        if (textBytes[i] < 0x20 || textBytes[i] > leadByteLimit || (0x9f < textBytes[i] && textBytes[i] < 0xe0)) {
-            return false;
-        }
-        else if ((0x81 <= textBytes[i] && textBytes[i] <= 0x9f) || (0xe0 <= textBytes[i] && textBytes[i] <= leadByteLimit)) {
-            if (i + 1 >= textBytes.size()) {
-                return false;
-            }
-            if (textBytes[i + 1] > 0xfc || textBytes[i + 1] < 0x40) {
-                return false;
-            }
-            else {
-                i++;
-                continue;
-            }
-        }
-    }
-    return true;
-}
-
 //DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
     std::ifstream input(inputPath, std::ios::binary);
@@ -162,6 +139,13 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath) {
                         throw std::runtime_error("Error: unexpected command format.");
                     }
                     output << "[" << furigana << "/" << baseText << "]\n";
+                }
+                break;
+
+                case 0x04:
+                {
+                    uint16_t subCommandLength = read<uint16_t>(&commandBytes[currentCommandOffset]);
+                    currentCommandOffset = currentCommandOffset + subCommandLength - 1;
                 }
                 break;
 
@@ -384,6 +368,13 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
                 }
                 break;
 
+                case 0x04:
+                {
+                    uint16_t subCommandLength = read<uint16_t>(&commandBytes[currentCommandOffset]);
+                    currentCommandOffset = currentCommandOffset + subCommandLength - 1;
+                }
+                break;
+
                 case 0x10:
                 case 0x11:
                 case 0x12:
@@ -500,7 +491,7 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         std::vector<uint8_t> commandBytes(commandLength);
         inputBin.read(reinterpret_cast<char*>(commandBytes.data()), commandLength);
 
-        if (commandHeader == 0x0000000A) {
+        if (commandHeader == 0x0000000A || commandHeader == 0x0000000B) {
             uint32_t absOffsetOrder = read<uint32_t>(&commandBytes[0x9]);
             if (absOffsetOrder >= tctAbsOffset.size()) {
                 throw std::runtime_error("Error: not enough TCT absolute offsets provided.");
