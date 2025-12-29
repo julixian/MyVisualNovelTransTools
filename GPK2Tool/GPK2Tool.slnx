@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="GPK2CompressTool/GPK2CompressTool.vcxproj" Id="398aa124-0e58-4d32-b957-0802f45b3b33" />
+  <Project Path="SysdatTool/SysdatTool.vcxproj" Id="80721d23-96f0-4358-8018-e27346fb3b24" />
+</Solution>
