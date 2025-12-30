@@ -89,14 +89,16 @@ void decompress(const fs::path& inputScbPath, const fs::path& outputPath) {
     std::vector<uint32_t> offsets(offsetCount);
     ifs.read(reinterpret_cast<char*>(offsets.data()), offsetCount * 4);
     ifs.close();
-    for (const auto& offset : offsets | std::views::reverse) {
-        if (offset > decompressedSize) {
-            break;
-        }
-        decompressedData.insert(offset, "__SF0__SIG__");
+    if (!offsets.empty() && offsets.back() > decompressedSize) {
+        offsets.clear();
     }
-
-    ofs.write(reinterpret_cast<char*>(decompressedData.data()), decompressedData.size());
+    size_t currentPos = 0;
+    for (uint32_t offset : offsets) {
+        ofs.write(decompressedData.data() + currentPos, offset - currentPos);
+        ofs.write("__SF0__SIG__", 12);
+        currentPos = offset;
+    }
+    ofs.write(decompressedData.data() + currentPos, decompressedSize - currentPos);
     ofs.close();
 
     std::println("Decompressed {}", wide2Ascii(inputScbPath));
@@ -175,7 +177,7 @@ void compress(const fs::path& inputScbPath, const fs::path& outputPath, const fs
 }
 
 void printUsage(const fs::path& programPath) {
-    std::print("Made by julixian 2025.12.29\n"
+    std::print("Made by julixian 2025.12.30\n"
         "Usage: \n"
         "  Decompress: {0} decompress <scb_dir> <output_dir>\n"
         "  Compress: {0} compress <org_scb_dir> <decompressed_scb_dir> <output_dir> \n",
