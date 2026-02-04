@@ -18,8 +18,8 @@
     <ClCompile Include="MajiroScriptTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="json.cppm">
-      <Filter>源文件</Filter>
+    <ClCompile Include="json.ixx">
+      <Filter>头文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

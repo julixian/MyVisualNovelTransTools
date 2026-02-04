@@ -1,5 +1,6 @@
 **/vcpkg_installed/
-**/Release/
+**/Debug/
+**/Release/*
 !**/Release/*.exe
 !**/Release/*.dll
 **/.vs/
