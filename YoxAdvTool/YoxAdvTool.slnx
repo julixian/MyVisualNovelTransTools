@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="YoxDatArchiveTool/YoxDatArchiveTool.vcxproj" Id="89a31b88-90ae-4817-a18f-deca774616f4" />
+  <Project Path="YoxScriptSimpleTool/YoxScriptSimpleTool.vcxproj" Id="182ba0d0-6a4d-4abe-9232-48591e735c23" />
+</Solution>

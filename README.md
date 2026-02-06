@@ -111,8 +111,12 @@ It will set all compression flags to 0(no compression) so the repacked archive l
 To extract/repack FrontWing engine LIB_PACKDATA0000 sign .pac(ArcFLT in GARbro) Archive<br/>
 ## G2CryptTool
 To dump/inject G2 engine .g2 script files<br/>
-## GPK2CompressTool
-To decompress/compress GPK2 .scb file to achieve No-packet-read<br/>
+## GPK2Tool
+To decompress/compress GPK2 .scb files<br/>
+Fix offsets in .sf0 as well if possible<br/>
+After reinject .scb and .sf0 files, you need to use SysdatTool to dump system.dat as .json and reinject it referring new .scb/.sf0 files, or game jumps will be wrong<br/>
+(Another role is to make the lastWriteTime of system.dat later than any .scb/.sf0 file because the stupid engine will **DELETE** files created later than system.dat)<br/>
+
 ## GsWin2ArchiveTool && GsWin2ImageTool
 To extract/pack GsWin2 .pak archive<br/>
 To convert gspic2png and png2gspic<br/>
@@ -130,7 +134,7 @@ A serial of tools to extract/repack .pk archive, decrypt/encrypt script files, d
 To extract/repack Lambda(maybe?) engine .DAT CLSLINK Archive<br/>
 To convert clspic2png and png2clspic<br/>
 The sturct of the CLS archive seems simple, but I failed to create readable archives<br/>
-if I create them directly from directory instead of adding files to the end of the original archive<br/>
+If I create them directly from directory instead of adding files to the end of the original archive<br/>
 Maybe it has some hard-codes or strange alignment rules? Who knows, I just use the way that would work<br/>
 ## LambdaLapArchiveTool
 To extract/repack Lambda engine gsce.lap Archive<br/>
@@ -237,9 +241,7 @@ If want to edit the image, convert the image to png first. And before converting
 Or the image will lose Transparent pixel.<br/>
 ## YoxDatArchvieTool
 To extract/repack YoxAdv+++ engine .dat archive<br/>
-v1: Tested on かぎろひ～勺景～<br/>
-v2: Tested on MUSICUS!<br/>
-## YoxScriptSimpleTool/YoxScriptSimpleToolV2
+## YoxScriptSimpleTool
 To dump/inject YoxAdv+++ engine script files<br/>
 ## misc_pack
 To pack [this engine](https://github.com/Dir-A/GARbro/blob/master/ArcFormats/Misc/ArcBIN.cs) ([凌辱学園～部活調教恥獄責め～](https://vndb.org/v7127))<br/>
