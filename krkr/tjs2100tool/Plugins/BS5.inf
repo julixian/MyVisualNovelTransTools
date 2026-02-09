@@ -1,0 +1,7 @@
+[Plugin]
+Version=1.0
+Import=BS5.AoKana>Import
+Export=BS5.AoKana>Export
+Extensions=BS5
+Initialize=true
+

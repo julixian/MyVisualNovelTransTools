@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# made by coroz
 """
 字库映射替换和重新渲染工具 (修正版 v2)
 - 基线对齐修复标点符号位置

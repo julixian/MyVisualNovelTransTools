@@ -1,3 +1,6 @@
 [submodule "betterfpk"]
 	path = betterfpk
 	url = https://github.com/julixian/betterfpk.git
+[submodule "krkr/tjs2Decompiler"]
+	path = krkr/tjs2Decompiler
+	url = https://github.com/julixian/tjs2Decompiler

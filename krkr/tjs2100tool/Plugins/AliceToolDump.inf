@@ -1,0 +1,7 @@
+[Plugin]
+Version=1.0
+Import=AliceTool.Dump>Import
+Export=AliceTool.Dump>Export
+Extensions=TXT
+Initialize=true
+

@@ -1,0 +1,7 @@
+[Plugin]
+Version=1.2
+Import=TXT.PIXSTUDIO>Import
+Export=TXT.PIXSTUDIO>Export
+Extensions=TXT
+Initialize=true
+

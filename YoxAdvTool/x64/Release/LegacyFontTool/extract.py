@@ -1,3 +1,4 @@
+# made by coroz
 import struct
 import os
 from PIL import Image
