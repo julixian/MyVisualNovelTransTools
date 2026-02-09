@@ -1,0 +1,6 @@
+[Plugin]
+Version=1.0
+Import=AVGSys.SCD>Import
+Export=AVGSys.SCD>Export
+Extension=SCD|TXT
+Initialize=true

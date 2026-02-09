@@ -1,0 +1,8 @@
+[Plugin]
+Version=1.5
+Import=HTML.Plain>Import
+Export=HTML.Plain>Export
+Extensions=HTML|HTM|XHTML|XHTM
+Initialize=true
+
+

@@ -1,0 +1,7 @@
+[Plugin]
+Version=1.0
+Import=Plain.CSV>Import
+Export=Plain.CSV>Export
+Extension=CSV
+Initialize=true
+
