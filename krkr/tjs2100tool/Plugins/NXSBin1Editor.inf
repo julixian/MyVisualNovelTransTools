@@ -1,9 +1,0 @@
-[Plugin]
-Version=1.0
-Import=NXSBinEditor.Bin>Import
-Export=NXSBinEditor.Bin>Export
-File=NXSBinEditor
-Extension=bin
-Initialize=true
-
-

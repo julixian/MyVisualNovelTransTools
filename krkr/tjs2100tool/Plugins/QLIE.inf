@@ -1,7 +1,0 @@
-[Plugin]
-Version=2.3
-Import=QLIE.S>Import
-Export=QLIE.S>Export
-Extensions=S
-Initialize=true
-

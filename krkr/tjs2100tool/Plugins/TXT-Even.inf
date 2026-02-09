@@ -1,7 +1,0 @@
-[Plugin]
-Version=1.2
-Import=TXTEven.Plain>Import
-Export=TXTEven.Plain>Export
-Extensions=TXT
-Initialize=true
-

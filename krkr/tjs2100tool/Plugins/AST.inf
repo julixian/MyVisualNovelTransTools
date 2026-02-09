@@ -1,7 +1,0 @@
-[Plugin]
-Version=1.0
-Import=Artemis.AST>Import
-Export=Artemis.AST>Export
-Extensions=AST
-Initialize=true
-
