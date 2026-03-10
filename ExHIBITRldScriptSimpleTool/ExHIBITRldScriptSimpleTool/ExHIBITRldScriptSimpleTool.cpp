@@ -186,6 +186,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath, const std::
     for (uint32_t i = 0; i < opCount; i++) {
         uint32_t currentOpOffset = currentOffset;
         OpCode op = readOpCode(buffer, read<uint32_t>(&buffer[currentOffset]));
+        //std::println("op offset: 0x{:X}", currentOpOffset);
         currentOffset += 4;
 
         std::vector<uint32_t> allInit;
@@ -197,10 +198,10 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath, const std::
         }
         for (uint32_t j = 0; j < op.strCount; j++) {
             std::string str((char*)&buffer[currentOffset]);
+            currentOffset += (uint32_t)str.length() + 1;
             Sentence sentence;
             sentence.offset = currentOffset;
             sentence.text = std::move(replaceStrInplace(str, "\n", "[n]"));
-            currentOffset += (uint32_t)sentence.text.length() + 1;
             allStr.push_back(std::move(sentence));
         }
 

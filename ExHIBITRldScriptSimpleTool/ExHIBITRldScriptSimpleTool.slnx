@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="ExHIBITRldScriptSimpleTool/ExHIBITRldScriptSimpleTool.vcxproj" />
+  <Project Path="ExHIBITRldScriptSimpleTool/ExHIBITRldScriptSimpleTool.vcxproj" Id="59f8c136-a1ae-4b41-abe3-232201250c3d" />
 </Solution>
