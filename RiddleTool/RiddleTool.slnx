@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="RiddleArchiveTool/RiddleArchiveTool.vcxproj" Id="5de58345-a3e3-42ab-beca-2e9216665cfb" />
+  <Project Path="RiddleCompressTool/RiddleCompressTool.vcxproj" Id="b7ec6582-aa00-4a38-b89f-8198f6f075c1" />
+  <Project Path="RiddleScriptSimpleTool/RiddleScriptSimpleTool.vcxproj" Id="b8cd6506-099a-4be4-8226-5068733d83e4" />
+</Solution>
