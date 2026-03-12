@@ -310,19 +310,6 @@ void compressDir(const fs::path& inputDir, const fs::path& outputDir)
             continue;
         }
 
-        std::ifstream file(entry.path(), std::ios::binary | std::ios::ate);
-        if (!file.is_open()) {
-            std::println("failed to open file: {}", wide2Ascii(entry.path().native(), CP_UTF8));
-            continue;
-        }
-        std::streamsize size = file.tellg();
-        file.close();
-
-        if (size <= 12) {
-            std::println("skip compress (size <= 12): {}", wide2Ascii(entry.path().native(), CP_UTF8));
-            continue;
-        }
-
         fs::path relativePath = fs::relative(entry.path(), inputDir);
         fs::path outputPath = outputDir / relativePath;
         fs::create_directories(outputPath.parent_path());
@@ -355,7 +342,7 @@ int main(int argc, char** argv)
 {
     SetConsoleOutputCP(CP_UTF8);
 
-    CLI::App app("Made by julixian 2026.03.11", "RiddleCompressTool");
+    CLI::App app("Made by julixian 2026.03.12", "RiddleCompressTool");
     argv = app.ensure_utf8(argv);
     app.set_help_all_flag("-a");
     app.require_subcommand(1);
@@ -365,12 +352,12 @@ int main(int argc, char** argv)
 
     auto decompressCmd = app.add_subcommand("decompress");
     decompressCmd->alias("-d");
-    decompressCmd->add_option("inputDir", inputDir, "input directory")->required();
+    decompressCmd->add_option("inputDir", inputDir, "input directory")->required()->check(CLI::ExistingDirectory);
     decompressCmd->add_option("outputDir", outputDir, "output directory")->required();
 
     auto compressCmd = app.add_subcommand("compress");
     compressCmd->alias("-c");
-    compressCmd->add_option("inputDir", inputDir, "input directory")->required();
+    compressCmd->add_option("inputDir", inputDir, "input directory")->required()->check(CLI::ExistingDirectory);
     compressCmd->add_option("outputDir", outputDir, "output directory")->required();
 
     CLI11_PARSE(app, argc, argv);

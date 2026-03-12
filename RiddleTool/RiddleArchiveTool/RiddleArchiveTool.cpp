@@ -175,7 +175,7 @@ int main(int argc, char** argv)
 {
     SetConsoleOutputCP(CP_UTF8);
 
-    CLI::App app("Made by julixian 2026.03.11", "RiddleArchiveTool");
+    CLI::App app("Made by julixian 2026.03.12", "RiddleArchiveTool");
     argv = app.ensure_utf8(argv);
     app.set_help_all_flag("-a");
     app.require_subcommand(1);
@@ -189,13 +189,13 @@ int main(int argc, char** argv)
 
     auto extractCmd = app.add_subcommand("extract");
     extractCmd->alias("-e");
-    extractCmd->add_option("inputPac", pacPath, "input pac file")->required();
+    extractCmd->add_option("inputPac", pacPath, "input pac file")->required()->check(CLI::ExistingFile);
     extractCmd->add_option("outputDir", outDir, "output directory")->required();
 
     auto repackCmd = app.add_subcommand("repack");
     repackCmd->alias("-r");
-    repackCmd->add_option("originalPac", orgPac, "original pac file")->required();
-    repackCmd->add_option("inputDir", inDir, "input directory")->required();
+    repackCmd->add_option("originalPac", orgPac, "original pac file")->required()->check(CLI::ExistingFile);
+    repackCmd->add_option("inputDir", inDir, "input directory")->required()->check(CLI::ExistingDirectory);
     repackCmd->add_option("outputPac", outPac, "output pac file")->required();
 
     CLI11_PARSE(app, argc, argv);

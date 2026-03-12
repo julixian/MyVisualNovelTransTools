@@ -97,42 +97,42 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
     {
         std::println("find select script: {}", wide2Ascii(inputBinPath.native(), CP_UTF8));
         for (size_t i = 0x24; i < buffer.size(); i += 0x20) {
-            size_t orgiAddr = 0;
-            std::memcpy(&orgiAddr, &buffer[i], sizeof(uint32_t));
-            if (orgiAddr >= buffer.size() || orgiAddr == 0x00000000) {
+            size_t origAddr = 0;
+            std::memcpy(&origAddr, &buffer[i], sizeof(uint32_t));
+            if (origAddr >= buffer.size() || origAddr == 0x00000000) {
                 break;
             }
-            size_t orgiSelength = 0;
-            size_t transSelength = 0;
+            size_t origSeLength = 0;
+            size_t transSeLength = 0;
             translationIndex = 0;
-            for (size_t j = i; j < orgiAddr; ++j) {
+            for (size_t j = i; j < origAddr; ++j) {
                 if ((buffer[j] == 0xF0 && buffer[j + 1] == 0x42) || (buffer[j] == 0xF0 && buffer[j + 1] == 0x00)) {
-                    uint32_t orgilength = 0;
+                    uint32_t origLength = 0;
                     j += 2;
-                    std::memcpy(&orgilength, &buffer[j], sizeof(uint32_t));
-                    if (orgilength == 0) {
+                    std::memcpy(&origLength, &buffer[j], sizeof(uint32_t));
+                    if (origLength == 0) {
                         continue;
                     }
-                    if (j + 4 + orgilength >= buffer.size()) {
+                    if (j + 4 + origLength >= buffer.size()) {
                         continue;
                     }
                     if (translationIndex >= translations.size()) {
                         continue;
                     }
-                    orgiSelength += orgilength;
+                    origSeLength += origLength;
                     std::string translatedText = translations[translationIndex++];
                     std::vector<uint8_t> textBytes = str2Vec(translatedText);
-                    transSelength += textBytes.size() + 1;
-                    j += 3 + orgilength;
+                    transSeLength += textBytes.size() + 1;
+                    j += 3 + origLength;
                 }
             }
-            if (orgiSelength >= transSelength) {
-                size_t dvalue = orgiSelength - transSelength;
-                size_t transAddr = orgiAddr - dvalue;
+            if (origSeLength >= transSeLength) {
+                size_t dvalue = origSeLength - transSeLength;
+                size_t transAddr = origAddr - dvalue;
                 std::memcpy(&buffer[i], &transAddr, sizeof(uint32_t));
             } else {
-                size_t dvalue = transSelength - orgiSelength;
-                size_t transAddr = orgiAddr + dvalue;
+                size_t dvalue = transSeLength - origSeLength;
+                size_t transAddr = origAddr + dvalue;
                 std::memcpy(&buffer[i], &transAddr, sizeof(uint32_t));
             }
         }
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
 {
     SetConsoleOutputCP(CP_UTF8);
 
-    CLI::App app("Made by julixian 2026.03.11", "RiddleScriptSimpleTool");
+    CLI::App app("Made by julixian 2026.03.12", "RiddleScriptSimpleTool");
     argv = app.ensure_utf8(argv);
     app.set_help_all_flag("-a");
     app.require_subcommand(1);
@@ -227,13 +227,13 @@ int main(int argc, char** argv)
 
     auto dumpCmd = app.add_subcommand("dump");
     dumpCmd->alias("-d");
-    dumpCmd->add_option("inputDir", inputBinDir, "input directory")->required();
+    dumpCmd->add_option("inputDir", inputBinDir, "input directory")->required()->check(CLI::ExistingDirectory);
     dumpCmd->add_option("outputDir", outputDir, "output directory")->required();
 
     auto injectCmd = app.add_subcommand("inject");
     injectCmd->alias("-i");
-    injectCmd->add_option("inputBinDir", inputBinDir, "input bin directory")->required();
-    injectCmd->add_option("inputTxtDir", inputTxtDir, "input txt directory")->required();
+    injectCmd->add_option("inputBinDir", inputBinDir, "input bin directory")->required()->check(CLI::ExistingDirectory);
+    injectCmd->add_option("inputTxtDir", inputTxtDir, "input txt directory")->required()->check(CLI::ExistingDirectory);
     injectCmd->add_option("outputDir", outputDir, "output directory")->required();
 
     CLI11_PARSE(app, argc, argv);

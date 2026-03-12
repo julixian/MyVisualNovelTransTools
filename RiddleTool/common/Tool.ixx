@@ -20,6 +20,12 @@ export  {
     }
 
     template<typename T>
+    void write(void* ptr, T value)
+    {
+        memcpy(ptr, &value, sizeof(T));
+    }
+
+    template<typename T>
     T calculateAbs(T a, T b) {
         return a > b ? a - b : b - a;
     }
