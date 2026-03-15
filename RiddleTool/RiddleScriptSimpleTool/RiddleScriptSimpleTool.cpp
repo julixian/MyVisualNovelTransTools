@@ -96,10 +96,11 @@ void injectText(const fs::path& inputBinPath, const fs::path& inputTxtPath, cons
         ) 
     {
         std::println("find select script: {}", wide2Ascii(inputBinPath.native(), CP_UTF8));
+        size_t count = 0;
+        uint32_t jumpCount = read<uint32_t>(&buffer[4]);
         for (size_t i = 0x24; i < buffer.size(); i += 0x20) {
-            size_t origAddr = 0;
-            std::memcpy(&origAddr, &buffer[i], sizeof(uint32_t));
-            if (origAddr >= buffer.size() || origAddr == 0x00000000) {
+            uint32_t origAddr = read<uint32_t>(&buffer[i]);
+            if (origAddr >= buffer.size() || origAddr == 0 || ++count > jumpCount) {
                 break;
             }
             size_t origSeLength = 0;
