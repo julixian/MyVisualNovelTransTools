@@ -3,4 +3,6 @@
 **/Release/*
 !**/Release/*.exe
 !**/Release/*.dll
+!**/Release/*.py
+!**/Release/*.bat
 **/.vs/
