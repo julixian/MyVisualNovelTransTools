@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AdvHDWscScriptTool/AdvHDWscScriptTool.vcxproj" Id="ed671f96-0c31-4373-9d9a-9c6d66aa244c" />
+</Solution>
