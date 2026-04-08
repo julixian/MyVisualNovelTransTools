@@ -1,0 +1,155 @@
+你代码里的核心问题
+1）相对跳转根本没修
+你在 dumpText() 里已经把 0x10~0x13 当成 MaybeRelativeJump 了：
+
+<CPP>
+case 0x10:
+case 0x11:
+case 0x12:
+case 0x13:
+但在 injectText() 里这段是注释掉的：
+
+<CPP>
+if (i32 + offset < buffer.size() && (buffer[i32 + offset] == 0x1B || buffer[i32 + offset] == 0x1A)) {
+    /*RelJmp relJmp;
+    relJmp.addrInBuffer = offset - 4;
+    relJmp.addrInNewBuffer = newBuffer.size();
+    relJmps.push_back(relJmp);*/
+}
+所以你文本一变长，后面的相对跳转全还是旧地址。
+
+而你这句从图里看，原文大概是 0x1A，新文是 0x22，多了 8 字节。
+
+只要后面有一条跳到这附近的相对跳转，就会直接跳歪。
+
+2）即使你把相对跳转打开，现在的修法也还不稳
+你后面修 relJmps 时用了：
+
+<CPP>
+uint32_t relJmp = read<uint32_t>(&newBuffer[relJmps[i].addrInNewBuffer]);
+相对跳转应该用 int32_t，不是 uint32_t。
+
+因为它可能是负偏移。
+
+3）你的编码处理其实是假的
+这几个函数有坑：
+
+stringToCP932
+<CPP>
+std::vector<uint8_t> stringToCP932(const std::string& str) {
+    std::vector<uint8_t> result;
+    for (char c : str) {
+        result.push_back(static_cast<uint8_t>(c));
+    }
+    return result;
+}
+这不是转 CP932，只是把 std::string 原字节抄出来。
+
+也就是说：
+
+txt 如果是 UTF-8，就会原样写入 UTF-8
+txt 如果是 GBK，就原样写入 GBK
+txt 如果是 Shift-JIS/CP932，才“碰巧正确”
+WideToAscii
+<CPP>
+int len = WideCharToMultiByte(936, 0, wide.c_str(), -1, nullptr, 0, nullptr, nullptr);
+你函数参数叫 CodePage，结果里面写死了 936。
+
+而且这函数现在根本没在注入里用上。
+
+4）isValidCP932(std::string((char*)&buffer[i32])) 有 UB
+这句很危险：
+
+<CPP>
+isValidCP932(std::string((char*)&buffer[i32]))
+你是在二进制缓冲区里随便拿一个地址，当 C 字符串去读到 \0 为止。
+
+这会带来两个问题：
+
+可能读过界，UB
+很容易误判，把不是跳转的整数也当成跳转
+所以你 jmps.push_back() 也可能收进了不该修的东西。
+
+为什么看起来像“到这句就炸”？
+因为这句正好变长了。
+
+假设原来某个跳转目标在这句后面。
+
+原文长度 0x1A，新文长度 0x22，多了 +8。
+
+那原来应该跳到：
+
+旧地址：0x1F3C
+现在应该跳到：
+
+新地址：0x1F44
+但你没修相对跳转，它还是跳 0x1F3C。
+
+那就可能正好跳进这句文本的中间字节里。
+
+脚本引擎把文本字节当命令解释，典型现象就是：
+
+先乱码
+然后崩
+这个现象和你描述完全一致。
+
+最该先改的地方
+方案：统一做“旧地址 -> 新地址”的映射
+这是最稳的。
+
+你已经有 sentences 记录每段文本长度变化了。
+
+做一个函数：
+
+<CPP>
+auto remapOldToNew = [&](uint32_t oldAddr) -> uint32_t {
+    int delta = 0;
+    for (auto& s : sentences) {
+        if (s.addr < oldAddr)
+            delta += s.offset;
+    }
+    return oldAddr + delta;
+};
+修绝对跳转
+你现在的绝对跳转修法可以直接改成：
+
+<CPP>
+for (uint32_t pos : jmps) {
+    uint32_t oldAbs = read<uint32_t>(&newBuffer[pos]);
+    uint32_t newAbs = remapOldToNew(oldAbs);
+    write<uint32_t>(&newBuffer[pos], newAbs);
+}
+收集相对跳转
+把注释去掉，但建议改成这样：
+
+<CPP>
+struct RelJmp {
+    uint32_t addrInBuffer;     // 原文件里这4字节立即数的位置
+    uint32_t addrInNewBuffer;  // 新文件里这4字节立即数的位置
+};
+case 0x10:
+case 0x11:
+case 0x12:
+case 0x13: {
+    int32_t rel = read<int32_t>(&buffer[offset]);
+    uint32_t immAddrOld = offset;
+    uint32_t immAddrNew = (uint32_t)newBuffer.size();
+    offset += 4;
+    // 先全部记录，后面统一修
+    relJmps.push_back({ immAddrOld, immAddrNew });
+    newBuffer.insert(newBuffer.end(),
+        (uint8_t*)&rel, (uint8_t*)&rel + 4);
+    break;
+}
+修相对跳转
+<CPP>
+for (auto& r : relJmps) {
+    int32_t oldRel = read<int32_t>(&newBuffer[r.addrInNewBuffer]);
+    uint32_t oldBase = r.addrInBuffer + 4; // 相对基址 = 立即数末尾
+    uint32_t newBase = remapOldToNew(oldBase);
+    uint32_t oldTarget = oldBase + oldRel;
+    uint32_t newTarget = remapOldToNew(oldTarget);
+    int32_t newRel = (int32_t)((int64_t)newTarget - (int64_t)newBase);
+    write<int32_t>(&newBuffer[r.addrInNewBuffer], newRel);
+}
+这个写法比你后面手动算区间 offset 稳很多，前跳后跳都能处理。
