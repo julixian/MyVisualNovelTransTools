@@ -151,10 +151,11 @@ std::map<uint32_t, std::string> getNameTable(const fs::path& inputPath, const fs
             nameTable[std::stoul(splitted[0])] = splitted[3];
         }
         case 0x31:
+        case 0xBF:
         break;
 
         default:
-            throw std::runtime_error(std::format("Unsupported op code In getNameTable: {:#x} at {:#x}.", op.op, currentOpOffset));
+            std::println("Unsupported op code In getNameTable: {:#x} at {:#x}.", op.op, currentOpOffset);
         }
     }
 
