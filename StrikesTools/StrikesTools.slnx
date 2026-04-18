@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="StrikesPckArchiveTool/StrikesPckArchiveTool.vcxproj" Id="971340a0-6c63-497c-ab85-3ec873a8711e" />
+</Solution>
