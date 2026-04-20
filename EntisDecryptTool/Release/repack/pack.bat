@@ -1,4 +1,4 @@
 chcp 932
 @echo off
-rosetta pack_noa.rs /arg script.noa script\*.*
+rosetta pack_noa.ros /arg script.noa script\*.*
 pause
