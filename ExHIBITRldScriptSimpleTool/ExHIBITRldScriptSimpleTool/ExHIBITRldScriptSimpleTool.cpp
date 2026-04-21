@@ -117,7 +117,7 @@ std::map<uint32_t, std::string> getNameTable(const fs::path& inputPath, const fs
     uint32_t opOffset = read<uint32_t>(&buffer[0x8]);
     uint32_t opCount = read<uint32_t>(&buffer[0xC]);
 
-    uint32_t currentOffset = opOffset + 4;
+    uint32_t currentOffset = opOffset;
     for (uint32_t i = 0; i < opCount; i++) {
         uint32_t currentOpOffset = currentOffset;
         OpCode op = readOpCode(buffer, read<uint32_t>(&buffer[currentOffset]));
@@ -183,7 +183,7 @@ void dumpText(const fs::path& inputPath, const fs::path& outputPath, const std::
     uint32_t opOffset = read<uint32_t>(&buffer[0x8]);
     uint32_t opCount = read<uint32_t>(&buffer[0xC]);
 
-    uint32_t currentOffset = opOffset + 4;
+    uint32_t currentOffset = opOffset;
     for (uint32_t i = 0; i < opCount; i++) {
 
         //std::println("op offset: 0x{:X}", currentOffset);
