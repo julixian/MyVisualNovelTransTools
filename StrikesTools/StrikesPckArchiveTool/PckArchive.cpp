@@ -16,6 +16,11 @@ namespace {
     constexpr uint32_t blockXor = 0xC53A9A6Cu;
     constexpr uint32_t smallBlockXor = 0x6C9A3AC5u;
 
+    enum class ConfigHeaderLayout {
+        oldEngine,
+        packedStructs,
+    };
+
     struct RawGroupInfo {
         uint32_t groupIndex{};
         uint32_t metadataSize{};
@@ -47,6 +52,7 @@ namespace {
         std::vector<uint8_t> rawData;
         std::vector<uint8_t> decodedConfigHeader;
         Strikes::PckConfigInfo configInfo;
+        ConfigHeaderLayout configHeaderLayout{ ConfigHeaderLayout::oldEngine };
         std::vector<RawGroupInfo> rawGroups;
         std::vector<RawEntryInfo> rawEntries;
         std::vector<Strikes::PckGroupInfo> groupInfos;
@@ -349,6 +355,11 @@ namespace {
         return 8 - (((int)groupBase + (int)entryIndex) & 7);
     }
 
+    bool isBsdScriptEntry(const RawEntryInfo& entry)
+    {
+        return str2Lower(entry.nameWide).ends_with(L".bsd");
+    }
+
     std::vector<uint8_t> readResourceChunk(const std::vector<uint8_t>& packed, int skipWords, uint32_t* chunkSize)
     {
         if (packed.size() < 4) {
@@ -381,6 +392,134 @@ namespace {
             *chunkSize = storedSize;
         }
         return chunk;
+    }
+
+    std::vector<uint8_t> decryptResourceChunk(const RawEntryInfo& entry, const std::vector<uint8_t>& packed, uint32_t* chunkSize)
+    {
+        int skipWords = 0;
+        if (entry.isEncrypted) {
+            skipWords = computeResourceSkipWords((uint8_t)(entry.groupKey & 0xFFu), entry.entryIndex);
+            int detectedSkipWords = detectResourceSkipWords(packed, entry.packedSize);
+            if (detectedSkipWords != 0 && detectedSkipWords != skipWords) {
+                skipWords = detectedSkipWords;
+            }
+        }
+
+        std::vector<uint8_t> chunk = readResourceChunk(packed, skipWords, chunkSize);
+        if (entry.isEncrypted) {
+            uint32_t actualChunkSize = chunkSize != nullptr ? *chunkSize : (uint32_t)chunk.size();
+            if ((actualChunkSize & 0x7FFFFFFFu) >= 0x10u) {
+                xorPrefixDwordwise(chunk, 0x10, blockXor);
+            }
+            else {
+                xorPrefixBytewise(chunk, chunk.size(), smallBlockXor);
+            }
+        }
+        return chunk;
+    }
+
+    std::vector<uint8_t> decodeBsdScriptBody(const std::vector<uint8_t>& chunk, uint32_t unpackedSize)
+    {
+        constexpr size_t bsdHeaderSize = 48;
+        if (unpackedSize < bsdHeaderSize || chunk.size() < bsdHeaderSize) {
+            throw std::runtime_error("BSD script chunk is too small");
+        }
+
+        std::vector<uint8_t> packedBody(chunk.begin() + (ptrdiff_t)bsdHeaderSize, chunk.end());
+        std::vector<uint8_t> body = lzssDecompress(packedBody, unpackedSize - (uint32_t)bsdHeaderSize, true);
+
+        std::vector<uint8_t> output;
+        output.reserve(unpackedSize);
+        output.insert(output.end(), chunk.begin(), chunk.begin() + (ptrdiff_t)bsdHeaderSize);
+        output.insert(output.end(), body.begin(), body.end());
+        return output;
+    }
+
+    void applyOldEngineConfigEndian(std::vector<uint8_t>& header)
+    {
+        for (size_t offset : { 0u, 8u, 12u, 16u, 20u, 24u, 28u, 32u, 36u, 60u }) {
+            std::reverse(header.begin() + (ptrdiff_t)offset, header.begin() + (ptrdiff_t)(offset + 4));
+        }
+        for (size_t offset : { 44u, 46u, 48u, 50u, 56u }) {
+            std::reverse(header.begin() + (ptrdiff_t)offset, header.begin() + (ptrdiff_t)(offset + 2));
+        }
+    }
+
+    void applyPackedStructsConfigEndian(std::vector<uint8_t>& header)
+    {
+        for (size_t offset : { 0u, 8u, 12u, 16u, 20u, 24u, 28u, 32u, 36u, 40u, 52u, 56u, 68u }) {
+            std::reverse(header.begin() + (ptrdiff_t)offset, header.begin() + (ptrdiff_t)(offset + 4));
+        }
+        for (size_t offset : { 44u, 46u, 48u, 50u, 66u }) {
+            std::reverse(header.begin() + (ptrdiff_t)offset, header.begin() + (ptrdiff_t)(offset + 2));
+        }
+    }
+
+    void applyConfigEndian(std::vector<uint8_t>& header, ConfigHeaderLayout layout)
+    {
+        if (layout == ConfigHeaderLayout::packedStructs) {
+            applyPackedStructsConfigEndian(header);
+        }
+        else {
+            applyOldEngineConfigEndian(header);
+        }
+    }
+
+    uint32_t getGroupSizeFromConfigHeader(const std::vector<uint8_t>& header, ConfigHeaderLayout layout, size_t groupIndex)
+    {
+        static constexpr std::array<size_t, 9> oldEngineOffsets = { 0x08u, 0x0Cu, 0x10u, 0x14u, 0x18u, 0x28u, 0x24u, 0x34u, 0x44u };
+        static constexpr std::array<size_t, 9> packedStructsOffsets = { 0x08u, 0x0Cu, 0x10u, 0x14u, 0x18u, 0x28u, 0x24u, 0x34u, 0x44u };
+
+        const auto& offsets = layout == ConfigHeaderLayout::packedStructs ? packedStructsOffsets : oldEngineOffsets;
+        return readLe32(header, offsets[groupIndex]);
+    }
+
+    std::array<uint32_t, 9> readGroupSizeTableFromConfigHeader(const std::vector<uint8_t>& header, ConfigHeaderLayout layout)
+    {
+        std::array<uint32_t, 9> groupSizeTable{};
+        for (size_t i = 0; i < groupSizeTable.size(); ++i) {
+            groupSizeTable[i] = getGroupSizeFromConfigHeader(header, layout, i);
+        }
+        return groupSizeTable;
+    }
+
+    uint64_t sumGroupSizeTable(const std::array<uint32_t, 9>& groupSizeTable)
+    {
+        uint64_t sum = 0;
+        for (auto groupSize : groupSizeTable) {
+            sum += groupSize;
+        }
+        return sum;
+    }
+
+    bool isPlausibleConfigHeaderLayout(const std::vector<uint8_t>& rawData, const std::vector<uint8_t>& header, ConfigHeaderLayout layout)
+    {
+        uint32_t checkInput =
+            (uint32_t)header[5] |
+            ((uint32_t)header[6] << 8) |
+            ((uint32_t)header[4] << 16) |
+            ((uint32_t)header[7] << 24);
+        uint32_t storedCheck = readLe32(header, 28);
+        if ((checkInput ^ headerXor) != storedCheck) {
+            return false;
+        }
+
+        uint32_t metaSizeOffset = readLe32(header, 0x20);
+        if ((uint64_t)metaSizeOffset + 4u > rawData.size()) {
+            return false;
+        }
+
+        uint32_t metaUnpackedSize = readBe32(rawData, metaSizeOffset);
+        if (metaUnpackedSize == 0 || metaUnpackedSize > rawData.size()) {
+            return false;
+        }
+
+        auto groupSizeTable = readGroupSizeTableFromConfigHeader(header, layout);
+        if (sumGroupSizeTable(groupSizeTable) != metaUnpackedSize) {
+            return false;
+        }
+
+        return true;
     }
 
     std::vector<uint8_t> decodeIndexedBlock(const std::vector<uint8_t>& rawData, uint32_t tableOffset, uint32_t index, uint32_t expectedUnpackedSize)
@@ -452,11 +591,22 @@ namespace {
             writeLe32(header, offset, value);
         }
 
-        for (size_t offset : { 0u, 8u, 12u, 16u, 20u, 24u, 28u, 32u, 36u, 60u }) {
-            std::reverse(header.begin() + (ptrdiff_t)offset, header.begin() + (ptrdiff_t)(offset + 4));
+        std::vector<uint8_t> oldEngineHeader = header;
+        applyConfigEndian(oldEngineHeader, ConfigHeaderLayout::oldEngine);
+
+        std::vector<uint8_t> packedStructsHeader = header;
+        applyConfigEndian(packedStructsHeader, ConfigHeaderLayout::packedStructs);
+
+        if (isPlausibleConfigHeaderLayout(rawData, oldEngineHeader, ConfigHeaderLayout::oldEngine)) {
+            header = std::move(oldEngineHeader);
+            state.configHeaderLayout = ConfigHeaderLayout::oldEngine;
         }
-        for (size_t offset : { 44u, 46u, 48u, 50u, 56u }) {
-            std::reverse(header.begin() + (ptrdiff_t)offset, header.begin() + (ptrdiff_t)(offset + 2));
+        else if (isPlausibleConfigHeaderLayout(rawData, packedStructsHeader, ConfigHeaderLayout::packedStructs)) {
+            header = std::move(packedStructsHeader);
+            state.configHeaderLayout = ConfigHeaderLayout::packedStructs;
+        }
+        else {
+            throw std::runtime_error("failed to detect config header layout");
         }
 
         uint32_t checkInput =
@@ -469,17 +619,7 @@ namespace {
             throw std::runtime_error("config header checksum mismatch");
         }
 
-        config.groupSizeTable = {
-            readLe32(header, 0x08),
-            readLe32(header, 0x0C),
-            readLe32(header, 0x10),
-            readLe32(header, 0x14),
-            readLe32(header, 0x18),
-            readLe32(header, 0x28),
-            readLe32(header, 0x24),
-            readLe32(header, 0x34),
-            readLe32(header, 0x44),
-        };
+        config.groupSizeTable = readGroupSizeTableFromConfigHeader(header, state.configHeaderLayout);
         config.metaSizeOffset = readLe32(header, 0x20);
         config.metaUnpackedSize = readBe32(rawData, config.metaSizeOffset);
         config.metaTableOffset = config.metaSizeOffset + 4;
@@ -595,28 +735,13 @@ namespace {
             return packed;
         }
 
-        int skipWords = 0;
-        if (entry.isEncrypted) {
-            skipWords = computeResourceSkipWords((uint8_t)(entry.groupKey & 0xFFu), entry.entryIndex);
-            int detectedSkipWords = detectResourceSkipWords(packed, entry.packedSize);
-            if (detectedSkipWords != 0 && detectedSkipWords != skipWords) {
-                skipWords = detectedSkipWords;
-            }
-        }
-
         uint32_t chunkSize = 0;
-        std::vector<uint8_t> chunk = readResourceChunk(packed, skipWords, &chunkSize);
-
-        if (entry.isEncrypted) {
-            if ((chunkSize & 0x7FFFFFFFu) >= 0x10u) {
-                xorPrefixDwordwise(chunk, 0x10, blockXor);
-            }
-            else {
-                xorPrefixBytewise(chunk, chunk.size(), smallBlockXor);
-            }
-        }
+        std::vector<uint8_t> chunk = decryptResourceChunk(entry, packed, &chunkSize);
 
         if (entry.isPacked) {
+            if (state.configHeaderLayout == ConfigHeaderLayout::packedStructs && isBsdScriptEntry(entry)) {
+                return decodeBsdScriptBody(chunk, entry.unpackedSize);
+            }
             return lzssDecompress(chunk, entry.unpackedSize);
         }
 
@@ -628,16 +753,15 @@ namespace {
 
     const RawEntryInfo& getRawEntryByPublicEntry(const ArchiveState& state, const Strikes::PckEntry& entry)
     {
-        if (entry.groupIndex >= state.groupInfos.size()) {
-            throw std::runtime_error("invalid entry group index");
-        }
-
         for (const auto& rawEntry : state.rawEntries) {
             if (rawEntry.groupIndex == entry.groupIndex && rawEntry.entryIndex == entry.entryIndex) {
                 return rawEntry;
             }
         }
-        throw std::runtime_error("failed to locate raw entry");
+        throw std::runtime_error(std::format(
+            "failed to locate raw entry: group{} index{}",
+            entry.groupIndex,
+            entry.entryIndex));
     }
 
     std::vector<uint8_t> buildDecodedConfigHeaderForRebuild(const ArchiveState& state, uint32_t newMetaSizeOffset)
@@ -655,19 +779,14 @@ namespace {
         return header;
     }
 
-    std::vector<uint8_t> encodeConfigHeader(const std::vector<uint8_t>& decodedHeader)
+    std::vector<uint8_t> encodeConfigHeader(const std::vector<uint8_t>& decodedHeader, ConfigHeaderLayout layout)
     {
         if (decodedHeader.size() != 0x68) {
             throw std::runtime_error("decoded config header must be 0x68 bytes");
         }
 
         std::vector<uint8_t> raw = decodedHeader;
-        for (size_t offset : { 44u, 46u, 48u, 50u, 56u }) {
-            std::reverse(raw.begin() + (ptrdiff_t)offset, raw.begin() + (ptrdiff_t)(offset + 2));
-        }
-        for (size_t offset : { 0u, 8u, 12u, 16u, 20u, 24u, 28u, 32u, 36u, 60u }) {
-            std::reverse(raw.begin() + (ptrdiff_t)offset, raw.begin() + (ptrdiff_t)(offset + 4));
-        }
+        applyConfigEndian(raw, layout);
 
         uint32_t seed = readBe32(raw, 0);
         KnuthRng rng(seed);
@@ -901,7 +1020,7 @@ namespace Strikes {
         outputPosition += metadata.size() + 8;
 
         auto decodedHeader = buildDecodedConfigHeaderForRebuild(impl->state, newMetaSizeOffset);
-        auto rawConfigHeader = encodeConfigHeader(decodedHeader);
+        auto rawConfigHeader = encodeConfigHeader(decodedHeader, impl->state.configHeaderLayout);
         if (outputPosition > UINT32_MAX) {
             throw std::runtime_error("rebuilt archive exceeds 32-bit package limits");
         }
