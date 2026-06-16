@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="TacticsScriptSimpleTool/TacticsScriptSimpleTool.vcxproj" Id="3db93b38-12f4-4b5b-b137-c16f6f5d5323" />
+</Solution>
