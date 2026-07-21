@@ -1,0 +1,189 @@
+
+
+// 引数 : <destination-noa-file> <source-files(can be wild-card)>
+
+
+Console	con = System.console() ;
+
+String[]	g_IgnoreCompressExt =
+[
+	"eri", "mei", "mio", "noa", "png", "jpg", "jpeg",
+	"avi", "mpg", "mpeg", "mp3", "mp4", "wma", "wmv",
+] ;
+HashMap<boolean>	g_mapIgnoreCompressExt = HashMap<boolean>() ;
+
+
+int main( String[] arg )
+{
+	if ( arg.length() < 2 )
+	{
+		con.printf( "Usage:\n"
+					+ "Rosetta.exe pack_noa.rs /arg <output noa> <input file>\n" ) ;
+		return	-1 ;
+	}
+	for ( int i = 0; i < g_IgnoreCompressExt.length(); i ++ )
+	{
+		g_mapIgnoreCompressExt.put( g_IgnoreCompressExt[i], true ) ;
+	}
+	String	strDstFile = arg[0] ;
+	String	strSrcFiles = arg[1] ;
+	String	strSrcDir = strSrcFiles.getFileDirectoryPart() ;
+	//
+	RandomAccessFile	file = null ;
+	try
+	{
+		file = new RandomAccessFile( strDstFile, "rw" ) ;
+	}
+	catch ( Exception e )
+	{
+		con.printf( "File could not be opened: %s\n", strDstFile ) ;
+		return	1 ;
+	}
+	NoaFileArchiver.FileInfo[]	dirFiles = listFileInfo( strSrcFiles ) ;
+	NoaFileArchiver	noafile = new NoaFileArchiver() ;
+	if ( !noafile.createArchive( file, dirFiles ) )
+	{
+		con.printf( "Failed to create file : %s\n", strDstFile ) ;
+		return	1 ;
+	}
+	int	nErrors = archiveDirectory( noafile, strSrcDir, "", dirFiles ) ;
+	//
+	noafile.close() ;
+	//
+	if ( nErrors == 0 )
+	{
+		con.printf( "%s has been created.\n", strDstFile ) ;
+	}
+	else
+	{
+		con.printf( "%s Add: %d errors\n", strDstFile, nErrors ) ;
+	}
+	return	nErrors ;
+}
+
+// ディレクトリのファイルリスト作成
+NoaFileArchiver.FileInfo[] listFileInfo( String strFiles )
+{
+	String		strDirPath = strFiles.getFileDirectoryPart() ;
+	String		strFileName = strFiles.getFileNamePart() ;
+	File		fileDir = new File( strDirPath ) ;
+	String[]	files = fileDir.list( strFileName ) ;
+	NoaFileArchiver.FileInfo[]
+			fileInfos = new NoaFileArchiver.FileInfo[] ;
+	for ( int i = 0; i < files.length(); i ++ )
+	{
+		if ( (files[i] == ".") || (files[i] == "..") )
+		{
+			continue ;
+		}
+		File	file = new File( strDirPath.offsetFilePath(files[i]) ) ;
+		if ( !file.exists() )
+		{
+			continue ;
+		}
+		NoaFileArchiver.FileInfo	info = new NoaFileArchiver.FileInfo() ;
+		if ( file.isDirectory() )
+		{
+			info.dtFileTime = new Date() ;
+			info.strFilename  = file.getName() ;
+			info.nAttribute = NoaFileArchiver.attrDirectory ;
+		}
+		else
+		{
+			info.dtFileTime = new Date( file.lastModified() ) ;
+			info.nBytes = file.length() ;
+			info.strFilename  = file.getName() ;
+			info.nEncodeType = NoaFileArchiver.encodeRaw ;
+			if ( g_mapIgnoreCompressExt.isEmpty
+					( info.strFilename.getFileExtensionPart().toLowerCase() ) )
+			{
+				info.nEncodeType = NoaFileArchiver.encodeERISA ;
+			}
+		}
+		fileInfos.add( info ) ;
+	}
+	return	fileInfos ;
+}
+
+// ディレクトリの書庫化
+int archiveDirectory
+	( NoaFileArchiver noafile,
+		String strSrcDir, String strNoaDir,
+		NoaFileArchiver.FileInfo[] dirFiles )
+{
+	int				nErrors = 0 ;
+	const int		nBufSize = 0x10000 ;
+	Uint8Pointer	buf = new Uint8Pointer( nBufSize ) ;
+	for ( int i = 0; i < dirFiles.length(); i ++ )
+	{
+		const String	strFileName = dirFiles[i].strFilename ;
+		const String	strSrcFile = strSrcDir.offsetFilePath( strFileName ) ;
+		if ( dirFiles[i].nAttribute & NoaFileArchiver.attrDirectory )
+		{
+			// ディレクトリ
+			NoaFileArchiver.FileInfo[]	dirSubFiles =
+				listFileInfo( strSrcFile.offsetFilePath( "*.*" ) ) ;
+			//
+			if ( !noafile.createDirectory( strFileName, dirSubFiles ) )
+			{
+				con.printf( "Failed to create a directory in the archive: %s\n", strFileName ) ;
+				nErrors ++ ;
+				continue ;
+			}
+			nErrors += archiveDirectory
+				( noafile, strSrcFile,
+					strNoaDir.offsetFilePath( strFileName ), dirSubFiles ) ;
+			noafile.ascendDirectory() ;
+		}
+		else
+		{
+			// ファイル
+			String	strArcFilePath = strNoaDir.offsetFilePath( strFileName ) ;
+			InputStream	is = null ;
+			try
+			{
+				is = new InputStream( strSrcFile ) ;
+			}
+			catch ( Exception e )
+			{
+				con.printf( "%s Could not be opened\n", strArcFilePath ) ;
+				nErrors ++ ;
+				continue ;
+			}
+			if ( !noafile.descendFile( strFileName, null, true ) )
+			{
+				con.printf( "%s Can't add.\n", strArcFilePath ) ;
+				nErrors ++ ;
+				continue ;
+			}
+			con.printf( "\x1b[s%s...", strArcFilePath ) ;
+			//
+			long	nTotalBytes = 0 ;
+			try
+			{
+				for ( ; ; )
+				{
+					int	nReadBytes = is.read( buf, 0, nBufSize ) ;
+					if ( nReadBytes == 0 )
+					{
+						break ;
+					}
+					noafile.write( buf, 0, nReadBytes ) ;
+					nTotalBytes += nReadBytes ;
+					con.printf( "\r\x1b[u%s...%d [bytes]", strArcFilePath, nTotalBytes ) ;
+				}
+				con.printf( "\r\x1b[u%s...%d [bytes] done.\n", strArcFilePath, nTotalBytes ) ;
+			}
+			catch ( Exception e )
+			{
+				con.printf( "\n%s Failed to write.\n", strArcFilePath ) ;
+				nErrors ++ ;
+			}
+			noafile.ascendFile() ;
+		}
+	}
+	return	nErrors ;
+}
+
+
+
