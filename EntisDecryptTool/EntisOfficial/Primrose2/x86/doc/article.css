@@ -1,0 +1,166 @@
+
+/* 文書タイトル */
+div.title0
+{
+	color: #000000;
+	text-align: left;
+	text-decoration: underline;
+	font-size: 300%;
+	font-family: serif;
+	font-style: normal;
+	padding: 8px 8px 8px 8px;
+}
+
+/* クラス章題 */
+div.chapter
+{
+	color: #000000;
+	text-align: left;
+	text-decoration: underline;
+	font-size: 200%;
+	font-family: serif;
+	font-style: italic;
+	padding: 4px 4px 4px 4px;
+	margin-top: 2em;
+}
+
+/* 関数ヘッドライン */
+div.headline
+{
+	color: #ffffff;
+	background-color: #000000;
+	text-align: left;
+	font-size: 120%;
+	font-family: serif;
+	font-style: italic;
+	padding: 4px 4px 4px 4px;
+	margin: 1em 4px 1em 4px;
+}
+
+/* 項目見出し */
+div.term_name
+{
+	color: #000000;
+	background-color: #E0E0E0;
+	padding: 4px 4px 4px 4px;
+	margin: 8px 4px 8px 4px;
+	font-family: serif;
+	font-style: normal;
+}
+
+/* 本文 */
+div.normal
+{
+	color: #000000;
+	margin-left: 1em;
+	margin-right: 1em;
+	font-family: serif;
+	font-style: normal;
+}
+
+/* 本文インデント1 */
+div.indent1
+{
+	color: #000000;
+	margin-left: 2em;
+	margin-right: 2em;
+	font-family: serif;
+	font-style: normal;
+}
+
+/* 本文インデント2 */
+div.indent2
+{
+	color: #000000;
+	margin-left: 4em;
+	margin-right: 4em;
+	font-family: serif;
+	font-style: normal;
+}
+
+/* 注記インデント1 */
+div.notes_indent1
+{
+	color: #000000;
+	border: solid 1px #C0C0C0;
+	margin-left: 2em;
+	margin-right: 2em;
+	font-family: serif;
+	font-style: normal;
+	font-size: 85%;
+	padding: 4px 4px 4px 4px;
+}
+
+/* 書式 */
+div.usage
+{
+	border: double 3px #808080;
+	color: #000000;
+	background-color: #E8E8E8;
+	font-size: 100%;
+	font-family: monospace;
+	font-style: normal;
+	padding: 4px 4px 4px 4px;
+	margin: 4px 1em 4px 1em;
+}
+
+/* パラメータ */
+div.notes_parameter
+{
+	color: #000000;
+	border: solid 1px #C0C0C0;
+	margin-left: 2em;
+	margin-right: 2em;
+	font-family: serif;
+	font-style: normal;
+	font-size: 100%;
+	padding: 4px 4px 4px 4px;
+}
+
+div.param_name
+{
+	color: #000000;
+	background-color: #F0F0F0;
+	padding: 2px 4px 2px 8px;
+	margin: 8px 4px 8px 4px;
+	font-size: 95%;
+	font-family: serif;
+	font-style: italic;
+}
+
+div.param_desc
+{
+	color: #000000;
+	margin-left: 2em;
+	margin-right: 2em;
+	margin-bottom: 1em;
+	font-family: serif;
+	font-size: 85%;
+	font-style: normal;
+}
+
+/* コード */
+div.code_quote
+{
+	color: #000000;
+	background-color: #E8E8E8;
+	font-size: 90%;
+	font-family: monospace;
+	font-style: normal;
+	padding: 4px 4px 4px 4px;
+	margin: 1em 4em 1em 4em;
+}
+
+/* 斜体 */
+italic
+{
+	font-style: italic;
+}
+
+/* 太字 */
+bold
+{
+	font-weight: bold;
+}
+
+

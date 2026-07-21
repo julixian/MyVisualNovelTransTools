@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html
+[
+	<!ENTITY nbsp "&#160;">
+]>
+<?xml-stylesheet type="text/css" href="article.css"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+	<title>Primrose2 チートシート</title>
+</head>
+<body>
+
+<div class="title0">Primrose2 チートシート</div>
+
+<div class="headline">目次</div>
+
+<div class="indent1">
+<a href="#view_operation">§ビュー基本操作</a><br/>
+	<div class="indent2">
+	<a href="#orth_view_operation">平行透視ビュー共通</a><br/>
+	<a href="#proj_view_operation">3D透視ビュー共通</a><br/>
+	<a href="#position_operation">制御点（座標）</a><br/>
+	<a href="#rotation_operation">回転リング</a><br/>
+	<a href="#zoom_operation">拡大ハンドル</a><br/>
+	<a href="#bone_handle_operation">ボーンハンドル（ボーン先端）</a><br/>
+	<a href="#bone_position_operation">ボーン座標（ボーン根本）</a><br/>
+	<a href="#bezier_point_operation">ベジェ制御点</a><br/>
+	<a href="#instance_operation">インスタンス</a><br/>
+	</div>
+</div>
+
+<a name="view_operation"/>
+<div class="chapter">§ビュー基本操作</div>
+
+<a name="orth_view_operation"/>
+<div class="headline">平行透視ビュー共通</div>
+<div class="normal">
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">何もない場所で左クリック</td>
+	<td align="left" width="70%">現在のカーソル座標変更／設定</td>
+</tr>
+<tr>
+	<td width="30%">何もない場所でドラッグ</td>
+	<td align="left" width="70%">画面をスクロール</td>
+</tr>
+<tr>
+	<td width="30%">SPACE キーを押しながらドラッグ</td>
+	<td align="left" width="70%">画面をスクロール</td>
+</tr>
+<tr>
+	<td width="30%">マウスホイール</td>
+	<td align="left" width="70%">拡大率変更</td>
+</tr>
+<tr>
+	<td width="30%">マウス中央ボタンを押しながらドラッグ</td>
+	<td align="left" width="70%">画面をスクロール</td>
+</tr>
+</thead>
+</table>
+</small>
+</div>
+<br/>
+
+
+
+<a name="proj_view_operation"/>
+<div class="headline">3D透視ビュー共通</div>
+<div class="normal">
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">左 or 中央ボタン押下ドラッグ</td>
+	<td align="left" width="70%">視点移動（注視点を中心に回転）</td>
+</tr>
+<tr>
+	<td width="30%">SHIFT or SPACE キーを押しながらドラッグ</td>
+	<td align="left" width="70%">カメラを平行移動</td>
+</tr>
+<tr>
+	<td width="30%">マウスホイール</td>
+	<td align="left" width="70%">視点ｚ移動（注視点までの距離を拡大縮小）</td>
+</tr>
+<tr>
+	<td width="30%">SHIFT or SPACE キーを押しながらマウスホイール</td>
+	<td align="left" width="70%">カメラをｚ移動（注視点・視点両方を移動）</td>
+</tr>
+</thead>
+</table>
+</small>
+</div>
+<br/>
+
+
+
+<a name="position_operation"/>
+<div class="headline">制御点（座標）</div>
+<div class="normal">
+
+ドラッグして移動<br/>
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">ALT キーを押しながら</td>
+	<td align="left" width="70%">グリッドへのスナップ有無の反転</td>
+</tr>
+<tr>
+	<td width="30%">CTRL キーを押しながら</td>
+	<td align="left" width="70%">ユーザー定義グリッドへのスナップ有無の反転</td>
+</tr>
+<tr>
+	<td width="30%">SHIFT キーを押しながら</td>
+	<td align="left" width="70%">移動方向を45度単位にスナップ</td>
+</tr>
+<tr>
+	<td width="30%">SHIFT+CTRL キーを押しながら</td>
+	<td align="left" width="70%">移動元から移動先線分での当たり判定を行い、当たり判定座標へスナップ</td>
+</tr>
+</thead>
+</table>
+</small>
+
+</div>
+<br/>
+
+
+<a name="rotation_operation"/>
+<div class="headline">回転リング</div>
+<div class="normal">
+
+ドラッグして回転<br/>
+
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">ALT キーを押しながら</td>
+	<td align="left" width="70%">45度単位の回転</td>
+</tr>
+</thead>
+</table>
+</small>
+
+</div>
+<br/>
+
+
+<a name="zoom_operation"/>
+<div class="headline">拡大ハンドル</div>
+<div class="normal">
+
+ドラッグして、ドラッグ以前の拡大率を基準に伸縮<br/>
+
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">ALT キーを押しながら</td>
+	<td align="left" width="70%">0.25 倍単位の拡大率</td>
+</tr>
+<tr>
+	<td width="30%">CTRL キーを押しながら</td>
+	<td align="left" width="70%">XYZ 全て同時に拡大</td>
+</tr>
+</thead>
+</table>
+</small>
+
+</div>
+<br/>
+
+
+<a name="bone_handle_operation"/>
+<div class="headline">ボーンハンドル（ボーン先端）</div>
+<div class="normal">
+
+ドラッグで回転<br/>
+
+</div>
+<br/>
+
+
+<a name="bone_position_operation"/>
+<div class="headline">ボーン座標（ボーン根本）</div>
+<div class="normal">
+
+ドラッグで親ボーン回転<br/>
+
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">SHIFT キーを押しながら</td>
+	<td align="left" width="70%">ドラッグで平行移動</td>
+</tr>
+</thead>
+</table>
+</small>
+
+</div>
+<br/>
+
+
+<a name="bezier_point_operation"/>
+<div class="headline">ベジェ制御点</div>
+<div class="normal">
+
+ドラッグして移動<br/>
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">SHIFT キーを押しながらドラッグ</td>
+	<td align="left" width="70%">矩形選択</td>
+</tr>
+<tr>
+	<td width="30%">ALT キーを押しながらドラッグ</td>
+	<td align="left" width="70%">矩形選択解除</td>
+</tr>
+<tr>
+	<td width="30%">ハンドルを CTRL キーを押しながらドラッグ</td>
+	<td align="left" width="70%">制御点をコーナーとして片ハンドルのみ制御</td>
+</tr>
+</thead>
+</table>
+<br/>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">DEL キー</td>
+	<td align="left" width="70%">選択点を削除</td>
+</tr>
+<tr>
+	<td width="30%">↑↓ キー</td>
+	<td align="left" width="70%">次の制御点を選択</td>
+</tr>
+</thead>
+</table>
+</small>
+
+</div>
+<br/>
+
+
+<a name="instance_operation"/>
+<div class="headline">インスタンス</div>
+<div class="normal">
+
+インスタンス制御点クリックで選択（選択ツール動作時）<br/>
+<small>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">SHIFT キーを押しながらドラッグ</td>
+	<td align="left" width="70%">矩形選択</td>
+</tr>
+<tr>
+	<td width="30%">ALT キーを押しながらドラッグ</td>
+	<td align="left" width="70%">矩形選択解除</td>
+</tr>
+<tr>
+	<td width="30%">CTRL キーを押しながらドラッグ</td>
+	<td align="left" width="70%">矩形選択追加</td>
+</tr>
+</thead>
+</table>
+<br/>
+<table border="1" cellspacing="1" cellpadding="4" bordercolor="#808080" width="90%" style="table-layout: fixed;">
+<thead>
+<tr>
+	<td width="30%">ダブルクリック</td>
+	<td align="left" width="70%">インスタンス追加</td>
+</tr>
+<tr>
+	<td width="30%">DEL キー</td>
+	<td align="left" width="70%">選択点を削除</td>
+</tr>
+</thead>
+</table>
+</small>
+
+</div>
+<br/>
+
+
+
+
+
+
+</body>
+</html>
