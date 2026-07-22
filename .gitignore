@@ -5,4 +5,10 @@
 !**/Release/*.dll
 !**/Release/*.py
 !**/Release/*.bat
+!**/Release/path.txt
+!**/Release/specific_game.txt
+!**/Release/*.[to]tf
+!**/Release/FNT*_NEWDATA
+!**/Release/COD/
+!**/Release/LegacyFontTool/
 **/.vs/
