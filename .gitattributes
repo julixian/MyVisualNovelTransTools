@@ -2,6 +2,7 @@
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
 * text=auto
+EntisDecryptTool/EntisOfficial/* linguist-vendored
 EntisDecryptTool/EntisOfficial/**/* linguist-vendored
 **/lzss.h linguist-vendored
 **/lzss.c linguist-vendored
