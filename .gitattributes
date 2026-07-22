@@ -3,7 +3,8 @@
 ###############################################################################
 * text=auto
 EntisDecryptTool/EntisOfficial/ linguist-vendored
-lzss.[hc] linguist-vendored
+lzss.h linguist-vendored
+lzss.c linguist-vendored
 png2tlg/ linguist-vendored
 
 ###############################################################################
