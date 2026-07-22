@@ -4,11 +4,11 @@
 * text=auto
 EntisDecryptTool/EntisOfficial/**/* linguist-vendored
 
+krkr/png2tlg/**/* linguist-vendored
+
 **/lzss.h linguist-vendored
 
 **/lzss.c linguist-vendored
-
-**/png2tlg/**/* linguist-vendored
 
 ###############################################################################
 # Set default behavior for command prompt diff.
