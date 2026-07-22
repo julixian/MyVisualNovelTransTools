@@ -2,8 +2,9 @@
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
 * text=auto
-EntisDecryptTool/EntisOfficial/**/* linguist-vendored
+EntisDecryptTool/EntisOfficial/ linguist-vendored
 **/lzss.[hc] linguist-vendored
+**/png2tlg/ linguist-vendored
 
 ###############################################################################
 # Set default behavior for command prompt diff.
