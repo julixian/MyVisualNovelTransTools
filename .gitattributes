@@ -4,7 +4,7 @@
 * text=auto
 EntisDecryptTool/EntisOfficial/**/* linguist-vendored
 
-krkr/png2tlg/**/* linguist-vendored
+krkr/png2tlg/* linguist-vendored
 
 **/lzss.h linguist-vendored
 
